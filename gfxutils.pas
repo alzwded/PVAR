@@ -2,6 +2,9 @@ unit GfxUtils;
 
 {$mode objfpc}{$H+}
 
+(* enable short-circuiting boolean evaluation (DO NOT DISABLE THIS) *)
+{$B-}
+
 {$DEFINE CHECK_PLANARITY}
 
 (* utilities for creating, sorting and rendering 3d triangles, quadrangles,
