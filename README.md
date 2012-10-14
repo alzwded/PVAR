@@ -16,7 +16,11 @@ Componente
 Misc
 ====
 
-Engineul grafic foloseşte algoritmul lui Newell pentru sortare poligoanelor. (încă neimplementat complet)
+Engineul grafic foloseşte algoritmul lui Newell pentru sortare poligoanelor.
+
+Funcţia care testează interioritatea unui punct e luată de-aici:
+http://www.ecse.rpi.edu/Homepages/wrf/Research/Short_Notes/pnpoly.html
+Mulţumesc lui W. Randolph Franklin!
 
 Fiecare entitate rulează independent pe propriul ceas, rendarea se face la ~60hz (+/-)
 
