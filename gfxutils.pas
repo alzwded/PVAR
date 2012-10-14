@@ -2,6 +2,8 @@ unit GfxUtils;
 
 {$mode objfpc}{$H+}
 
+{$DEFINE CHECK_PLANARITY}
+
 (* utilities for creating, sorting and rendering 3d triangles, quadrangles,
    spheres and sprites to a canvas *)
 (* available 3d entities:
@@ -133,7 +135,28 @@ type
     function Project(p: TPoint3D): TPoint;
   public
     property Background: TColor read m_bgColor write m_bgColor;
-  protected
+  public (* need InOrder* functions here because I need m_z_*Component *)
+    (* entry function for determining if e1 is closer to the viewport than e2
+       true means e1 is closer than e2, hence e2 should be drawn first *)
+    function InOrder(e1, e2: IEntity3D): boolean;
+    (* implementation for sphere-sphere *)
+    function InOrderSpheres(s1, s2: TSphere): boolean;
+    (* implementation for sphere-polygon *)
+    function InOrderSpherePolygon(s: TSphere; p: TPolygon): boolean;
+    (* wrapper for not InOrderSpherePolygon *)
+    function InOrderPolygonSphere(p: TPolygon; s: TSphere): boolean;
+    (* implementation of Newell's algorithm *)
+    function InOrderPolygons(t1, t2: TPolygon): boolean;
+    (* implementation for sprites *)
+    function InOrderSprites(s1, s2: TSprite): boolean;
+    (* implementation for sprite-sphere *)
+    function InOrderSpriteSphere(sprite: TSprite; s: TSphere): boolean;
+    (* implementation for sphere-sprite *)
+    function InOrderSphereSprite(s: TSphere; sprite: TSprite): boolean;
+    (* implementation for sprite-polygon *)
+    function InOrderSpritePolygon(sprite: TSprite; p: TPolygon): boolean;
+    (* implementation for polygon-sprite *)
+    function InOrderPolygonSprite(p: TPolygon; sprite: TSprite): boolean;
   end;
 
   (* TBD: see if a buffer is necessary of if Canvas suffices *)
@@ -156,30 +179,14 @@ type
 
 function Point3DFromCoords(x, y, z: real): TPoint3D;
 
+function IsPointInPolygon(
+        p: TPoint;
+        poli: array of TPoint;
+        start, count: integer)
+: boolean;
+
 procedure incr(var whom: real; value: real = 1.0);
 procedure decr(var whom: real; value: real = 1.0);
-
-(* entry function for determining if e1 is closer to the viewport than e2
-   true means e1 is closer than e2, hence e2 should be drawn first *)
-function InOrder(e1, e2: IEntity3D): boolean;
-(* implementation for sphere-sphere *)
-function InOrderSpheres(s1, s2: TSphere): boolean;
-(* implementation for sphere-polygon *)
-function InOrderSpherePolygon(s: TSphere; p: TPolygon): boolean;
-(* wrapper for not InOrderSpherePolygon *)
-function InOrderPolygonSphere(p: TPolygon; s: TSphere): boolean;
-(* implementation of Newell's algorithm *)
-function InOrderPolygons(t1, t2: TPolygon): boolean;
-(* implementation for sprites *)
-function InOrderSprites(s1, s2: TSprite): boolean;
-(* implementation for sprite-sphere *)
-function InOrderSpriteSphere(sprite: TSprite; s: TSphere): boolean;
-(* implementation for sphere-sprite *)
-function InOrderSphereSprite(s: TSphere; sprite: TSprite): boolean;
-(* implementation for sprite-polygon *)
-function InOrderSpritePolygon(sprite: TSprite; p: TPolygon): boolean;
-(* implementation for polygon-sprite *)
-function InOrderPolygonSprite(p: TPolygon; sprite: TSprite): boolean;
 
 (* check if p is in front, behind of or on the plane *)
 function SideOfPlane(plane: TPolygon; p: TPoint3D): TPlanarity;
@@ -190,7 +197,6 @@ function CrossProduct(v1, v2: TPoint3D): TPoint3D;
 procedure NormalizeVector(var v: TPoint3D);
 function Distance(p1, p2: TPoint3D): real;
 procedure RotateNode(var node: TPoint3D; centre: TPoint3D; rx, ry, rz: real);
-
 
 implementation
 
@@ -233,7 +239,7 @@ var
   i: integer;
 begin
   for i := 1 to m_entities.Count do begin
-    if InOrder(entity, m_entities.Items[i]) then begin
+    if m_visu.InOrder(entity, m_entities.Items[i]) then begin
       m_entities.Insert(i, entity);
       exit;
     end;
@@ -386,6 +392,336 @@ begin
   m_canvas^.FillRect(0, 0, m_canvas^.Width, m_canvas^.Height);
 end;
 
+(* sort functions *)
+(* entry function *)
+
+function TJakRandrProjector.InOrder(e1, e2: IEntity3D): boolean;
+begin
+  if      (e1 is TSphere)  and (e2 is TSphere)  then
+    InOrder := InOrderSpheres
+          (e1 as TSphere,       e2 as TSphere )
+  else if (e1 is TPolygon) and (e2 is TPolygon) then
+    InOrder := InOrderPolygons
+          (e1 as TPolygon,      e2 as TPolygon)
+  else if (e1 is TSphere)  and (e2 is TPolygon) then
+    InOrder := InOrderSpherePolygon
+          (e1 as TSphere,       e2 as TPolygon)
+  else if (e1 is TPolygon) and (e2 is TSphere)  then
+    InOrder := InOrderPolygonSphere
+          (e1 as TPolygon,      e2 as TSphere )
+  else if (e1 is TSprite)  and (e2 is TSprite)  then
+    InOrder := InOrderSprites
+          (e1 as TSprite,       e2 as TSprite )
+  else if (e1 is TSprite)  and (e2 is TPolygon) then
+    InOrder := InOrderSpritePolygon
+          (e1 as TSprite,       e2 as TPolygon)
+  else if (e1 is TPolygon) and (e2 is TSprite)  then
+    InOrder := InOrderPolygonSprite
+          (e1 as TPolygon,      e2 as TSprite )
+  else if (e1 is TSprite)  and (e2 is TSphere)  then
+    InOrder := InOrderSpriteSphere
+          (e1 as TSprite,       e2 as TSphere )
+  else if (e1 is TSphere)  and (e2 is TSprite)  then
+    InOrder := InOrderSphereSprite
+          (e1 as TSphere,       e2 as TSprite )
+  else Raise Exception.Create('Not implemented for given object types');
+end;
+
+(* implementations *)
+
+(* special case for spheres *)
+(* sphere vs. sphere:
+     if distance between centre is greater than the sum of radii, return
+       c1 > c2
+     else if s1 fully contians s2, return true
+     else if s2 fully contains s1, return false
+     else return c1 > c2 *)
+function TJakRandrProjector.InOrderSpheres(s1, s2: TSphere): boolean;
+var
+  d: real;
+begin
+  d := Distance(s1.Centre, s2.Centre);
+
+  if d > (s1.Radius + s2.Radius) then
+    InOrderSpheres := s1.Centre.z > s2.Centre.z
+  else if s1.Radius > s2.Radius then begin
+    if d <= s1.Radius - s2.Radius then
+      InOrderSpheres := true
+    else
+      InOrderSpheres := s1.Centre.z > s2.Centre.z;
+  end else begin
+    if d <= s2.Radius - s1.Radius then
+      InOrderSpheres := false
+    else
+      InOrderSpheres := s1.Centre.z > s2.Centre.z; (* check this *)
+  end;
+end;
+
+(* sphere vs. polygon:
+   if c.z > anyVertexOfPoly.z return true
+   else if c.z < anyVertexOfPoly.z return false
+   else if s fully contains poly return true
+   else if s doesn't contain poly at all then or partially contains poly
+     return centre is on same side as plane of poly as viewport
+
+   poly vs. sphere -- not( call( sphere vs. poly ) );
+*)
+function TJakRandrProjector.InOrderSpherePolygon(s: TSphere; p: TPolygon): boolean;
+begin
+  writeln('InOrderSpherePolygon: TODO');
+  InOrderSpherePolygon := true;
+end;
+
+function TJakRandrProjector.InOrderPolygonSphere(p: TPolygon; s: TSphere): boolean;
+begin
+  InOrderPolygonSphere := not InOrderSpherePolygon(s, p);
+end;
+
+(* implementation of Newell's algorithm *)
+(* implement for triangles and quads *)
+(* for quads we assume all nodes are in the same plane *)
+(*    assert that in constructor *)
+(*      by making sure two normals are very, very close together *)
+function TJakRandrProjector.InOrderPolygons(t1, t2: TPolygon): boolean;
+var
+  i: integer;
+  retMin, passes: Boolean;
+  min, max: real;
+  viewportSide, side: TPlanarity;
+  projection1, projection2: array of TPoint;
+label
+  test2, test3, test4, test5, test6, test7, test8, testOther;
+begin
+  (* test 1 - no overlap on Z *)
+  (*   get minZ of t2, get maxZ of t2 *)
+  min := t2.Nodes[1].z;
+  max := t2.Nodes[1].z;
+  for i := 2 to t2.NbNodes do
+    if t2.Nodes[i].z < min then
+      min := t2.Nodes[i].z
+    else if t1.Nodes[i].z > max then
+      max := t2.Nodes[i].z;
+  (*   check no vertex is inside t2 *)
+  (*     if p1 is bigger than maxZ return true *)
+  (*     if p1 is smaller than minZ return false *)
+  (*   else continue with tests *)
+  for i := 1 to t1.NbNodes do
+    if (t1.Nodes[i].z >= min) or (t1.Nodes[i].z <= max) then
+      goto test2;
+
+  (* test passes *)
+  if t1.Nodes[i].z < min then
+    InOrderPolygons := true
+  else
+    InOrderPolygons := false;
+  exit;
+
+  test2:
+  (* test 2 - no overlap on X *)
+  (*   idem *)
+  if m_z_xComponent < 0.0 then
+    retMin := true
+  else
+    retMin := false;
+
+  min := t2.Nodes[1].x;
+  max := t2.Nodes[1].x;
+  for i := 2 to t2.NbNodes do
+    if t2.Nodes[i].x < min then
+      min := t2.Nodes[i].x
+    else if t2.Nodes[i].x > max then
+      max := t2.Nodes[i].x;
+
+  for i := 1 to t1.NbNodes do
+    if (t1.Nodes[i].x >= min) or (t1.Nodes[i].x <= max) then
+      goto test3;
+
+  if t1.Nodes[i].x < min then
+    InOrderPolygons := retMin
+  else
+    InOrderPolygons := not retMin;
+  exit;
+
+  test3:
+  (* test 3 - no overlap on Y *)
+  (*   idem *)
+  if m_z_yComponent < 0.0 then
+    retMin := true
+  else
+    retMin := false;
+
+  min := t2.Nodes[1].y;
+  max := t2.Nodes[1].y;
+  for i := 2 to t2.NbNodes do
+    if t2.Nodes[i].y < min then
+      min := t2.Nodes[i].y
+    else if t2.Nodes[i].y > max then
+      max := t2.Nodes[i].y;
+
+  for i := 1 to t1.NbNodes do
+    if (t1.Nodes[i].y >= min) or (t1.Nodes[i].y <= max) then
+      goto test4;
+
+  if t1.Nodes[i].y < min then
+    InOrderPolygons := retMin
+  else
+    InOrderPolygons := not retMin;
+  exit;
+
+  test4:
+  (* test 4 - all vertices of t1 are on the opposite side of t2 versus viewpoint *)
+  (*   idem but with SideOfPlane instead of minZ/maxZ *)
+  (*   if true, return true, else continue with tests *)
+  viewportSide := SideOfPlane(t2,
+        Point3DFromCoords(
+                t2.Nodes[1].x,
+                t2.Nodes[1].y,
+                100000.0));
+  if viewportSide = plOn then
+    Raise Exception.Create('TJakRandrProjector.InOrderPolygons: viewport is ON plane, don''t know what to do');
+
+  for i := 1 to t1.NbNodes do begin
+    side := SideOfPlane(t2, t1.Nodes[i]);
+    if side = viewportSide then
+      goto test5;
+  end;
+
+  InOrderPolygons := true;
+  exit;
+
+  test5:
+  (* test 5 - all vertices of t2 are on the same side of t1 versus viewpoint *)
+  (*   idem but with SideOfPlane *)
+  viewportSide := SideOfPlane(t1,
+        Point3DFromCoords(
+                t1.Nodes[1].x,
+                t1.Nodes[1].y,
+                100000.0));
+  if viewportSide = plOn then
+    Raise Exception.Create('TJakRandrProjector.InOrderPolygons: viewport is ON plane, don''t know what to do');
+
+  for i := 1 to t2.NbNodes do begin
+    side := SideOfPlane(t1, t2.Nodes[i]);
+    if (side <> plOn) and (side <> viewportSide) then
+      goto test6;
+  end;
+
+  InOrderPolygons := true;
+  exit;
+
+  test6:
+  (* test 6 - projections overlap *)
+  (*   check with point in triangle *)
+  SetLength(projection1, t1.NbNodes);
+  SetLength(projection2, t2.NbNodes);
+  for i := 1 to t1.NbNodes do
+    projection1[i] := Project(t1.Nodes[i]);
+  for i := 1 to t2.NbNodes do
+    projection2[i] := Project(t2.Nodes[i]);
+
+  passes := true;
+  for i := 1 to t1.NbNodes do
+    if IsPointInPolygon(projection1[i], projection2, 1, t2.NbNodes) then begin
+      passes := false;
+      break;
+    end;
+
+  SetLength(projection1, 0);
+  SetLength(projection2, 0);
+
+  if passes then begin
+    InOrderPolygons := true;
+    exit;
+  end;
+
+  test7:
+  (* test 7 - all vertices of t2 are on opposite side of t1 (false if passes)*)
+  (* same as 4 but swap t2 and t1 *)
+  viewportSide := SideOfPlane(t1,
+        Point3DFromCoords(
+                t1.Nodes[1].x,
+                t1.Nodes[1].y,
+                100000.0));
+  if viewportSide = plOn then
+    Raise Exception.Create('TJakRandrProjector.InOrderPolygons: viewport is ON plane, don''t know what to do');
+
+  for i := 1 to t2.NbNodes do begin
+    side := SideOfPlane(t1, t2.Nodes[i]);
+    if side = viewportSide then begin
+      goto test8;
+    end;
+  end;
+
+  InOrderPolygons := false;
+  exit;
+
+  test8:
+  (* test 8 - all vertices of t1 are on same side of t2 (false if passes) *)
+  (* same as 5 but swap t2 and t1 *)
+  viewportSide := SideOfPlane(t2,
+        Point3DFromCoords(
+                t2.Nodes[1].x,
+                t2.Nodes[1].y,
+                100000.0));
+  if viewportSide = plOn then
+    Raise Exception.Create('TJakRandrProjector.InOrderPolygons: viewport is ON plane, don''t know what to do');
+
+  for i := 1 to t1.NbNodes do begin
+    side := SideOfPlane(t2, t1.Nodes[i]);
+    if (side <> plOn) and (side <> viewportSide) then
+      goto testOther;
+  end;
+
+  InOrderPolygons := false;
+  exit;
+
+  testOther:
+  (* else ... *)
+  writeln('polygon splitting not supported, defaulting to true and hoping for the best');
+  InOrderPolygons := true;
+end;
+
+function TJakRandrProjector.InOrderSprites(s1, s2: TSprite): boolean;
+begin
+  InOrderSprites := s1.Centre.z > s2.Centre.z;
+end;
+
+function TJakRandrProjector.InOrderSpriteSphere(sprite: TSprite; s: TSphere): boolean;
+begin
+  InOrderSpriteSphere := sprite.Centre.z > s.Centre.z;
+end;
+
+function TJakRandrProjector.InOrderSphereSprite(s: TSphere; sprite: TSprite): boolean;
+begin
+  InOrderSphereSprite := s.Centre.z > sprite.Centre.z;
+end;
+
+(* true if viewport and sprite.centre are on the same side of p's plane
+   false otherwise *)
+function TJakRandrProjector.InOrderSpritePolygon(sprite: TSprite; p: TPolygon): boolean;
+var
+  ret: boolean;
+  viewport: TPoint3D;
+  sideOfSprite: TPlanarity;
+begin
+  (* viewport x,y can be just about anywhere on-screen, but z is infinity *)
+  viewport.x := sprite.Centre.x;
+  viewport.y := sprite.Centre.y;
+  viewport.z := 100000.0; (* hopefully nothing is this big *)
+
+  sideOfSprite := SideOfPlane(p, sprite.Centre);
+
+  if (sideOfSprite = plOn) or (sideOfSprite = SideOfPlane(p, viewport)) then
+    InOrderSpritePolygon := true
+  else
+    InOrderSpritePolygon := false;
+end;
+
+function TJakRandrProjector.InOrderPolygonSprite(p: TPolygon; sprite: TSprite): boolean;
+begin
+  InOrderPolygonSprite := not InOrderSpritePolygon(sprite, p);
+end;
+
 (* TSphere *)
 
 constructor TSphere.Sphere(centre: TPoint3D; radius: real);
@@ -423,11 +759,9 @@ end;
 
 constructor TPolygon.Quad(p1, p2, p3, p4: TPoint3D);
 {$IFDEF CHECK_PLANARITY}
-  {$IF CHECK_PLANARITY > 0}
 var
   n1, n2: TPoint3D;
   tr1, tr2: TPolygon;
-  {$ENDIF}
 {$ENDIF}
 begin
   m_n := 4;
@@ -441,7 +775,6 @@ begin
   m_fillColour := clWhite;
 
 {$IFDEF CHECK_PLANARITY}
-  {$IF CHECK_PLANARITY > 0}
   tr1 := TPolygon.Triangle(p1, p2, p3);
   tr2 := TPolygon.Triangle(p1, p2, p4);
   n1 := NormalForPlane(tr1);
@@ -454,7 +787,6 @@ begin
        and (abs(n1.z - n2.z) < 0.00001))
        then
     Raise Exception.Create('TPolygon.Quad: nodes are not in the same plane! Not supported!');
-  {$ENDIF}
 {$ENDIF}
 end;
 
@@ -517,6 +849,9 @@ begin
   RotateNode(m_c, centre, rotx, roty, rotz);
 end;
 
+
+
+
 (* globals *)
 
 function Point3DFromCoords(x, y, z: real): TPoint3D;
@@ -528,6 +863,8 @@ begin
   ret.z := z;
   Point3DFromCoords := ret;
 end;
+
+(* utils *)
 
 procedure incr(var whom: real; value: real);
 begin
@@ -541,176 +878,28 @@ begin
   if abs(whom) < 0.00001 then whom := 0.0;
 end;
 
-(* global sort functions *)
-(* entry function *)
-
-function InOrder(e1, e2: IEntity3D): boolean;
-begin
-  if      (e1 is TSphere)  and (e2 is TSphere)  then
-    InOrder := InOrderSpheres
-          (e1 as TSphere,       e2 as TSphere )
-  else if (e1 is TPolygon) and (e2 is TPolygon) then
-    InOrder := InOrderPolygons
-          (e1 as TPolygon,      e2 as TPolygon)
-  else if (e1 is TSphere)  and (e2 is TPolygon) then
-    InOrder := InOrderSpherePolygon
-          (e1 as TSphere,       e2 as TPolygon)
-  else if (e1 is TPolygon) and (e2 is TSphere)  then
-    InOrder := InOrderPolygonSphere
-          (e1 as TPolygon,      e2 as TSphere )
-  else if (e1 is TSprite)  and (e2 is TSprite)  then
-    InOrder := InOrderSprites
-          (e1 as TSprite,       e2 as TSprite )
-  else if (e1 is TSprite)  and (e2 is TPolygon) then
-    InOrder := InOrderSpritePolygon
-          (e1 as TSprite,       e2 as TPolygon)
-  else if (e1 is TPolygon) and (e2 is TSprite)  then
-    InOrder := InOrderPolygonSprite
-          (e1 as TPolygon,      e2 as TSprite )
-  else if (e1 is TSprite)  and (e2 is TSphere)  then
-    InOrder := InOrderSpriteSphere
-          (e1 as TSprite,       e2 as TSphere )
-  else if (e1 is TSphere)  and (e2 is TSprite)  then
-    InOrder := InOrderSphereSprite
-          (e1 as TSphere,       e2 as TSprite )
-  else Raise Exception.Create('Not implemented for given object types');
-end;
-
-(* implementations *)
-
-(* special case for spheres *)
-(* sphere vs. sphere:
-     if distance between centre is greater than the sum of radii, return
-       c1 > c2
-     else if s1 fully contians s2, return true
-     else if s2 fully contains s1, return false
-     else return c1 > c2 *)
-function InOrderSpheres(s1, s2: TSphere): boolean;
+function IsPointInPolygon(
+  p: TPoint;
+  poli: array of TPoint;
+  start, count: integer): boolean;
 var
-  d: real;
+  i, j: integer;
+  c: boolean;
 begin
-  d := Distance(s1.Centre, s2.Centre);
-
-  if d > (s1.Radius + s2.Radius) then
-    InOrderSpheres := s1.Centre.z > s2.Centre.z
-  else if s1.Radius > s2.Radius then begin
-    if d <= s1.Radius - s2.Radius then
-      InOrderSpheres := true
-    else
-      InOrderSpheres := s1.Centre.z > s2.Centre.z;
-  end else begin
-    if d <= s2.Radius - s1.Radius then
-      InOrderSpheres := false
-    else
-      InOrderSpheres := s1.Centre.z > s2.Centre.z; (* check this *)
+  j := start + count;
+  c := false;
+  for i := start to start + count do begin
+    if ((poli[i].y > p.y) <> (poli[j].y > p.y))
+        and (p.x < ((poli[j].x - poli[i].x)
+                * (p.y - poli[i].y)
+                / (poli[j].y - poli[i].y)
+                + poli[i].x)) then
+      c := not c;
+    j := i;
   end;
+
+  IsPointInPolygon := c;
 end;
-
-(* sphere vs. polygon:
-   if c.z > anyVertexOfPoly.z return true
-   else if c.z < anyVertexOfPoly.z return false
-   else if s fully contains poly return true
-   else if s doesn't contain poly at all then or partially contains poly
-     return centre is on same side as plane of poly as viewport
-
-   poly vs. sphere -- not( call( sphere vs. poly ) );
-*)
-function InOrderSpherePolygon(s: TSphere; p: TPolygon): boolean;
-begin
-  writeln('InOrderSpherePolygon: TODO');
-  InOrderSpherePolygon := true;
-end;
-
-function InOrderPolygonSphere(p: TPolygon; s: TSphere): boolean;
-begin
-  InOrderPolygonSphere := not InOrderSpherePolygon(s, p);
-end;
-
-(* implementation of Newell's algorithm *)
-(* implement for triangles and quads *)
-(* for quads we assume all nodes are in the same plane *)
-(*    assert that in constructor *)
-(*      by making sure two normals are very, very close together *)
-function InOrderPolygons(t1, t2: TPolygon): boolean;
-var
-  i: integer;
-  front: boolean;
-begin
-  (* test 1 - no overlap on Z *)
-  (*   get minZ of t2, get maxZ of t2 *)
-  (*   check no vertex is inside t2 *)
-  (*     if p1 is bigger than maxZ return true *)
-  (*     if p1 is smaller than minZ return false *)
-  (*   else continue with tests *)
-
-  (* test 2 - no overlap on X *)
-  (*   idem *)
-
-  (* test 3 - no overlap on Y *)
-  (*   idem *)
-
-  (* test 4 - all vertices of t1 are on the opposite side of t2 versus viewpoint *)
-  (*   idem but with SideOfPlane instead of minZ/maxZ *)
-  (*   if true, return true, else continue with tests *)
-
-  (* test 5 - all vertices of t2 are on the same side of t1 versus viewpoint *)
-  (*   idem but with SideOfPlane *)
-
-  (* test 6 - projections overlap *)
-  (*   check with point in triangle *)
-
-  (* test 7 - all vertices of t2 are on opposite side of t1 (false if passes)*)
-  (* same as 4 but swap t2 and t1 *)
-
-  (* test 8 - all vertices of t1 are on same side of t2 (false if passes) *)
-  (* same as 5 but swap t2 and t1 *)
-  (* else ... *)
-  writeln('polygon splitting not supported, defaulting to true and hoping for the best');
-  InOrderPolygons := true;
-end;
-
-function InOrderSprites(s1, s2: TSprite): boolean;
-begin
-  InOrderSprites := s1.Centre.z > s2.Centre.z;
-end;
-
-function InOrderSpriteSphere(sprite: TSprite; s: TSphere): boolean;
-begin
-  InOrderSpriteSphere := sprite.Centre.z > s.Centre.z;
-end;
-
-function InOrderSphereSprite(s: TSphere; sprite: TSprite): boolean;
-begin
-  InOrderSphereSprite := s.Centre.z > sprite.Centre.z;
-end;
-
-(* true if viewport and sprite.centre are on the same side of p's plane
-   false otherwise *)
-function InOrderSpritePolygon(sprite: TSprite; p: TPolygon): boolean;
-var
-  ret: boolean;
-  viewport: TPoint3D;
-  sideOfSprite: TPlanarity;
-begin
-  (* viewport x,y can be just about anywhere on-screen, but z is infinity *)
-  viewport.x := sprite.Centre.x;
-  viewport.y := sprite.Centre.y;
-  viewport.z := 100000.0; (* hopefully nothing is this big *)
-
-  sideOfSprite := SideOfPlane(p, sprite.Centre);
-
-  if (sideOfSprite = plOn) or (sideOfSprite = SideOfPlane(p, viewport)) then
-    InOrderSpritePolygon := true
-  else
-    InOrderSpritePolygon := false;
-end;
-
-function InOrderPolygonSprite(p: TPolygon; sprite: TSprite): boolean;
-begin
-  InOrderPolygonSprite := not InOrderSpritePolygon(sprite, p);
-end;
-
-(* utils *)
 
 (* alternative implementation for SideOfPlane *)
 (*
