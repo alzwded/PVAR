@@ -881,6 +881,7 @@ begin
   if abs(whom) < 0.00001 then whom := 0.0;
 end;
 
+(* see README.md for acknowledgements *)
 function IsPointInPolygon(
   p: TPoint;
   poli: array of TPoint;
