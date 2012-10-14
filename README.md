@@ -1,7 +1,7 @@
 PVAR-JakRandr
 =============
 
-Proiect pentru cursul de PVAR, anul II -- platformă pentru simulări-automatizări + engine grafic + implementare
+Proiect pentru cursul de PVAR, anul III -- platformă pentru simulări-automatizări + engine grafic + implementare
 
 Componente
 ==========
