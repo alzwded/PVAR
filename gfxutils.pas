@@ -470,9 +470,65 @@ end;
    poly vs. sphere -- not( call( sphere vs. poly ) );
 *)
 function TJakRandrProjector.InOrderSpherePolygon(s: TSphere; p: TPolygon): boolean;
+var
+  containment: TPlanarity; (* plOn => Polygon is inside Sphere *)
+  i: integer;
+  side, viewportSide: TPlanarity;
+  viewport: TPoint3D;
+label
+  last_test; (* in case any test fails, goto fallback test *)
 begin
-  writeln('InOrderSpherePolygon: TODO');
-  InOrderSpherePolygon := true;
+  (*
+     if very in front, return true
+     if very behind, return false
+     if fully contained, return true
+     return Centre of sphere on the same side of plane as viewport
+  *)
+  (* decide which test we're running *)
+  if p.Nodes[1].z <= (s.Centre.z - s.Radius) then
+    containment := plBehind (* test behind-ness *)
+  else if p.Nodes[1].z >= (s.Centre.z - s.Radius) then
+    containment := plFront (* test infront-ness *)
+  else begin
+    if Distance(s.Centre, p.Nodes[1]) > s.Radius then
+      goto last_test (* catch-all test *)
+    else
+      containment := plOn; (* test containiness *)
+  end;
+
+  if containment = plOn then begin
+    for i := 2 to p.NbNodes do
+      if Distance(s.Centre, p.Nodes[i]) > s.Radius then
+        goto last_test; (* polygon all over the place, go to catch all test *)
+    InOrderSpherePolygon := true; (* polygon much more behind than sphere *)
+    exit;
+     end else if containment = plFront then begin
+    for i := 2 to p.NbNodes do
+      if p.Nodes[i].z < s.Centre.z then
+        goto last_test; (* polygon all over the place, go to catch all test *)
+    InOrderSpherePolygon := false; (* polygon much closer than sphere *)
+    exit;
+  end else if containment = plBehind then begin
+    for i := 2 to p.NbNodes do
+      if p.Nodes[i].z > s.Centre.z then
+        goto last_test; (* polygon all over the place, go to catch all test *)
+    InOrderSpherePolygon := true; (* polygon is fully within the sphere *)
+    exit;
+  end;
+
+  last_test:
+  viewport.x := s.Centre.x;
+  viewport.y := s.Centre.y;
+  viewport.z := s.Centre.z + 100000.0;
+  viewportSide := SideOfPlane(p, viewport);
+  if viewportSide = plOn then
+    Raise Exception.Create('TJakRandrProjector.InOrderSpherePolygon: viewport is on plane, don''t know what to do');
+
+  side := SideOfPlane(p, s.Centre);
+  if (side = viewportSide) then
+    InOrderSpherePolygon := true
+  else
+    InOrderSpherePolygon := false;
 end;
 
 function TJakRandrProjector.InOrderPolygonSphere(p: TPolygon; s: TSphere): boolean;
@@ -703,7 +759,6 @@ end;
    false otherwise *)
 function TJakRandrProjector.InOrderSpritePolygon(sprite: TSprite; p: TPolygon): boolean;
 var
-  ret: boolean;
   viewport: TPoint3D;
   sideOfSprite: TPlanarity;
 begin
