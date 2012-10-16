@@ -1,8 +1,30 @@
-object Form1: TForm1
+object JakRandr: TJakRandr
   Left = 231
   Height = 240
   Top = 157
   Width = 320
-  Caption = 'Form1'
+  Anchors = [akTop, akLeft, akRight, akBottom]
+  Caption = 'JakRandr'
+  ClientHeight = 240
+  ClientWidth = 320
+  OnActivate = FormActivate
+  OnCreate = FormCreate
+  OnDeactivate = FormDeactivate
+  OnDestroy = FormDestroy
   LCLVersion = '0.9.30.4'
+  object DisplaySurface: TImage
+    Left = 0
+    Height = 242
+    Top = 0
+    Width = 322
+    Anchors = [akTop, akLeft, akRight, akBottom]
+    AutoSize = True
+    Center = True
+  end
+  object Timer1: TTimer
+    Interval = 17
+    OnTimer = Timer1Timer
+    left = 124
+    top = 94
+  end
 end

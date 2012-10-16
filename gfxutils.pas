@@ -808,9 +808,9 @@ constructor TPolygon.Triangle(p1, p2, p3: TPoint3D);
 begin
   m_n := 3;
   SetLength(m_nodes, m_n);
-  m_nodes[1] := p1;
-  m_nodes[2] := p2;
-  m_nodes[3] := p3;
+  m_nodes[0] := p1;
+  m_nodes[1] := p2;
+  m_nodes[2] := p3;
   m_contourColour := clBlack;
   m_fillColour := clWhite;
 end;
@@ -824,10 +824,10 @@ var
 begin
   m_n := 4;
   SetLength(m_nodes, m_n);
-  m_nodes[1] := p1;
-  m_nodes[2] := p2;
-  m_nodes[3] := p3;
-  m_nodes[4] := p4;
+  m_nodes[0] := p1;
+  m_nodes[1] := p2;
+  m_nodes[2] := p3;
+  m_nodes[3] := p4;
 
   m_contourColour := clBlack;
   m_fillColour := clWhite;
@@ -855,7 +855,7 @@ end;
 
 function TPolygon.GetNode(i: integer): TPoint3D;
 begin
-  if (i > m_n) or (i < 1) then
+  if (i >= m_n) or (i < 0) then
     Raise Exception.Create('out of range!');
   GetNode := m_nodes[i];
 end;
@@ -864,7 +864,7 @@ procedure TPolygon.Translate(dp: TPoint3D);
 var
   i: integer;
 begin
-  for i := 1 to m_n do begin
+  for i := 0 to m_n-1 do begin
     incr(m_nodes[i].x, dp.x);
     incr(m_nodes[i].y, dp.y);
     incr(m_nodes[i].z, dp.z);
@@ -875,7 +875,7 @@ procedure TPolygon.Rotate(centre: TPoint3D; rotx, roty, rotz: real);
 var
   i: integer;
 begin
-  for i := 1 to m_n do
+  for i := 0 to m_n-1 do
     RotateNode(m_nodes[i], centre, rotx, roty, rotz);
 end;
 
