@@ -2,6 +2,8 @@ unit CoreUtils;
 
 {$mode objfpc}{$H+}
 
+{$DEFINE DEBUG}
+
 interface
 
 uses
@@ -51,10 +53,46 @@ begin
   m_phase := phase;
 
   m_clock := TTimer.Create(Nil);
-  m_clock.Enabled := false;
+  m_clock.Enabled := true;
   m_clock.OnTimer := @OnTimer;
-  m_clock.Interval := 20;
+  m_clock.Interval := 20; (*20;*)
 
+  m_geometry := TEntity3DList.Create;
+
+  (* test
+  e := TPolygon.Triangle(
+        Point3DFromCoords(
+                m_location.x - 100.0,
+                m_location.y,
+                m_location.z),
+        Point3DFromCoords(
+                m_location.x,
+                m_location.y,
+                m_location.z),
+        Point3DFromCoords(
+                m_location.x,
+                m_location.y + 100.0,
+                m_location.z));
+  (e as TPolygon).FillColour:=clWhite;
+  (e as TPolygon).ContourColour:=clWhite;
+  m_geometry.Add(e);
+  e := TPolygon.Triangle(
+        Point3DFromCoords(
+                m_location.x + 100.0,
+                m_location.y,
+                m_location.z),
+        Point3DFromCoords(
+                m_location.x,
+                m_location.y,
+                m_location.z),
+        Point3DFromCoords(
+                m_location.x,
+                m_location.y + 100.0,
+                m_location.z));
+  (e as TPolygon).FillColour:=clWhite;
+  (e as TPolygon).ContourColour:=clWhite;
+  m_geometry.Add(e);
+  exit;  *)
   (*
     /\
    / |\
@@ -77,7 +115,7 @@ begin
                 m_location.x,
                 m_location.y + 200.0,
                 m_location.z));
-  (e as TPolygon).ContourColour := clBlack;
+  (e as TPolygon).ContourColour := clPurple;
   (e as TPolygon).FillColour := clYellow;
   m_geometry.Add(e);
 
@@ -94,7 +132,7 @@ begin
                 m_location.x,
                 m_location.y + 200.0,
                 m_location.z));
-  (e as TPolygon).ContourColour := clBlack;
+  (e as TPolygon).ContourColour := clPurple;
   (e as TPolygon).FillColour := clYellow;
   m_geometry.Add(e);
 
@@ -111,7 +149,7 @@ begin
                 m_location.x,
                 m_location.y,
                 m_location.z + 100.0));
-  (e as TPolygon).ContourColour := clBlack;
+  (e as TPolygon).ContourColour := clPurple;
   (e as TPolygon).FillColour := clYellow;
   m_geometry.Add(e);
 
@@ -128,7 +166,7 @@ begin
                 m_location.x - 100.0,
                 m_location.y,
                 m_location.z));
-  (e as TPolygon).ContourColour := clBlack;
+  (e as TPolygon).ContourColour := clPurple;
   (e as TPolygon).FillColour := clYellow;
   m_geometry.Add(e);
 
@@ -146,7 +184,7 @@ begin
                 m_location.x,
                 m_location.y - 200.0,
                 m_location.z));
-  (e as TPolygon).ContourColour := clBlack;
+  (e as TPolygon).ContourColour := clPurple;
   (e as TPolygon).FillColour := clYellow;
   m_geometry.Add(e);
 
@@ -163,7 +201,7 @@ begin
                 m_location.x,
                 m_location.y - 200.0,
                 m_location.z));
-  (e as TPolygon).ContourColour := clBlack;
+  (e as TPolygon).ContourColour := clPurple;
   (e as TPolygon).FillColour := clYellow;
   m_geometry.Add(e);
 
@@ -180,7 +218,7 @@ begin
                 m_location.x,
                 m_location.y,
                 m_location.z + 100.0));
-  (e as TPolygon).ContourColour := clBlack;
+  (e as TPolygon).ContourColour := clPurple;
   (e as TPolygon).FillColour := clYellow;
   m_geometry.Add(e);
 
@@ -197,7 +235,7 @@ begin
                 m_location.x - 100.0,
                 m_location.y,
                 m_location.z));
-  (e as TPolygon).ContourColour := clBlack;
+  (e as TPolygon).ContourColour := clPurple;
   (e as TPolygon).FillColour := clYellow;
   m_geometry.Add(e);
 end;
@@ -234,7 +272,7 @@ begin
 
   (* engine^.BeginScene; NO -- called one level above *)
 
-  for i := 1 to m_geometry.Count do begin
+  for i := 0 to m_geometry.Count - 1 do begin
     engine^.AddEntity(m_geometry.Items[i]);
   end;
 
@@ -256,11 +294,33 @@ var
   i: integer;
   iface: IEntity3D;
 begin
-  for i := 1 to m_geometry.Count do begin
+(*IFDEF DEBUG*)
+  writeln('------');
+  writeln('Entities before rotation: ');
+  writeln('------');
+  for i := 0 to m_geometry.Count - 1 do begin
+    write('  ');
     iface := m_geometry.Items[i];
-    iface.Rotate(m_location, 0.0, pi / 10.0, 0.0);
+    iface.Dump;
+  end;
+  writeln('======');
+ (*ENDIF*)
+  for i := 0 to m_geometry.Count - 1 do begin
+    iface := m_geometry.Items[i];
+    iface.Rotate(m_location, 0.0, pi / 100.0, 0.0);
     (* N.B. there exists the DegToRad function *)
   end;
+(*IFDEF DEBUG*)
+  writeln('------');
+  writeln('Entities after rotation: ');
+  writeln('------');
+  for i := 0 to m_geometry.Count - 1 do begin
+    write('  ');
+    iface := m_geometry.Items[i];
+    iface.Dump;
+  end;
+  writeln('======');
+ (*ENDIF*)
 end;
 
 end.

@@ -44,6 +44,7 @@ type
   IEntity3D = interface(IInterface)
     procedure Translate(dp: TPoint3D);
     procedure Rotate(centre: TPoint3D; rotx, roty, rotz: real);
+    procedure Dump;
   end;
 
   TSphere = class(TInterfacedObject, IEntity3D)
@@ -51,6 +52,7 @@ type
     (* implementation of IEntity3D *)
     procedure Translate(dp: TPoint3D);
     procedure Rotate(centre: TPoint3D; rotx, roty, rotz: real);
+    procedure Dump;
   private
     m_c: TPoint3D;
     m_r: real;
@@ -60,7 +62,7 @@ type
     property Centre: TPoint3D read m_c;
     property Radius: Real read m_r;
     property ContourColour: TColor read m_contourColour write m_contourColour;
-    property FillColour: TColor read m_contourColour write m_contourColour;
+    property FillColour: TColor read m_fillColour write m_fillColour;
   end;
 
   TPolygon = class(TInterfacedObject, IEntity3D)
@@ -70,6 +72,7 @@ type
     (* implementation of IEntity3D *)
     procedure Translate(dp: TPoint3D);
     procedure Rotate(centre: TPoint3D; rotx, roty, rotz: real);
+    procedure Dump;
   private
     m_n: Integer;
     m_nodes: array of TPoint3D;
@@ -81,7 +84,7 @@ type
     property Nodes[i: integer]: TPoint3D read GetNode;
     property NbNodes: Integer read m_n;
     property ContourColour: TColor read m_contourColour write m_contourColour;
-    property FillColour: TColor read m_contourColour write m_contourColour;
+    property FillColour: TColor read m_fillColour write m_fillColour;
   end;
 
   TSprite = class(TInterfacedObject, IEntity3D)
@@ -90,6 +93,7 @@ type
     (* implementation of IEntity3D *)
     procedure Translate(dp: TPoint3D);
     procedure Rotate(centre: TPoint3D; rotx, roty, rotz: real);
+    procedure Dump;
   private
     m_c: TPoint3D;
     m_g: TBitmap;
@@ -105,14 +109,14 @@ type
   TPlanarity = ( plOn, plFront, plBehind ); (* points ON the plane are ignored *)
   (* viewpoint is somewhere @ plane.m_p1.x, plane.m_p1.y, 100000 *)
 
-  PCanvas = ^TCanvas;
+  //PCanvas = ^TCanvas; //effin delphi
 
   TEntity3DList = specialize TFPGInterfacedObjectList<IEntity3D>;
 
   (* projects triangles, quadrangles, spheres or sprites to canvas *)
   TJakRandrProjector = class(TObject)
     (* constructors *)
-    constructor Create(canvas: PCanvas; bgColor: TColor);
+    constructor Create(canvas: TCanvas; bgColor: TColor);
 
     (* fine tuning parameters *)
     procedure SetZProjection(x, y: real);
@@ -130,7 +134,7 @@ type
     (* draw other *)
     procedure Clear;
   private
-    m_canvas: PCanvas;
+    m_canvas: TCanvas;
     m_bgColor: TColor;
     m_z_xComponent: real;
     m_z_yComponent: real;
@@ -164,7 +168,7 @@ type
 
   (* TBD: see if a buffer is necessary of if Canvas suffices *)
   TJakRandrEngine = class(TObject)
-    constructor Create(canvas: PCanvas; bgColor: TColor);
+    constructor Create(canvas: TCanvas; bgColor: TColor);
     destructor Destroy; override;
     (* cleans the entity list and the frame buffer *)
     procedure BeginScene;
@@ -205,7 +209,7 @@ implementation
 
 (* TJakRandrEngine *)
 
-constructor TJakRandrEngine.Create(canvas: PCanvas; bgColor: TColor);
+constructor TJakRandrEngine.Create(canvas: TCanvas; bgColor: TColor);
 begin
   m_visu := TJakRandrProjector.Create(canvas, bgColor);
   m_entities := TEntity3DList.Create;
@@ -232,7 +236,7 @@ procedure TJakRandrEngine.CommitScene;
 var
   i: integer;
 begin
-  for i := 1 to m_entities.Count do begin
+  for i := 0 to m_entities.Count - 1 do begin
     m_visu.Draw(m_entities.Items[i])
   end;
 end;
@@ -241,7 +245,7 @@ procedure TJakRandrEngine.AddEntity(entity: IEntity3D);
 var
   i: integer;
 begin
-  for i := 1 to m_entities.Count do begin
+  for i := 0 to m_entities.Count - 1 do begin
     if m_visu.InOrder(entity, m_entities.Items[i]) then begin
       m_entities.Insert(i, entity);
       exit;
@@ -252,7 +256,7 @@ end;
 
 (* TJakRandrProjector *)
 
-constructor TJakRandrProjector.Create(canvas: PCanvas; bgColor: TColor);
+constructor TJakRandrProjector.Create(canvas: TCanvas; bgColor: TColor);
 begin
   if canvas = Nil then
     Raise Exception.Create('NULL pointer!');
@@ -280,16 +284,16 @@ begin
 
   (* offset from origin *)
   (* TODO add actual offsetCamera procedure and properties to class *)
-  rx := rx + m_canvas^.Width / 3;
-  ry := ry + m_canvas^.Height / 3;
+  rx := rx + m_canvas.Width / 3;
+  ry := ry + m_canvas.Height / 3;
 
   (* scale down *)
-  rx := m_canvas^.Width * rx / 4000.0;
-  ry := m_canvas^.Width * ry / 3000.0;
+  rx := m_canvas.Width * rx / 4000.0;
+  ry := m_canvas.Width * ry / 3000.0;
 
   (* convert to int, flip Y axis for normality's sake *)
   ret.X := round(rx);
-  ret.Y := m_canvas^.Height - round(ry);
+  ret.Y := m_canvas.Height - round(ry);
 
   (* return *)
   Project := ret;
@@ -301,7 +305,7 @@ var
 begin
   onScreenPoint := Project(p);
 
-  m_canvas^.Pixels[onScreenPoint.X, onScreenPoint.Y] := color;
+  m_canvas.Pixels[onScreenPoint.X, onScreenPoint.Y] := color;
 end;
 
 procedure TJakRandrProjector.DrawLine(p1, p2: TPoint3D; color: TColor);
@@ -311,8 +315,8 @@ begin
   OSP_p1 := Project(p1);
   OSP_p2 := Project(p2);
 
-  m_canvas^.Pen.Color := color;
-  m_canvas^.Line(OSP_p1, OSP_p2);
+  m_canvas.Pen.Color := color;
+  m_canvas.Line(OSP_p1, OSP_p2);
 end;
 
 procedure TJakRandrProjector.Draw(entity: IEntity3D);
@@ -330,14 +334,15 @@ var
 begin
   SetLength(points, poli.NbNodes);
 
-  for i := 1 to poli.NbNodes do
+  for i := 0 to poli.NbNodes - 1 do
     points[i] := Project(poli.Nodes[i]);
 
-  m_canvas^.Pen.color := poli.ContourColour;
-  m_canvas^.Brush.color := poli.FillColour;
-  m_canvas^.Brush.Style := bsSolid;
+  m_canvas.Pen.color := poli.ContourColour;
+  m_canvas.Brush.color := poli.FillColour;
+  m_canvas.Brush.Style := bsSolid;
 
-  m_canvas^.Polygon(points, True, 0, poli.NbNodes);
+  m_canvas.Polyline(points, 0, poli.NbNodes);
+  m_canvas.Polygon(points, True, 0, poli.NbNodes);
 end;
 
 procedure TJakRandrProjector.DrawSphere(sphere: TSphere);
@@ -347,16 +352,16 @@ var
 begin
   p := Project(sphere.Centre);
 
-  m_canvas^.Pen.Color := sphere.ContourColour;
-  m_canvas^.Brush.Color := sphere.FillColour;
-  m_canvas^.Brush.Style := bsSolid;
+  m_canvas.Pen.Color := sphere.ContourColour;
+  m_canvas.Brush.Color := sphere.FillColour;
+  m_canvas.Brush.Style := bsSolid;
 
-  rx := round(sphere.Radius * m_canvas^.Width / 4000.0);
-  ry := round(sphere.Radius * m_canvas^.Height / 3000.0);
+  rx := round(sphere.Radius * m_canvas.Width / 4000.0);
+  ry := round(sphere.Radius * m_canvas.Height / 3000.0);
 
   (* winding algorithm for drawing a sphere ffs *)
   while (rx > 0) and (ry > 0) do begin
-    m_canvas^.EllipseC(p.X, p.Y, rx, ry);
+    m_canvas.EllipseC(p.X, p.Y, rx, ry);
 
     if (rx > 0) and (ry > 1) then dec(rx);
     if (ry > 0) and (rx > 1) then dec(ry);
@@ -371,15 +376,15 @@ var
 begin
   p := Project(sprite.Centre);
 
-  w := sprite.Width * m_canvas^.Width / 4000.0;
-  h := sprite.Height * m_canvas^.Height / 3000.0;
+  w := sprite.Width * m_canvas.Width / 4000.0;
+  h := sprite.Height * m_canvas.Height / 3000.0;
 
   magicRect.Left := p.X - round(w / 2.0);
   magicRect.Right := p.X + round(w / 2.0);
   magicRect.Top := p.Y - round(h / 2.0);
   magicRect.Bottom := p.Y + round(h / 2.0);
 
-  m_canvas^.StretchDraw(magicRect, sprite.Graphic);
+  m_canvas.StretchDraw(magicRect, sprite.Graphic);
 end;
 
 procedure TJakRandrProjector.SetZProjection(x, y: real);
@@ -390,9 +395,9 @@ end;
 
 procedure TJakRandrProjector.Clear;
 begin
-  m_canvas^.Brush.Color := m_bgColor;
-  m_canvas^.Brush.Style := bsSolid;
-  m_canvas^.FillRect(0, 0, m_canvas^.Width, m_canvas^.Height);
+  m_canvas.Brush.Color := m_bgColor;
+  m_canvas.Brush.Style := bsSolid;
+  m_canvas.FillRect(0, 0, m_canvas.Width, m_canvas.Height);
 end;
 
 (* sort functions *)
@@ -485,31 +490,31 @@ begin
      return Centre of sphere on the same side of plane as viewport
   *)
   (* decide which test we're running *)
-  if p.Nodes[1].z <= (s.Centre.z - s.Radius) then
+  if p.Nodes[0].z <= (s.Centre.z - s.Radius) then
     containment := plBehind (* test behind-ness *)
-  else if p.Nodes[1].z >= (s.Centre.z - s.Radius) then
+  else if p.Nodes[0].z >= (s.Centre.z - s.Radius) then
     containment := plFront (* test infront-ness *)
   else begin
-    if Distance(s.Centre, p.Nodes[1]) > s.Radius then
+    if Distance(s.Centre, p.Nodes[0]) > s.Radius then
       goto last_test (* catch-all test *)
     else
       containment := plOn; (* test containiness *)
   end;
 
   if containment = plOn then begin
-    for i := 2 to p.NbNodes do
+    for i := 1 to p.NbNodes - 1 do
       if Distance(s.Centre, p.Nodes[i]) > s.Radius then
         goto last_test; (* polygon all over the place, go to catch all test *)
     InOrderSpherePolygon := true; (* polygon much more behind than sphere *)
     exit;
      end else if containment = plFront then begin
-    for i := 2 to p.NbNodes do
+    for i := 1 to p.NbNodes - 1 do
       if p.Nodes[i].z < s.Centre.z then
         goto last_test; (* polygon all over the place, go to catch all test *)
     InOrderSpherePolygon := false; (* polygon much closer than sphere *)
     exit;
   end else if containment = plBehind then begin
-    for i := 2 to p.NbNodes do
+    for i := 1 to p.NbNodes - 1 do
       if p.Nodes[i].z > s.Centre.z then
         goto last_test; (* polygon all over the place, go to catch all test *)
     InOrderSpherePolygon := true; (* polygon is fully within the sphere *)
@@ -553,9 +558,9 @@ label
 begin
   (* test 1 - no overlap on Z *)
   (*   get minZ of t2, get maxZ of t2 *)
-  min := t2.Nodes[1].z;
-  max := t2.Nodes[1].z;
-  for i := 2 to t2.NbNodes do
+  min := t2.Nodes[0].z;
+  max := t2.Nodes[0].z;
+  for i := 1 to t2.NbNodes - 1 do
     if t2.Nodes[i].z < min then
       min := t2.Nodes[i].z
     else if t1.Nodes[i].z > max then
@@ -564,12 +569,12 @@ begin
   (*     if p1 is bigger than maxZ return true *)
   (*     if p1 is smaller than minZ return false *)
   (*   else continue with tests *)
-  for i := 1 to t1.NbNodes do
+  for i := 0 to t1.NbNodes - 1 do
     if (t1.Nodes[i].z >= min) or (t1.Nodes[i].z <= max) then
       goto test2;
 
   (* test passes *)
-  if t1.Nodes[i].z < min then
+  if t1.Nodes[0].z < min then
     InOrderPolygons := true
   else
     InOrderPolygons := false;
@@ -583,19 +588,19 @@ begin
   else
     retMin := false;
 
-  min := t2.Nodes[1].x;
-  max := t2.Nodes[1].x;
-  for i := 2 to t2.NbNodes do
+  min := t2.Nodes[0].x;
+  max := t2.Nodes[0].x;
+  for i := 1 to t2.NbNodes - 1 do
     if t2.Nodes[i].x < min then
       min := t2.Nodes[i].x
     else if t2.Nodes[i].x > max then
       max := t2.Nodes[i].x;
 
-  for i := 1 to t1.NbNodes do
+  for i := 0 to t1.NbNodes - 1 do
     if (t1.Nodes[i].x >= min) or (t1.Nodes[i].x <= max) then
       goto test3;
 
-  if t1.Nodes[i].x < min then
+  if t1.Nodes[0].x < min then
     InOrderPolygons := retMin
   else
     InOrderPolygons := not retMin;
@@ -609,19 +614,19 @@ begin
   else
     retMin := false;
 
-  min := t2.Nodes[1].y;
-  max := t2.Nodes[1].y;
-  for i := 2 to t2.NbNodes do
+  min := t2.Nodes[0].y;
+  max := t2.Nodes[0].y;
+  for i := 1 to t2.NbNodes - 1 do
     if t2.Nodes[i].y < min then
       min := t2.Nodes[i].y
     else if t2.Nodes[i].y > max then
       max := t2.Nodes[i].y;
 
-  for i := 1 to t1.NbNodes do
+  for i := 0 to t1.NbNodes - 1 do
     if (t1.Nodes[i].y >= min) or (t1.Nodes[i].y <= max) then
       goto test4;
 
-  if t1.Nodes[i].y < min then
+  if t1.Nodes[0].y < min then
     InOrderPolygons := retMin
   else
     InOrderPolygons := not retMin;
@@ -633,13 +638,13 @@ begin
   (*   if true, return true, else continue with tests *)
   viewportSide := SideOfPlane(t2,
         Point3DFromCoords(
-                t2.Nodes[1].x,
-                t2.Nodes[1].y,
+                t2.Nodes[0].x,
+                t2.Nodes[0].y,
                 100000.0));
   if viewportSide = plOn then
     Raise Exception.Create('TJakRandrProjector.InOrderPolygons: viewport is ON plane, don''t know what to do');
 
-  for i := 1 to t1.NbNodes do begin
+  for i := 0 to t1.NbNodes - 1 do begin
     side := SideOfPlane(t2, t1.Nodes[i]);
     if side = viewportSide then
       goto test5;
@@ -653,13 +658,13 @@ begin
   (*   idem but with SideOfPlane *)
   viewportSide := SideOfPlane(t1,
         Point3DFromCoords(
-                t1.Nodes[1].x,
-                t1.Nodes[1].y,
+                t1.Nodes[0].x,
+                t1.Nodes[0].y,
                 100000.0));
   if viewportSide = plOn then
     Raise Exception.Create('TJakRandrProjector.InOrderPolygons: viewport is ON plane, don''t know what to do');
 
-  for i := 1 to t2.NbNodes do begin
+  for i := 0 to t2.NbNodes - 1 do begin
     side := SideOfPlane(t1, t2.Nodes[i]);
     if (side <> plOn) and (side <> viewportSide) then
       goto test6;
@@ -673,14 +678,14 @@ begin
   (*   check with point in triangle *)
   SetLength(projection1, t1.NbNodes);
   SetLength(projection2, t2.NbNodes);
-  for i := 1 to t1.NbNodes do
+  for i := 0 to t1.NbNodes - 1 do
     projection1[i] := Project(t1.Nodes[i]);
-  for i := 1 to t2.NbNodes do
+  for i := 0 to t2.NbNodes - 1 do
     projection2[i] := Project(t2.Nodes[i]);
 
   passes := true;
-  for i := 1 to t1.NbNodes do
-    if IsPointInPolygon(projection1[i], projection2, 1, t2.NbNodes) then begin
+  for i := 0 to t1.NbNodes - 1 do
+    if IsPointInPolygon(projection1[i], projection2, 0, t2.NbNodes) then begin
       passes := false;
       break;
     end;
@@ -698,13 +703,13 @@ begin
   (* same as 4 but swap t2 and t1 *)
   viewportSide := SideOfPlane(t1,
         Point3DFromCoords(
-                t1.Nodes[1].x,
-                t1.Nodes[1].y,
+                t1.Nodes[0].x,
+                t1.Nodes[0].y,
                 100000.0));
   if viewportSide = plOn then
     Raise Exception.Create('TJakRandrProjector.InOrderPolygons: viewport is ON plane, don''t know what to do');
 
-  for i := 1 to t2.NbNodes do begin
+  for i := 0 to t2.NbNodes - 1 do begin
     side := SideOfPlane(t1, t2.Nodes[i]);
     if side = viewportSide then begin
       goto test8;
@@ -719,13 +724,13 @@ begin
   (* same as 5 but swap t2 and t1 *)
   viewportSide := SideOfPlane(t2,
         Point3DFromCoords(
-                t2.Nodes[1].x,
-                t2.Nodes[1].y,
+                t2.Nodes[0].x,
+                t2.Nodes[0].y,
                 100000.0));
   if viewportSide = plOn then
     Raise Exception.Create('TJakRandrProjector.InOrderPolygons: viewport is ON plane, don''t know what to do');
 
-  for i := 1 to t1.NbNodes do begin
+  for i := 0 to t1.NbNodes - 1 do begin
     side := SideOfPlane(t2, t1.Nodes[i]);
     if (side <> plOn) and (side <> viewportSide) then
       goto testOther;
@@ -800,6 +805,11 @@ end;
 procedure TSphere.Rotate(centre: TPoint3D; rotx, roty, rotz: real);
 begin
   RotateNode(m_c, centre, rotx, roty, rotz);
+end;
+
+procedure TSphere.Dump;
+begin
+  writeln('Sphere: (', Centre.x, ',', Centre.y, ',', Centre.z, ',) ', Radius);
 end;
 
 (* TPolygon *)
@@ -879,6 +889,17 @@ begin
     RotateNode(m_nodes[i], centre, rotx, roty, rotz);
 end;
 
+procedure TPolygon.Dump;
+var
+  i: integer;
+begin
+  write('Polygon: ', m_n, ' ');
+  for i := 0 to m_n - 1 do begin
+    write('(', m_nodes[i].x, ',', m_nodes[i].y, ',', m_nodes[i].z, ') ');
+  end;
+  writeln;
+end;
+
 (* TSprite *)
 
 constructor TSprite.Sprite(centre: TPoint3D; graphic: TBitmap;
@@ -907,6 +928,10 @@ begin
   RotateNode(m_c, centre, rotx, roty, rotz);
 end;
 
+procedure TSprite.Dump;
+begin
+  writeln('Sprite: (', m_c.x, ',', m_c.y, ',', m_c.z, ')');
+end;
 
 
 
@@ -945,9 +970,9 @@ var
   i, j: integer;
   c: boolean;
 begin
-  j := start + count;
+  j := start + count - 1;
   c := false;
-  for i := start to start + count do begin
+  for i := start to start + count - 1 do begin
     if ((poli[i].y > p.y) <> (poli[j].y > p.y))
         and (p.x < ((poli[j].x - poli[i].x)
                 * (p.y - poli[i].y)
@@ -978,16 +1003,21 @@ var
   myVector: TPoint3D;
   prod: real;
 begin
-  (* origin is plane.Nodes[1] *)
+  (* origin is plane.Nodes[0] *)
   normal := NormalForPlane(plane);
 
   (* translate vector to origin *)
-  myVector.x := p.x - plane.Nodes[1].x;
-  myVector.y := p.y - plane.Nodes[1].y;
-  myVector.z := p.z - plane.Nodes[1].z;
+  myVector.x := p.x - plane.Nodes[0].x;
+  myVector.y := p.y - plane.Nodes[0].y;
+  myVector.z := p.z - plane.Nodes[0].z;
   NormalizeVector(myVector);
 
   prod := DotProduct(normal, myVector);
+
+  writeln('sideOfPlane, prod is = ', prod);
+  plane.Dump;
+  writeln('(', myVector.x, ',', myVector.y, ',', myVector.z, ')');
+  writeln('(', normal.x, ',', normal.y, ',', normal.z, ')');
 
   if prod > 0.00001 then SideOfPlane := plFront
   else if prod < -0.00001 then SideOfPlane := plBehind
@@ -999,13 +1029,13 @@ var
   v1, v2: TPoint3D;
   ret: TPoint3D;
 begin
-  v1.x := plane.Nodes[2].x - plane.Nodes[1].x;
-  v1.y := plane.Nodes[2].y - plane.Nodes[1].y;
-  v1.z := plane.Nodes[2].z - plane.Nodes[1].z;
+  v1.x := plane.Nodes[1].x - plane.Nodes[0].x;
+  v1.y := plane.Nodes[1].y - plane.Nodes[0].y;
+  v1.z := plane.Nodes[1].z - plane.Nodes[0].z;
 
-  v2.x := plane.Nodes[3].x - plane.Nodes[1].x;
-  v2.y := plane.Nodes[3].y - plane.Nodes[1].y;
-  v2.z := plane.Nodes[3].z - plane.Nodes[1].z;
+  v2.x := plane.Nodes[2].x - plane.Nodes[0].x;
+  v2.y := plane.Nodes[2].y - plane.Nodes[0].y;
+  v2.z := plane.Nodes[2].z - plane.Nodes[0].z;
 
   ret := CrossProduct(v1, v2);
   NormalizeVector(ret);
@@ -1047,31 +1077,40 @@ begin
 end;
 
 procedure RotateNode(var node: TPoint3D; centre: TPoint3D; rx, ry, rz: real);
+var
+  translationVector: TPoint3D;
 begin
+  translationVector.x := node.x - centre.x;
+  translationVector.y := node.y - centre.y;
+  translationVector.z := node.z - centre.z;
   (* offset node by centre *)
-  decr(node.x, centre.x);
-  decr(node.y, centre.y);
-  decr(node.z, centre.z);
+  (*incr(node.x, translationVector.x);
+  incr(node.y, translationVector.y);
+  incr(node.z, translationVector.z);*)
 
   if rx <> 0.0 then begin
-    node.y := cos(rx) * node.y - sin(rx) * node.z;
-    node.z := sin(rx) * node.y + cos(rx) * node.z;
+    translationVector.y := cos(rx) * translationVector.y - sin(rx) * translationVector.z;
+    translationVector.z := sin(rx) * translationVector.y + cos(rx) * translationVector.z;
   end;
 
   if ry <> 0.0 then begin
-    node.x := sin(ry) * node.z + cos(ry) * node.x;
-    node.z := cos(ry) * node.z - sin(ry) * node.x;
+    translationVector.x := sin(ry) * translationVector.z + cos(ry) * translationVector.x;
+    translationVector.z := cos(ry) * translationVector.z - sin(ry) * translationVector.x;
   end;
 
   if rz <> 0.0 then begin
-    node.x := cos(rz) * node.x - sin(rz) * node.y;
-    node.y := sin(rz) * node.x + cos(rz) * node.x;
+    translationVector.x := cos(rz) * translationVector.x - sin(rz) * translationVector.y;
+    translationVector.y := sin(rz) * translationVector.x + cos(rz) * translationVector.y;
   end;
 
   (* offset node back to where it was *)
-  incr(node.x, centre.x);
-  incr(node.y, centre.y);
-  incr(node.z, centre.z);
+  node.x := centre.x + translationVector.x;
+  node.y := centre.y + translationVector.y;
+  node.z := centre.z + translationVector.z;
+  (*
+  incr(node.x, translationVector.x);
+  decr(node.y, translationVector.y);
+  decr(node.z, translationVector.z);*)
 end;
 
 end.

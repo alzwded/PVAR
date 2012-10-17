@@ -18,3 +18,5 @@ JakOmlette
 **/\#*\#
 *.bak
 **/*.bak
+*.log
+**/*.log

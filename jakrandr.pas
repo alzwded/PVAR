@@ -15,6 +15,8 @@ type
   TJakRandr = class(TForm)
     DisplaySurface: TImage;
     Timer1: TTimer;
+    procedure DisplaySurfaceClick(Sender: TObject);
+    procedure DisplaySurfaceResize(Sender: TObject);
     procedure FormActivate(Sender: TObject);
     procedure FormCreate(Sender: TObject);
     procedure FormDeactivate(Sender: TObject);
@@ -38,12 +40,9 @@ implementation
 { TJakRandr }
 
 procedure TJakRandr.FormCreate(Sender: TObject);
-var
-  cvs: TCanvas;
 begin
-  cvs := DisplaySurface.Canvas;
-  m_disp := TJakRandrEngine.Create(@cvs, clBlack);
-  m_test := TTestWE.Create(Point3DFromCoords(100.0, 100.0, 100.0), 0, 0);
+  m_disp := TJakRandrEngine.Create(DisplaySurface.Canvas, clBlack);
+  m_test := TTestWE.Create(Point3DFromCoords(1000.0, 1000.0, 0.0), 0, 0);
 end;
 
 procedure TJakRandr.FormDeactivate(Sender: TObject);
@@ -53,7 +52,16 @@ end;
 
 procedure TJakRandr.FormActivate(Sender: TObject);
 begin
-  Timer1.Enabled := true;
+  //Timer1.Enabled := true;
+end;
+
+procedure TJakRandr.DisplaySurfaceClick(Sender: TObject);
+begin
+  Timer1.Enabled := not Timer1.Enabled;
+end;
+
+procedure TJakRandr.DisplaySurfaceResize(Sender: TObject);
+begin
 end;
 
 procedure TJakRandr.FormDestroy(Sender: TObject);
