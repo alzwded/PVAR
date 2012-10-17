@@ -51,5 +51,8 @@ TODO
     - store coordinates in the form of (origVector, xrotation, yrotation, zrotation) because rotations are (very) lossy
 * JakRandr
     - implementat forma unde va fi rendat totul
+    - implement rendering on separate thread because lcl is stupid and timers are kinda executed serially and that's what I DON'T want
+    - ^ although, that's what I want for state machines where timers need to be based on a global timer (like in the real world)
+    - implement good scaling for TImage because it sucks (the engine knows how to scale itself vectorially)
 * JakOmlette
     - implementat particularităţiile proiectului (adică scopul acestui proiect)
