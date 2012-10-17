@@ -48,6 +48,7 @@ TODO
     - finalizat designul
 * GfxUtils
     - finalizat sortarea poligoanelor
+    - store coordinates in the form of (origVector, xrotation, yrotation, zrotation) because rotations are (very) lossy
 * JakRandr
     - implementat forma unde va fi rendat totul
 * JakOmlette
