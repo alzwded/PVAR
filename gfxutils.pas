@@ -245,18 +245,26 @@ procedure TJakRandrEngine.AddEntity(entity: IEntity3D);
 var
   i: integer;
 begin
+  (*$IFDEF DEBUG_ADD_ENTITY*)
   writeln('Begin sorting new entity');
   entity.Dump;
+  (*$ENDIF*)
   for i := 0 to m_entities.Count - 1 do begin
+    (*$IFDEF DEBUG_ADD_ENTITY*)
     writeln('  comparing with:');
     write('  '); m_entities.Items[i].Dump;
+    (*$ENDIF*)
     if not m_visu.InOrder(entity, m_entities.Items[i]) then begin
+      (*$IFDEF DEBUG_ADD_ENTITY*)
       writeln('  inserting at ', i);
+      (*$ENDIF*)
       m_entities.Insert(i, entity);
       exit;
     end;
   end;
+  (*$IFDEF DEBUG_ADD_ENTITY*)
   writeln('  inserting at end');
+  (*$ENDIF*)
   m_entities.Add(entity);
 end;
 
@@ -1088,13 +1096,10 @@ procedure RotateNode(var node: TPoint3D; centre: TPoint3D; rx, ry, rz: real);
 var
   translationVector: TPoint3D;
 begin
+  (* offset node into 0,0 *)
   translationVector.x := node.x - centre.x;
   translationVector.y := node.y - centre.y;
   translationVector.z := node.z - centre.z;
-  (* offset node by centre *)
-  (*incr(node.x, translationVector.x);
-  incr(node.y, translationVector.y);
-  incr(node.z, translationVector.z);*)
 
   if rx <> 0.0 then begin
     translationVector.y := cos(rx) * translationVector.y - sin(rx) * translationVector.z;
@@ -1115,10 +1120,6 @@ begin
   node.x := centre.x + translationVector.x;
   node.y := centre.y + translationVector.y;
   node.z := centre.z + translationVector.z;
-  (*
-  incr(node.x, translationVector.x);
-  decr(node.y, translationVector.y);
-  decr(node.z, translationVector.z);*)
 end;
 
 end.

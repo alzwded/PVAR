@@ -2,8 +2,6 @@ unit CoreUtils;
 
 {$mode objfpc}{$H+}
 
-{$DEFINE __DEBUG_AILOOP}
-
 interface
 
 uses
@@ -59,40 +57,6 @@ begin
 
   m_geometry := TEntity3DList.Create;
 
-  (* test
-  e := TPolygon.Triangle(
-        Point3DFromCoords(
-                m_location.x - 100.0,
-                m_location.y,
-                m_location.z),
-        Point3DFromCoords(
-                m_location.x,
-                m_location.y,
-                m_location.z),
-        Point3DFromCoords(
-                m_location.x,
-                m_location.y + 100.0,
-                m_location.z));
-  (e as TPolygon).FillColour:=clWhite;
-  (e as TPolygon).ContourColour:=clWhite;
-  m_geometry.Add(e);
-  e := TPolygon.Triangle(
-        Point3DFromCoords(
-                m_location.x + 100.0,
-                m_location.y,
-                m_location.z),
-        Point3DFromCoords(
-                m_location.x,
-                m_location.y,
-                m_location.z),
-        Point3DFromCoords(
-                m_location.x,
-                m_location.y + 100.0,
-                m_location.z));
-  (e as TPolygon).FillColour:=clWhite;
-  (e as TPolygon).ContourColour:=clWhite;
-  m_geometry.Add(e);
-  exit;  *)
   (*
     /\
    / |\
@@ -270,13 +234,9 @@ begin
   if engine = Nil then
     Raise Exception.Create('NULL engine parameter provided!');
 
-  (* engine^.BeginScene; NO -- called one level above *)
-
   for i := 0 to m_geometry.Count - 1 do begin
     engine^.AddEntity(m_geometry.Items[i]);
   end;
-
-  (* engine^.CommitScene; NO called up one level *)
 end;
 
 procedure TTestWE.Start;
