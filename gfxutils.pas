@@ -245,12 +245,18 @@ procedure TJakRandrEngine.AddEntity(entity: IEntity3D);
 var
   i: integer;
 begin
+  writeln('Begin sorting new entity');
+  entity.Dump;
   for i := 0 to m_entities.Count - 1 do begin
-    if m_visu.InOrder(entity, m_entities.Items[i]) then begin
+    writeln('  comparing with:');
+    write('  '); m_entities.Items[i].Dump;
+    if not m_visu.InOrder(entity, m_entities.Items[i]) then begin
+      writeln('  inserting at ', i);
       m_entities.Insert(i, entity);
       exit;
     end;
   end;
+  writeln('  inserting at end');
   m_entities.Add(entity);
 end;
 
@@ -1014,10 +1020,12 @@ begin
 
   prod := DotProduct(normal, myVector);
 
+  (*
   writeln('sideOfPlane, prod is = ', prod);
   plane.Dump;
   writeln('(', myVector.x, ',', myVector.y, ',', myVector.z, ')');
   writeln('(', normal.x, ',', normal.y, ',', normal.z, ')');
+  *)
 
   if prod > 0.00001 then SideOfPlane := plFront
   else if prod < -0.00001 then SideOfPlane := plBehind

@@ -2,7 +2,7 @@ unit CoreUtils;
 
 {$mode objfpc}{$H+}
 
-{$DEFINE DEBUG}
+{$DEFINE __DEBUG_AILOOP}
 
 interface
 
@@ -116,7 +116,7 @@ begin
                 m_location.y + 200.0,
                 m_location.z));
   (e as TPolygon).ContourColour := clPurple;
-  (e as TPolygon).FillColour := clYellow;
+  (e as TPolygon).FillColour := clRed;
   m_geometry.Add(e);
 
   e := TPolygon.Triangle(
@@ -133,7 +133,7 @@ begin
                 m_location.y + 200.0,
                 m_location.z));
   (e as TPolygon).ContourColour := clPurple;
-  (e as TPolygon).FillColour := clYellow;
+  (e as TPolygon).FillColour := clLtGray;
   m_geometry.Add(e);
 
   e := TPolygon.Triangle(
@@ -167,7 +167,7 @@ begin
                 m_location.y,
                 m_location.z));
   (e as TPolygon).ContourColour := clPurple;
-  (e as TPolygon).FillColour := clYellow;
+  (e as TPolygon).FillColour := clGreen;
   m_geometry.Add(e);
 
   (* bottom side *)
@@ -185,7 +185,7 @@ begin
                 m_location.y - 200.0,
                 m_location.z));
   (e as TPolygon).ContourColour := clPurple;
-  (e as TPolygon).FillColour := clYellow;
+  (e as TPolygon).FillColour := clBlue;
   m_geometry.Add(e);
 
   e := TPolygon.Triangle(
@@ -202,7 +202,7 @@ begin
                 m_location.y - 200.0,
                 m_location.z));
   (e as TPolygon).ContourColour := clPurple;
-  (e as TPolygon).FillColour := clYellow;
+  (e as TPolygon).FillColour := clTeal;
   m_geometry.Add(e);
 
   e := TPolygon.Triangle(
@@ -219,7 +219,7 @@ begin
                 m_location.y,
                 m_location.z + 100.0));
   (e as TPolygon).ContourColour := clPurple;
-  (e as TPolygon).FillColour := clYellow;
+  (e as TPolygon).FillColour := clFuchsia;
   m_geometry.Add(e);
 
   e := TPolygon.Triangle(
@@ -236,7 +236,7 @@ begin
                 m_location.y,
                 m_location.z));
   (e as TPolygon).ContourColour := clPurple;
-  (e as TPolygon).FillColour := clYellow;
+  (e as TPolygon).FillColour := clAqua;
   m_geometry.Add(e);
 end;
 
@@ -294,7 +294,7 @@ var
   i: integer;
   iface: IEntity3D;
 begin
-(*IFDEF DEBUG*)
+(*IFDEF DEBUG_AILOOP*)
   writeln('------');
   writeln('Entities before rotation: ');
   writeln('------');
@@ -310,7 +310,7 @@ begin
     iface.Rotate(m_location, 0.0, pi / 100.0, 0.0);
     (* N.B. there exists the DegToRad function *)
   end;
-(*IFDEF DEBUG*)
+(*IFDEF DEBUG_AILOOP*)
   writeln('------');
   writeln('Entities after rotation: ');
   writeln('------');
