@@ -42,7 +42,7 @@ implementation
 procedure TJakRandr.FormCreate(Sender: TObject);
 begin
   m_disp := TJakRandrEngine.Create(DisplaySurface.Canvas, clBlack);
-  m_test := TTestWE.Create(Point3DFromCoords(1000.0, 1000.0, 0.0), 0, 0);
+  m_test := TTestWE.Create(Point3DFromCoords(0.0, 0.0, 0.0), 0, 0);
 end;
 
 procedure TJakRandr.FormDeactivate(Sender: TObject);
