@@ -302,11 +302,11 @@ begin
   end;
   writeln('======');
  (*ENDIF*)
-  incr(m_location.z, 5.0);
+  incr(m_location.z, 2.0);
   for i := 0 to m_geometry.Count - 1 do begin
     iface := m_geometry.Items[i];
     iface.Rotate(m_location, pi / 200.0, pi / 43.0, pi / 173.0);
-    iface.Translate(Point3DFromCoords(0.0, 0.0, 5.0));
+    iface.Translate(Point3DFromCoords(0.0, 0.0, 2.0));
     (* N.B. there exists the DegToRad function *)
   end;
 (*IFDEF DEBUG_AILOOP*)

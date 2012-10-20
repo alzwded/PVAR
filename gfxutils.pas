@@ -162,6 +162,7 @@ type
     m_rx, m_ry, m_rz: real;
 
     function Project(p: TPoint3D): TPoint;
+    function DistanceToViewport(p: TPoint3D): real;
   public
     property Background: TColor read m_bgColor write m_bgColor;
   public (* need InOrder* functions here because I need m_z_*Component *)
@@ -325,15 +326,55 @@ begin
     Raise Exception.Create('NULL pointer!');
   m_canvas := canvas;
   m_bgColor := bgColor;
-  (*
+
   m_rx := 0.0;
   m_ry := 0.0;
   m_rz := 0.0;
   exit;
-  *)
+
   m_rx := -pi / 12.0;//pi / 3.0;(*pi / 2.0;*)(*pi / 12;*)
   m_ry := pi / 6.0;//pi / 4.0;(*pi / 6;*)
   m_rz := 0.0;//pi / 2.0;
+end;
+
+function TJakRandrProjector.DistanceToViewport(p: TPoint3D): real;
+var
+  viewport, origin: TPoint3D;
+  distanceToCamera, distanceToLine: real;
+  v1, v2: TPoint3D;
+  c1, c2: real;
+  b: real;
+  Pb: TPoint3D;
+begin
+  viewport := GetViewportLocation;
+  origin := O;
+
+  distanceToCamera := Distance(viewport, p);
+
+  v1 := Point3DFromCoords(
+        viewport.x - origin.x,
+        viewport.y - origin.y,
+        viewport.z - origin.z);
+  v2 := Point3DFromCoords(
+        p.x - origin.x,
+        p.y - origin.y,
+        p.z - origin.z);
+
+  c1 := DotProduct(v1, v2);
+  c2 := DotProduct(v1, v1); //Distance(viewport, origin);
+
+  b := c1 / c2;
+
+  Pb := Point3DFromCoords(
+        origin.x + b * v1.x,
+        origin.y + b * v1.y,
+        origin.z + b * v1.z);
+
+  distanceToLine := Distance(p, Pb);
+
+  writeln('d to viewport = ', sqrt(sqr(distanceToCamera) - sqr(distanceToLine)));
+
+  DistanceToViewport := sqrt(sqr(distanceToCamera) - sqr(distanceToLine));
 end;
 
 function TJakRandrProjector.Project(p: TPoint3D): TPoint;
@@ -372,7 +413,7 @@ begin
      than the viewing plane...
      need to implement view plane and compute distance till there
      also, need to clip stuff out if it's behind the camera *)
-  s := 1;
+  s := CAMERA_DISTANCE / DistanceToViewport(p);
 
   (* scale down *)
   rx := m_canvas.Width * rx / 4000.0 * s;
