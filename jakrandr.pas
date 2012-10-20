@@ -21,6 +21,7 @@ type
     procedure FormCreate(Sender: TObject);
     procedure FormDeactivate(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
+    procedure FormResize(Sender: TObject);
     procedure Timer1Timer(Sender: TObject);
   private
     { private declarations }
@@ -68,6 +69,14 @@ procedure TJakRandr.FormDestroy(Sender: TObject);
 begin
   m_disp.Free;
   m_test.Free;
+end;
+
+procedure TJakRandr.FormResize(Sender: TObject);
+begin
+  DisplaySurface.Width:=Self.ClientWidth;
+  DisplaySurface.Height:=Self.ClientHeight;
+  DisplaySurface.Picture.Bitmap.Width:=DisplaySurface.Width;
+  DisplaySurface.Picture.Bitmap.Height:=DisplaySurface.Height;
 end;
 
 procedure TJakRandr.Timer1Timer(Sender: TObject);

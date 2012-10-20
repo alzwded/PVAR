@@ -43,6 +43,9 @@ interface
 uses
   Classes, SysUtils, Graphics, fgl;
 
+const
+  CAMERA_DISTANCE = 3000.0;
+
 type
   TPoint3D = record
     x, y, z: real;
@@ -322,8 +325,14 @@ begin
     Raise Exception.Create('NULL pointer!');
   m_canvas := canvas;
   m_bgColor := bgColor;
-  m_rx := 0.0;//pi / 3.0;(*pi / 2.0;*)(*pi / 12;*)
-  m_ry := 0.0;//pi / 4.0;(*pi / 6;*)
+  (*
+  m_rx := 0.0;
+  m_ry := 0.0;
+  m_rz := 0.0;
+  exit;
+  *)
+  m_rx := -pi / 12.0;//pi / 3.0;(*pi / 2.0;*)(*pi / 12;*)
+  m_ry := pi / 6.0;//pi / 4.0;(*pi / 6;*)
   m_rz := 0.0;//pi / 2.0;
 end;
 
@@ -331,6 +340,7 @@ function TJakRandrProjector.Project(p: TPoint3D): TPoint;
 var
   ret: TPoint;
   rx, ry: real;
+  s: real;
 begin
   (* ideal window:
        4000 x 3000
@@ -339,22 +349,39 @@ begin
   *)
   (* apply camera rotation *)
   (* not needed, polys already rotated with camera, orthogonal projection *)
+
   rx := p.x;
   ry := p.y;
 
+  (*
+  b_x = (d_x * s_x) / (d_z * r_x) * r_z
+  b_y = (d_y * s_y) / (d_z * r_y) * r_z
+  b -- on screen point
+  d_Z -- distance of point being projected to camera
+  r_z -- distance of recording surface to camera
+  r_x,y = recording surface size
+  s -- display size
+  *)
+
   (* offset from origin *)
   (* TODO add actual offsetCamera procedure and properties to class *)
-  rx := rx;
-  ry := ry;
+
+  (* scaling factor *)
+  (*s := CAMERA_DISTANCE / Distance(p, GetViewportLocation);*)
+  (* above is a bit dumb because it takes the distance from the camera rather
+     than the viewing plane...
+     need to implement view plane and compute distance till there
+     also, need to clip stuff out if it's behind the camera *)
+  s := 1;
 
   (* scale down *)
-  rx := m_canvas.Width * rx / 4000.0;
-  ry := m_canvas.Width * ry / 3000.0;
+  rx := m_canvas.Width * rx / 4000.0 * s;
+  ry := m_canvas.Height * ry / 3000.0 * s;
   (* note on relevance of z: *)
   (* rx := p.x * screenWidth / p.z; ry := p.y * screenWidth / p.z *)
 
-  rx := rx + m_canvas.Width / 3;
-  ry := ry + m_canvas.Height / 3;
+  rx := rx + m_canvas.Width / 2;
+  ry := ry + m_canvas.Height / 2;
 
   (* convert to int, flip Y axis for normality's sake *)
   ret.X := round(rx);
@@ -399,8 +426,10 @@ var
 begin
   SetLength(points, poli.NbNodes);
 
-  for i := 0 to poli.NbNodes - 1 do
+  for i := 0 to poli.NbNodes - 1 do begin
+    (* TODO if poli.Nodes[i] behind clipping plane, return *)
     points[i] := Project(GetRotatedPoint(poli.Nodes[i]));
+  end;
 
   m_canvas.Pen.color := poli.ContourColour;
   m_canvas.Brush.color := poli.FillColour;
@@ -471,7 +500,7 @@ var
   ret: TPoint3D;
 begin
   (* orthogonal (0, 0, 1) offset to O with rx, ry, rz rotations *)
-  ret := Point3DFromCoords(0.0, 0.0, 1000000.0);
+  ret := Point3DFromCoords(0.0, 0.0, CAMERA_DISTANCE);
 
   incr(ret.x, O.x);
   incr(ret.y, O.y);

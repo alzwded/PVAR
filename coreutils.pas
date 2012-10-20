@@ -61,7 +61,7 @@ begin
   e := TPolygon.Triangle(
         Point3DFromCoords(
                 m_location.x,
-                m_location.y,
+                m_location.y + 50.0,
                 m_location.z),
         Point3DFromCoords(
                 m_location.x,
@@ -69,7 +69,7 @@ begin
                 m_location.z - 200.0),
         Point3DFromCoords(
                 m_location.x,
-                m_location.y + 200.0,
+                m_location.y + 150.0,
                 m_location.z));
   (e as TPolygon).ContourColour := clPurple;
   (e as TPolygon).FillColour := clBlue;
@@ -302,9 +302,11 @@ begin
   end;
   writeln('======');
  (*ENDIF*)
+  incr(m_location.z, 5.0);
   for i := 0 to m_geometry.Count - 1 do begin
     iface := m_geometry.Items[i];
-    iface.Rotate(m_location, pi / 200.0, pi / 100.0, pi / 173.0);
+    iface.Rotate(m_location, pi / 200.0, pi / 43.0, pi / 173.0);
+    iface.Translate(Point3DFromCoords(0.0, 0.0, 5.0));
     (* N.B. there exists the DegToRad function *)
   end;
 (*IFDEF DEBUG_AILOOP*)
