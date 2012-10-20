@@ -26,6 +26,13 @@ Fiecare entitate rulează independent pe propriul ceas, rendarea se face la ~60h
 
 Arhitectură cât de cât MVC.
 
+Building
+========
+
+You need lazarus version 0.9.30.4 or newer with fpc 2.6.0 or newer.
+
+Make sure you select the build target for your platform (currently win32 or linux 32). I.e. if you're on windows, select the win32 target from build options, if you're on linux, select either of the linux-i686 targets.
+
 Acknowledgements
 ===============
 
