@@ -53,7 +53,7 @@ begin
   m_clock := TTimer.Create(Nil);
   m_clock.Enabled := true;
   m_clock.OnTimer := @OnTimer;
-  m_clock.Interval := 20; (*20;*)
+  m_clock.Interval := 200; (*20;*)
 
   m_geometry := TEntity3DList.Create;
 
@@ -68,13 +68,13 @@ begin
   (* top side *)
   e := TPolygon.Triangle(
         Point3DFromCoords(
-                m_location.x - 100.0,
+                m_location.x - 300.0,
                 m_location.y,
                 m_location.z),
         Point3DFromCoords(
                 m_location.x,
                 m_location.y,
-                m_location.z - 100.0),
+                m_location.z - 300.0),
         Point3DFromCoords(
                 m_location.x,
                 m_location.y + 200.0,
@@ -87,9 +87,9 @@ begin
         Point3DFromCoords(
                 m_location.x,
                 m_location.y,
-                m_location.z - 100.0),
+                m_location.z - 300.0),
         Point3DFromCoords(
-                m_location.x + 100.0,
+                m_location.x + 300.0,
                 m_location.y,
                 m_location.z),
         Point3DFromCoords(
@@ -102,7 +102,7 @@ begin
 
   e := TPolygon.Triangle(
         Point3DFromCoords(
-                m_location.x + 100.0,
+                m_location.x + 300.0,
                 m_location.y,
                 m_location.z),
         Point3DFromCoords(
@@ -112,7 +112,7 @@ begin
         Point3DFromCoords(
                 m_location.x,
                 m_location.y,
-                m_location.z + 100.0));
+                m_location.z + 300.0));
   (e as TPolygon).ContourColour := clPurple;
   (e as TPolygon).FillColour := RGBToColor(128, 64, 64);
   m_geometry.Add(e);
@@ -121,13 +121,13 @@ begin
         Point3DFromCoords(
                 m_location.x,
                 m_location.y,
-                m_location.z + 100.0),
+                m_location.z + 300.0),
         Point3DFromCoords(
                 m_location.x,
                 m_location.y + 200.0,
                 m_location.z),
         Point3DFromCoords(
-                m_location.x - 100.0,
+                m_location.x - 300.0,
                 m_location.y,
                 m_location.z));
   (e as TPolygon).ContourColour := clPurple;
@@ -137,13 +137,13 @@ begin
   (* bottom side *)
   e := TPolygon.Triangle(
         Point3DFromCoords(
-                m_location.x - 100.0,
+                m_location.x - 300.0,
                 m_location.y,
                 m_location.z),
         Point3DFromCoords(
                 m_location.x,
                 m_location.y,
-                m_location.z - 100.0),
+                m_location.z - 300.0),
         Point3DFromCoords(
                 m_location.x,
                 m_location.y - 200.0,
@@ -156,9 +156,9 @@ begin
         Point3DFromCoords(
                 m_location.x,
                 m_location.y,
-                m_location.z - 100.0),
+                m_location.z - 300.0),
         Point3DFromCoords(
-                m_location.x + 100.0,
+                m_location.x + 300.0,
                 m_location.y,
                 m_location.z),
         Point3DFromCoords(
@@ -171,7 +171,7 @@ begin
 
   e := TPolygon.Triangle(
         Point3DFromCoords(
-                m_location.x + 100.0,
+                m_location.x + 300.0,
                 m_location.y,
                 m_location.z),
         Point3DFromCoords(
@@ -181,7 +181,7 @@ begin
         Point3DFromCoords(
                 m_location.x,
                 m_location.y,
-                m_location.z + 100.0));
+                m_location.z + 300.0));
   (e as TPolygon).ContourColour := clPurple;
   (e as TPolygon).FillColour := RGBToColor(64, 64, 128);
   m_geometry.Add(e);
@@ -190,13 +190,13 @@ begin
         Point3DFromCoords(
                 m_location.x,
                 m_location.y,
-                m_location.z + 100.0),
+                m_location.z + 300.0),
         Point3DFromCoords(
                 m_location.x,
                 m_location.y - 200.0,
                 m_location.z),
         Point3DFromCoords(
-                m_location.x - 100.0,
+                m_location.x - 300.0,
                 m_location.y,
                 m_location.z));
   (e as TPolygon).ContourColour := clPurple;

@@ -6,6 +6,7 @@ unit GfxUtils;
 {$B-}
 
 {$DEFINE CHECK_PLANARITY}
+(*$DEFINE DEBUG_ADD_ENTITY*)
 
 (* utilities for creating, sorting and rendering 3d triangles, quadrangles,
    spheres and sprites to a canvas *)
@@ -31,6 +32,12 @@ unit GfxUtils;
    limitation: polygon clipping is not (yet) supported
       a polygon is either completely in front or completely behind another
 *)
+
+(* new plan:
+   everything is stored with TRealPoint3D to prevent data loss in rotations
+   on rendering everything is rotated to face camera (in AddEntity)
+       Newell's algorithm should THEN work
+*)
 interface
 
 uses
@@ -41,10 +48,17 @@ type
     x, y, z: real;
   end;
 
+  TRealPoint3D = record
+    p: TPoint3D;
+    rotationCentre: TPoint3D;
+    rx, ry, rz: real;
+  end;
+
   IEntity3D = interface(IInterface)
     procedure Translate(dp: TPoint3D);
     procedure Rotate(centre: TPoint3D; rotx, roty, rotz: real);
     procedure Dump;
+    function GetFacingCamera(O: TPoint3D; rx, ry, rz: real): IEntity3D;
   end;
 
   TSphere = class(TInterfacedObject, IEntity3D)
@@ -53,13 +67,14 @@ type
     procedure Translate(dp: TPoint3D);
     procedure Rotate(centre: TPoint3D; rotx, roty, rotz: real);
     procedure Dump;
+    function GetFacingCamera(O: TPoint3D; rx, ry, rz: real): IEntity3D;
   private
-    m_c: TPoint3D;
+    m_c: TRealPoint3D;
     m_r: real;
     m_contourColour: TColor;
     m_fillColour: TColor;
   public
-    property Centre: TPoint3D read m_c;
+    property Centre: TRealPoint3D read m_c;
     property Radius: Real read m_r;
     property ContourColour: TColor read m_contourColour write m_contourColour;
     property FillColour: TColor read m_fillColour write m_fillColour;
@@ -73,15 +88,16 @@ type
     procedure Translate(dp: TPoint3D);
     procedure Rotate(centre: TPoint3D; rotx, roty, rotz: real);
     procedure Dump;
+    function GetFacingCamera(O: TPoint3D; rx, ry, rz: real): IEntity3D;
   private
     m_n: Integer;
-    m_nodes: array of TPoint3D;
+    m_nodes: array of TRealPoint3D;
     m_contourColour: TColor;
     m_fillColour: TColor;
 
-    function GetNode(i: integer): TPoint3D;
+    function GetNode(i: integer): TRealPoint3D;
   public
-    property Nodes[i: integer]: TPoint3D read GetNode;
+    property Nodes[i: integer]: TRealPoint3D read GetNode;
     property NbNodes: Integer read m_n;
     property ContourColour: TColor read m_contourColour write m_contourColour;
     property FillColour: TColor read m_fillColour write m_fillColour;
@@ -94,13 +110,14 @@ type
     procedure Translate(dp: TPoint3D);
     procedure Rotate(centre: TPoint3D; rotx, roty, rotz: real);
     procedure Dump;
+    function GetFacingCamera(O: TPoint3D; rx, ry, rz: real): IEntity3D;
   private
-    m_c: TPoint3D;
+    m_c: TRealPoint3D;
     m_g: TBitmap;
     m_width: real;
     m_height: real;
   public
-    property Centre: TPoint3D read m_c;
+    property Centre: TRealPoint3D read m_c;
     property Graphic: TBitmap read m_g;
     property Width: Real read m_width write m_width;
     property Height: Real read m_height write m_height;
@@ -119,7 +136,7 @@ type
     constructor Create(canvas: TCanvas; bgColor: TColor);
 
     (* fine tuning parameters *)
-    procedure SetZProjection(x, y: real);
+    procedure SetCameraRotation(rx, ry, rz: real);
 
     (* draw 3d entities *)
     procedure Draw(entity: IEntity3D);
@@ -135,11 +152,11 @@ type
     procedure Clear;
 
     function GetViewportLocation: TPoint3D;
+    function O: TPoint3D;
   private
     m_canvas: TCanvas;
     m_bgColor: TColor;
-    m_z_xComponent: real;
-    m_z_yComponent: real;
+    m_rx, m_ry, m_rz: real;
 
     function Project(p: TPoint3D): TPoint;
   public
@@ -187,6 +204,17 @@ type
   PJakRandrEngine = ^TJakRandrEngine;
 
 function Point3DFromCoords(x, y, z: real): TPoint3D;
+function RealPoint3DFromCoords(x, y, z: real): TRealPoint3D;
+function RealPoint3DFromPoint(p: TPoint3D): TRealPoint3D;
+function GetRotatedPoint(p: TRealPoint3D): TPoint3D;
+
+(* warning! careful what you do with this
+   if unsure, just don't use it and apply rotations manually
+*)
+procedure ApplyRotationToPoint(
+  var p: TRealPoint3D;
+  rotCentre: TRealPoint3D;
+  rx, ry, rz: real);
 
 function IsPointInPolygon(
         p: TPoint;
@@ -246,7 +274,9 @@ end;
 procedure TJakRandrEngine.AddEntity(entity: IEntity3D);
 var
   i: integer;
+  candidate: IEntity3D;
 begin
+  candidate := entity.GetFacingCamera(m_visu.O, m_visu.m_rx, m_visu.m_ry, m_visu.m_rz);
   (*$IFDEF DEBUG_ADD_ENTITY*)
   writeln('Begin sorting new entity');
   entity.Dump;
@@ -278,8 +308,9 @@ begin
     Raise Exception.Create('NULL pointer!');
   m_canvas := canvas;
   m_bgColor := bgColor;
-  m_z_xComponent := 0.5;
-  m_z_yComponent := 0.3;
+  m_rx := pi / 12;
+  m_ry := pi / 6;
+  m_rz := 0.0;
 end;
 
 function TJakRandrProjector.Project(p: TPoint3D): TPoint;
@@ -292,9 +323,10 @@ begin
      1. compute coords
      2. scale down from 4000x3000 to current window size
   *)
+  (* apply camera rotation *)
+  (* TODO *)
   rx := p.x;
   ry := p.y;
-  (* apply Z transformation *)
   rx := rx + p.z * m_z_xComponent;
   ry := ry + p.z * m_z_yComponent;
 
@@ -351,7 +383,7 @@ begin
   SetLength(points, poli.NbNodes);
 
   for i := 0 to poli.NbNodes - 1 do
-    points[i] := Project(poli.Nodes[i]);
+    points[i] := Project(GetRotatedPoint(poli.Nodes[i]));
 
   m_canvas.Pen.color := poli.ContourColour;
   m_canvas.Brush.color := poli.FillColour;
@@ -366,7 +398,7 @@ var
   p: TPoint;
   rx, ry: integer;
 begin
-  p := Project(sphere.Centre);
+  p := Project(GetRotatedPoint(sphere.Centre));
 
   m_canvas.Pen.Color := sphere.ContourColour;
   m_canvas.Brush.Color := sphere.FillColour;
@@ -390,7 +422,7 @@ var
   w, h: real;
   magicRect: TRect;
 begin
-  p := Project(sprite.Centre);
+  p := Project(GetRotatedPoint(sprite.Centre));
 
   w := sprite.Width * m_canvas.Width / 4000.0;
   h := sprite.Height * m_canvas.Height / 3000.0;
@@ -403,10 +435,11 @@ begin
   m_canvas.StretchDraw(magicRect, sprite.Graphic);
 end;
 
-procedure TJakRandrProjector.SetZProjection(x, y: real);
+procedure TJakRandrProjector.SetCameraRotation(rx, ry, rz: real);
 begin
-  m_z_xComponent := x;
-  m_z_yComponent := y;
+  m_rx := rx;
+  m_ry := ry;
+  m_rz := rz;
 end;
 
 procedure TJakRandrProjector.Clear;
@@ -420,9 +453,9 @@ function TJakRandrProjector.GetViewportLocation: TPoint3D;
 begin
   (* vector is (-zx, -zy, 1) *)
   GetViewportLocation := Point3DFromCoords(
-        -100000.0 * m_z_xComponent,
-        -100000.0 * m_z_yComponent,
-        100000.0);
+        -1000000.0 * m_z_yComponent,
+        -1000000.0 * m_z_xComponent,
+         1000000.0);
 end;
 
 (* sort functions *)
@@ -473,20 +506,20 @@ function TJakRandrProjector.InOrderSpheres(s1, s2: TSphere): boolean;
 var
   d: real;
 begin
-  d := Distance(s1.Centre, s2.Centre);
+  d := Distance(s1.Centre.p, s2.Centre.p);
 
   if d > (s1.Radius + s2.Radius) then
-    InOrderSpheres := s1.Centre.z > s2.Centre.z
+    InOrderSpheres := s1.Centre.p.z > s2.Centre.p.z
   else if s1.Radius > s2.Radius then begin
     if d <= s1.Radius - s2.Radius then
       InOrderSpheres := true
     else
-      InOrderSpheres := s1.Centre.z > s2.Centre.z;
+      InOrderSpheres := s1.Centre.p.z > s2.Centre.p.z;
   end else begin
     if d <= s2.Radius - s1.Radius then
       InOrderSpheres := false
     else
-      InOrderSpheres := s1.Centre.z > s2.Centre.z; (* check this *)
+      InOrderSpheres := s1.Centre.p.z > s2.Centre.p.z; (* check this *)
   end;
 end;
 
@@ -564,6 +597,12 @@ begin
   InOrderPolygonSphere := not InOrderSpherePolygon(s, p);
 end;
 
+(* try these:
+        when disjoint by x or by y, return true without further test
+        try to swap return values for tests 4,5,7,8
+        in test other, compare centroids
+*)
+
 (* implementation of Newell's algorithm *)
 (* implement for triangles and quads *)
 (* for quads we assume all nodes are in the same plane *)
@@ -596,6 +635,7 @@ begin
     if (t1.Nodes[i].z >= min) or (t1.Nodes[i].z <= max) then
       goto test2;
 
+  writeln('test1');
   (* test passes *)
   if t1.Nodes[0].z < min then
     InOrderPolygons := true
@@ -623,6 +663,7 @@ begin
     if (t1.Nodes[i].x >= min) or (t1.Nodes[i].x <= max) then
       goto test3;
 
+  writeln('test2');
   if t1.Nodes[0].x < min then
     InOrderPolygons := retMin
   else
@@ -649,6 +690,7 @@ begin
     if (t1.Nodes[i].y >= min) or (t1.Nodes[i].y <= max) then
       goto test4;
 
+  writeln('test3');
   if t1.Nodes[0].y < min then
     InOrderPolygons := retMin
   else
@@ -670,6 +712,7 @@ begin
       goto test5;
   end;
 
+  writeln('test4');
   InOrderPolygons := true;
   exit;
 
@@ -687,6 +730,7 @@ begin
       goto test6;
   end;
 
+  writeln('test5');
   InOrderPolygons := true;
   exit;
 
@@ -711,6 +755,7 @@ begin
   SetLength(projection2, 0);
 
   if passes then begin
+    writeln('test6');
     InOrderPolygons := true;
     exit;
   end;
@@ -730,6 +775,7 @@ begin
     end;
   end;
 
+  writeln('test7');
   InOrderPolygons := false;
   exit;
 
@@ -747,10 +793,12 @@ begin
       goto testOther;
   end;
 
+  writeln('test8');
   InOrderPolygons := false;
   exit;
 
   testOther:
+  writeln('test centroid');
   (* else ... *)
   writeln('polygon splitting not supported, defaulting to true and hoping for the best');
   InOrderPolygons := true;
@@ -797,7 +845,7 @@ end;
 
 constructor TSphere.Sphere(centre: TPoint3D; radius: real);
 begin
-  m_c := centre;
+  m_c := RealPoint3DFromPoint(centre);
   m_r := radius;
   m_contourColour := clBlack;
   m_fillColour := clWhite;
@@ -812,12 +860,27 @@ end;
 
 procedure TSphere.Rotate(centre: TPoint3D; rotx, roty, rotz: real);
 begin
-  RotateNode(m_c, centre, rotx, roty, rotz);
+  ApplyRotationToPoint(m_c, centre, rotx, roty, rotz);
 end;
 
 procedure TSphere.Dump;
 begin
   writeln('Sphere: (', Centre.x, ',', Centre.y, ',', Centre.z, ',) ', Radius);
+end;
+
+function TSphere.GetFacingCamera(O: TPoint3D; rx, ry, rz: real): IEntity3D;
+var
+  c: TPoint3D;
+  ret: IEntity3D;
+begin
+  c := GetRotatedPoint(m_c);
+  RotateNode(c, O, rx, ry, rz);
+
+  ret := TSphere.Sphere(c, m_r);
+  (ret as TSphere).m_contourColour := m_contourColour;
+  (ret as TSphere).m_fillColour := m_fillColour;
+
+  GetFacingCamera := ret;
 end;
 
 (* TPolygon *)
@@ -826,9 +889,9 @@ constructor TPolygon.Triangle(p1, p2, p3: TPoint3D);
 begin
   m_n := 3;
   SetLength(m_nodes, m_n);
-  m_nodes[0] := p1;
-  m_nodes[1] := p2;
-  m_nodes[2] := p3;
+  m_nodes[0] := RealPoint3DFromPoint(p1);
+  m_nodes[1] := RealPoint3DFromPoint(p2);
+  m_nodes[2] := RealPoint3DFromPoint(p3);
   m_contourColour := clBlack;
   m_fillColour := clWhite;
 end;
@@ -842,10 +905,10 @@ var
 begin
   m_n := 4;
   SetLength(m_nodes, m_n);
-  m_nodes[0] := p1;
-  m_nodes[1] := p2;
-  m_nodes[2] := p3;
-  m_nodes[3] := p4;
+  m_nodes[0] := RealPoint3DFromPoint(p1);
+  m_nodes[1] := RealPoint3DFromPoint(p2);
+  m_nodes[2] := RealPoint3DFromPoint(p3);
+  m_nodes[3] := RealPoint3DFromPoint(p4);
 
   m_contourColour := clBlack;
   m_fillColour := clWhite;
@@ -871,7 +934,7 @@ begin
   SetLength(m_nodes, 0);
 end;
 
-function TPolygon.GetNode(i: integer): TPoint3D;
+function TPolygon.GetNode(i: integer): TRealPoint3D;
 begin
   if (i >= m_n) or (i < 0) then
     Raise Exception.Create('out of range!');
@@ -894,7 +957,7 @@ var
   i: integer;
 begin
   for i := 0 to m_n-1 do
-    RotateNode(m_nodes[i], centre, rotx, roty, rotz);
+    ApplyRotationToPoint(m_nodes[i], centre, rotx, roty, rotz);
 end;
 
 procedure TPolygon.Dump;
@@ -908,12 +971,38 @@ begin
   writeln;
 end;
 
+function TPolygon.GetFacingCamera(O: TPoint3D; rx, ry, rz: real): IEntity3D;
+var
+  p1, p2, p3, p4: TPoint3D;
+  ret: IEntity3D;
+begin
+  p1 := GetRotatedPoint(m_nodes[0]);
+  RotateNode(p1, O, rx, ry, rz);
+  p2 := GetRotatedPoint(m_nodes[1]);
+  RotateNode(p2, O, rx, ry, rz);
+  p3 := GetRotatedPoint(m_nodes[2]);
+  RotateNode(p3, O, rx, ry, rz);
+  if m_n = 3 then
+    ret := TPolygon.Triangle(p1, p2, p3)
+  else begin
+    p4 := GetRotatedPoint(m_nodes[3]);
+    RotateNode(p4, O, rx, ry, rz);
+
+    ret := TPolygon.Quad(p1, p2, p3, p4);
+  end;
+
+  (ret as TPolygon).m_contourColour := m_contourColour;
+  (ret as TPolygon).m_fillColour := m_fillColour;
+
+  GetFacingCamera := ret;
+end;
+
 (* TSprite *)
 
 constructor TSprite.Sprite(centre: TPoint3D; graphic: TBitmap;
   width, height: real);
 begin
-  m_c := centre;
+  m_c := RealPoint3DFromPoint(centre);
   m_g := graphic;
   m_width := width;
   m_height := height;
@@ -933,7 +1022,7 @@ end;
 
 procedure TSprite.Rotate(centre: TPoint3D; rotx, roty, rotz: real);
 begin
-  RotateNode(m_c, centre, rotx, roty, rotz);
+  ApplyRotationToPoint(m_c, centre, rotx, roty, rotz);
 end;
 
 procedure TSprite.Dump;
@@ -941,6 +1030,16 @@ begin
   writeln('Sprite: (', m_c.x, ',', m_c.y, ',', m_c.z, ')');
 end;
 
+function TSprite.GetFacingCamera(O: TPoint3D; rx, ry, rz): IEntity3D;
+var
+  c: TPoint3D;
+  ret: IEntity3D;
+begin
+  c := GetRotatedPoint(m_c);
+  RotateNode(c, O, rx, ry, rz);
+
+  GetFacingCamera := TSprite.Sprite(c, m_g, m_width, m_height);
+end;
 
 
 (* globals *)
@@ -953,6 +1052,55 @@ begin
   ret.y := y;
   ret.z := z;
   Point3DFromCoords := ret;
+end;
+
+function RealPoint3DFromCoords(x, y, z: real): TRealPoint3D;
+var
+  ret: TRealPoint3D;
+begin
+  ret.p := Point3DFromCoords(x, y, z);
+  ret.rotationCentre := Point3DFromCoords(0.0, 0.0, 0.0);
+  ret.rx := 0.0;
+  ret.ry := 0.0;
+  ret.rz := 0.0;
+  RealPoint3DFromCoords := ret;
+end;
+
+function RealPoint3DFromPoint(p: TPoint3D): TRealPoint3D;
+var
+  ret: TRealPoint3D;
+begin
+  ret.p := p;
+  ret.rotationCentre := Point3DFromCoords(0.0, 0.0, 0.0);
+  ret.rx := 0.0;
+  ret.ry := 0.0;
+  ret.rz := 0.0;
+  RealPoint3DFromCoords := ret;
+end;
+
+(* warning! careful what you do with this
+   if unsure, just don't use it and apply rotations manually
+*)
+procedure ApplyRotationToPoint(
+  var p: TRealPoint3D;
+  rotCentre: TRealPoint3D;
+  rx, ry, rz: real);
+begin
+  p.rotationCentre := rotCentre;
+  incr(p.rx, rx)
+  incr(p.ry, ry);
+  incr(p.rz, rz);
+end;
+
+function GetRotatedPoint(p: TRealPoint3D): TPoint3D;
+var
+  ret: TPoint3D;
+begin
+  ret.x := p.p.x;
+  ret.y := p.p.y;
+  ret.z := p.p.z;
+  RotateNode(ret, p.rotationCentre, p.rx, p.ry, p.rz);
+  GetRotatedPoint := ret;
 end;
 
 (* utils *)
