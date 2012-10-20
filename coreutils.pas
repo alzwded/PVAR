@@ -80,7 +80,7 @@ begin
                 m_location.y + 200.0,
                 m_location.z));
   (e as TPolygon).ContourColour := clPurple;
-  (e as TPolygon).FillColour := clRed;
+  (e as TPolygon).FillColour := RGBToColor(64, 32, 32);
   m_geometry.Add(e);
 
   e := TPolygon.Triangle(
@@ -97,7 +97,7 @@ begin
                 m_location.y + 200.0,
                 m_location.z));
   (e as TPolygon).ContourColour := clPurple;
-  (e as TPolygon).FillColour := clLtGray;
+  (e as TPolygon).FillColour := RGBToColor(96, 48, 48);
   m_geometry.Add(e);
 
   e := TPolygon.Triangle(
@@ -114,7 +114,7 @@ begin
                 m_location.y,
                 m_location.z + 100.0));
   (e as TPolygon).ContourColour := clPurple;
-  (e as TPolygon).FillColour := clYellow;
+  (e as TPolygon).FillColour := RGBToColor(128, 64, 64);
   m_geometry.Add(e);
 
   e := TPolygon.Triangle(
@@ -131,7 +131,7 @@ begin
                 m_location.y,
                 m_location.z));
   (e as TPolygon).ContourColour := clPurple;
-  (e as TPolygon).FillColour := clGreen;
+  (e as TPolygon).FillColour := RGBToColor(196, 96, 96);
   m_geometry.Add(e);
 
   (* bottom side *)
@@ -149,7 +149,7 @@ begin
                 m_location.y - 200.0,
                 m_location.z));
   (e as TPolygon).ContourColour := clPurple;
-  (e as TPolygon).FillColour := clBlue;
+  (e as TPolygon).FillColour := RGBToColor(32, 32, 64);
   m_geometry.Add(e);
 
   e := TPolygon.Triangle(
@@ -166,7 +166,7 @@ begin
                 m_location.y - 200.0,
                 m_location.z));
   (e as TPolygon).ContourColour := clPurple;
-  (e as TPolygon).FillColour := clTeal;
+  (e as TPolygon).FillColour := RGBToColor(48, 48, 96);
   m_geometry.Add(e);
 
   e := TPolygon.Triangle(
@@ -183,7 +183,7 @@ begin
                 m_location.y,
                 m_location.z + 100.0));
   (e as TPolygon).ContourColour := clPurple;
-  (e as TPolygon).FillColour := clFuchsia;
+  (e as TPolygon).FillColour := RGBToColor(64, 64, 128);
   m_geometry.Add(e);
 
   e := TPolygon.Triangle(
@@ -200,7 +200,7 @@ begin
                 m_location.y,
                 m_location.z));
   (e as TPolygon).ContourColour := clPurple;
-  (e as TPolygon).FillColour := clAqua;
+  (e as TPolygon).FillColour := RGBToColor(96, 96, 196);
   m_geometry.Add(e);
 end;
 

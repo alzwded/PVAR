@@ -133,6 +133,8 @@ type
 
     (* draw other *)
     procedure Clear;
+
+    function GetViewportLocation: TPoint3D;
   private
     m_canvas: TCanvas;
     m_bgColor: TColor;
@@ -414,6 +416,15 @@ begin
   m_canvas.FillRect(0, 0, m_canvas.Width, m_canvas.Height);
 end;
 
+function TJakRandrProjector.GetViewportLocation: TPoint3D;
+begin
+  (* vector is (-zx, -zy, 1) *)
+  GetViewportLocation := Point3DFromCoords(
+        -100000.0 * m_z_xComponent,
+        -100000.0 * m_z_yComponent,
+        100000.0);
+end;
+
 (* sort functions *)
 (* entry function *)
 
@@ -536,9 +547,7 @@ begin
   end;
 
   last_test:
-  viewport.x := s.Centre.x;
-  viewport.y := s.Centre.y;
-  viewport.z := s.Centre.z + 100000.0;
+  viewport := GetViewportLocation;
   viewportSide := SideOfPlane(p, viewport);
   if viewportSide = plOn then
     Raise Exception.Create('TJakRandrProjector.InOrderSpherePolygon: viewport is on plane, don''t know what to do');
@@ -651,10 +660,7 @@ begin
   (*   idem but with SideOfPlane instead of minZ/maxZ *)
   (*   if true, return true, else continue with tests *)
   viewportSide := SideOfPlane(t2,
-        Point3DFromCoords(
-                t2.Nodes[0].x,
-                t2.Nodes[0].y,
-                100000.0));
+        GetViewportLocation);
   if viewportSide = plOn then
     Raise Exception.Create('TJakRandrProjector.InOrderPolygons: viewport is ON plane, don''t know what to do');
 
@@ -671,10 +677,7 @@ begin
   (* test 5 - all vertices of t2 are on the same side of t1 versus viewpoint *)
   (*   idem but with SideOfPlane *)
   viewportSide := SideOfPlane(t1,
-        Point3DFromCoords(
-                t1.Nodes[0].x,
-                t1.Nodes[0].y,
-                100000.0));
+        GetViewportLocation);
   if viewportSide = plOn then
     Raise Exception.Create('TJakRandrProjector.InOrderPolygons: viewport is ON plane, don''t know what to do');
 
@@ -716,10 +719,7 @@ begin
   (* test 7 - all vertices of t2 are on opposite side of t1 (false if passes)*)
   (* same as 4 but swap t2 and t1 *)
   viewportSide := SideOfPlane(t1,
-        Point3DFromCoords(
-                t1.Nodes[0].x,
-                t1.Nodes[0].y,
-                100000.0));
+        GetViewportLocation);
   if viewportSide = plOn then
     Raise Exception.Create('TJakRandrProjector.InOrderPolygons: viewport is ON plane, don''t know what to do');
 
@@ -737,10 +737,7 @@ begin
   (* test 8 - all vertices of t1 are on same side of t2 (false if passes) *)
   (* same as 5 but swap t2 and t1 *)
   viewportSide := SideOfPlane(t2,
-        Point3DFromCoords(
-                t2.Nodes[0].x,
-                t2.Nodes[0].y,
-                100000.0));
+        GetViewportLocation);
   if viewportSide = plOn then
     Raise Exception.Create('TJakRandrProjector.InOrderPolygons: viewport is ON plane, don''t know what to do');
 
@@ -781,10 +778,7 @@ var
   viewport: TPoint3D;
   sideOfSprite: TPlanarity;
 begin
-  (* viewport x,y can be just about anywhere on-screen, but z is infinity *)
-  viewport.x := sprite.Centre.x;
-  viewport.y := sprite.Centre.y;
-  viewport.z := 100000.0; (* hopefully nothing is this big *)
+  viewport := GetViewportLocation;
 
   sideOfSprite := SideOfPlane(p, sprite.Centre);
 
