@@ -109,7 +109,7 @@
         <PackageName Value="LCL"/>
       </Item1>
     </RequiredPackages>
-    <Units Count="5">
+    <Units Count="8">
       <Unit0>
         <Filename Value="JakOmlette.lpr"/>
         <IsPartOfProject Value="True"/>
@@ -128,7 +128,7 @@
         <EditorIndex Value="0"/>
         <WindowIndex Value="0"/>
         <TopLine Value="1"/>
-        <CursorPos X="68" Y="11"/>
+        <CursorPos X="25" Y="10"/>
         <UsageCount Value="216"/>
         <Loaded Value="True"/>
         <LoadedDesigner Value="True"/>
@@ -137,10 +137,11 @@
         <Filename Value="gfxutils.pas"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="GfxUtils"/>
+        <IsVisibleTab Value="True"/>
         <EditorIndex Value="1"/>
         <WindowIndex Value="0"/>
-        <TopLine Value="1"/>
-        <CursorPos X="1" Y="1"/>
+        <TopLine Value="321"/>
+        <CursorPos X="5" Y="337"/>
         <UsageCount Value="216"/>
         <Loaded Value="True"/>
       </Unit2>
@@ -148,11 +149,10 @@
         <Filename Value="coreutils.pas"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="CoreUtils"/>
-        <IsVisibleTab Value="True"/>
-        <EditorIndex Value="2"/>
+        <EditorIndex Value="4"/>
         <WindowIndex Value="0"/>
-        <TopLine Value="308"/>
-        <CursorPos X="5" Y="324"/>
+        <TopLine Value="296"/>
+        <CursorPos X="73" Y="304"/>
         <UsageCount Value="214"/>
         <Loaded Value="True"/>
       </Unit3>
@@ -164,127 +164,152 @@
         <CursorPos X="73" Y="682"/>
         <UsageCount Value="86"/>
       </Unit4>
+      <Unit5>
+        <Filename Value="/usr/lib/lazarus/lcl/interfaces/gtk2/gtk2winapi.inc"/>
+        <EditorIndex Value="3"/>
+        <WindowIndex Value="0"/>
+        <TopLine Value="1677"/>
+        <CursorPos X="7" Y="1688"/>
+        <UsageCount Value="10"/>
+        <Loaded Value="True"/>
+      </Unit5>
+      <Unit6>
+        <Filename Value="/usr/lib/lazarus/lcl/include/canvas.inc"/>
+        <EditorIndex Value="2"/>
+        <WindowIndex Value="0"/>
+        <TopLine Value="807"/>
+        <CursorPos X="1" Y="818"/>
+        <UsageCount Value="10"/>
+        <Loaded Value="True"/>
+      </Unit6>
+      <Unit7>
+        <Filename Value="/usr/lib/lazarus/lcl/include/winapi.inc"/>
+        <WindowIndex Value="0"/>
+        <TopLine Value="715"/>
+        <CursorPos X="21" Y="725"/>
+        <UsageCount Value="10"/>
+      </Unit7>
     </Units>
     <JumpHistory Count="30" HistoryIndex="29">
       <Position1>
-        <Filename Value="gfxutils.pas"/>
-        <Caret Line="302" Column="14" TopLine="285"/>
+        <Filename Value="coreutils.pas"/>
+        <Caret Line="11" Column="1" TopLine="11"/>
       </Position1>
       <Position2>
-        <Filename Value="gfxutils.pas"/>
-        <Caret Line="309" Column="10" TopLine="292"/>
+        <Filename Value="coreutils.pas"/>
+        <Caret Line="294" Column="17" TopLine="277"/>
       </Position2>
       <Position3>
-        <Filename Value="gfxutils.pas"/>
-        <Caret Line="375" Column="82" TopLine="360"/>
+        <Filename Value="coreutils.pas"/>
+        <Caret Line="1" Column="17" TopLine="1"/>
       </Position3>
       <Position4>
-        <Filename Value="gfxutils.pas"/>
-        <Caret Line="801" Column="20" TopLine="782"/>
+        <Filename Value="coreutils.pas"/>
+        <Caret Line="294" Column="15" TopLine="277"/>
       </Position4>
       <Position5>
-        <Filename Value="gfxutils.pas"/>
-        <Caret Line="821" Column="18" TopLine="803"/>
+        <Filename Value="coreutils.pas"/>
+        <Caret Line="269" Column="72" TopLine="255"/>
       </Position5>
       <Position6>
-        <Filename Value="gfxutils.pas"/>
-        <Caret Line="842" Column="17" TopLine="824"/>
+        <Filename Value="coreutils.pas"/>
+        <Caret Line="295" Column="10" TopLine="278"/>
       </Position6>
       <Position7>
-        <Filename Value="gfxutils.pas"/>
-        <Caret Line="882" Column="3" TopLine="862"/>
+        <Filename Value="coreutils.pas"/>
+        <Caret Line="296" Column="10" TopLine="279"/>
       </Position7>
       <Position8>
-        <Filename Value="gfxutils.pas"/>
-        <Caret Line="891" Column="17" TopLine="873"/>
+        <Filename Value="coreutils.pas"/>
+        <Caret Line="297" Column="10" TopLine="280"/>
       </Position8>
       <Position9>
-        <Filename Value="gfxutils.pas"/>
-        <Caret Line="912" Column="17" TopLine="894"/>
+        <Filename Value="coreutils.pas"/>
+        <Caret Line="303" Column="10" TopLine="286"/>
       </Position9>
       <Position10>
-        <Filename Value="gfxutils.pas"/>
-        <Caret Line="792" Column="16" TopLine="785"/>
+        <Filename Value="coreutils.pas"/>
+        <Caret Line="313" Column="10" TopLine="296"/>
       </Position10>
       <Position11>
-        <Filename Value="jakrandr.pas"/>
-        <Caret Line="53" Column="25" TopLine="40"/>
+        <Filename Value="coreutils.pas"/>
+        <Caret Line="314" Column="10" TopLine="297"/>
       </Position11>
       <Position12>
         <Filename Value="coreutils.pas"/>
-        <Caret Line="305" Column="23" TopLine="292"/>
+        <Caret Line="315" Column="10" TopLine="298"/>
       </Position12>
       <Position13>
         <Filename Value="coreutils.pas"/>
-        <Caret Line="313" Column="10" TopLine="296"/>
+        <Caret Line="321" Column="10" TopLine="304"/>
       </Position13>
       <Position14>
-        <Filename Value="coreutils.pas"/>
-        <Caret Line="11" Column="1" TopLine="11"/>
+        <Filename Value="gfxutils.pas"/>
+        <Caret Line="9" Column="75" TopLine="1"/>
       </Position14>
       <Position15>
-        <Filename Value="coreutils.pas"/>
-        <Caret Line="294" Column="17" TopLine="277"/>
+        <Filename Value="gfxutils.pas"/>
+        <Caret Line="292" Column="10" TopLine="275"/>
       </Position15>
       <Position16>
         <Filename Value="coreutils.pas"/>
-        <Caret Line="1" Column="17" TopLine="1"/>
+        <Caret Line="55" Column="16" TopLine="51"/>
       </Position16>
       <Position17>
         <Filename Value="coreutils.pas"/>
-        <Caret Line="294" Column="15" TopLine="277"/>
+        <Caret Line="296" Column="4" TopLine="279"/>
       </Position17>
       <Position18>
         <Filename Value="coreutils.pas"/>
-        <Caret Line="269" Column="72" TopLine="255"/>
+        <Caret Line="110" Column="73" TopLine="101"/>
       </Position18>
       <Position19>
-        <Filename Value="coreutils.pas"/>
-        <Caret Line="295" Column="10" TopLine="278"/>
+        <Filename Value="gfxutils.pas"/>
+        <Caret Line="416" Column="1" TopLine="406"/>
       </Position19>
       <Position20>
-        <Filename Value="coreutils.pas"/>
-        <Caret Line="296" Column="10" TopLine="279"/>
+        <Filename Value="gfxutils.pas"/>
+        <Caret Line="446" Column="31" TopLine="436"/>
       </Position20>
       <Position21>
-        <Filename Value="coreutils.pas"/>
-        <Caret Line="297" Column="10" TopLine="280"/>
+        <Filename Value="gfxutils.pas"/>
+        <Caret Line="10" Column="30" TopLine="1"/>
       </Position21>
       <Position22>
-        <Filename Value="coreutils.pas"/>
-        <Caret Line="303" Column="10" TopLine="286"/>
+        <Filename Value="gfxutils.pas"/>
+        <Caret Line="33" Column="32" TopLine="16"/>
       </Position22>
       <Position23>
-        <Filename Value="coreutils.pas"/>
-        <Caret Line="313" Column="10" TopLine="296"/>
+        <Filename Value="/usr/lib/lazarus/lcl/interfaces/gtk2/gtk2winapi.inc"/>
+        <Caret Line="1688" Column="1" TopLine="1677"/>
       </Position23>
       <Position24>
-        <Filename Value="coreutils.pas"/>
-        <Caret Line="314" Column="10" TopLine="297"/>
+        <Filename Value="gfxutils.pas"/>
+        <Caret Line="508" Column="1" TopLine="491"/>
       </Position24>
       <Position25>
-        <Filename Value="coreutils.pas"/>
-        <Caret Line="315" Column="10" TopLine="298"/>
+        <Filename Value="gfxutils.pas"/>
+        <Caret Line="457" Column="1" TopLine="447"/>
       </Position25>
       <Position26>
-        <Filename Value="coreutils.pas"/>
-        <Caret Line="321" Column="10" TopLine="304"/>
+        <Filename Value="/usr/lib/lazarus/lcl/include/canvas.inc"/>
+        <Caret Line="818" Column="1" TopLine="807"/>
       </Position26>
       <Position27>
-        <Filename Value="gfxutils.pas"/>
-        <Caret Line="9" Column="75" TopLine="1"/>
+        <Filename Value="/usr/lib/lazarus/lcl/interfaces/gtk2/gtk2winapi.inc"/>
+        <Caret Line="1690" Column="31" TopLine="1677"/>
       </Position27>
       <Position28>
-        <Filename Value="gfxutils.pas"/>
-        <Caret Line="292" Column="10" TopLine="275"/>
+        <Filename Value="coreutils.pas"/>
+        <Caret Line="42" Column="37" TopLine="31"/>
       </Position28>
       <Position29>
-        <Filename Value="coreutils.pas"/>
-        <Caret Line="55" Column="16" TopLine="51"/>
+        <Filename Value="gfxutils.pas"/>
+        <Caret Line="494" Column="14" TopLine="491"/>
       </Position29>
       <Position30>
-        <Filename Value="coreutils.pas"/>
-        <Caret Line="296" Column="4" TopLine="279"/>
+        <Filename Value="gfxutils.pas"/>
+        <Caret Line="1" Column="1" TopLine="1"/>
       </Position30>
     </JumpHistory>
   </ProjectOptions>
@@ -324,15 +349,11 @@
     </Other>
   </CompilerOptions>
   <Debugging>
-    <BreakPoints Count="2">
+    <BreakPoints Count="1">
       <Item1>
         <Source Value="gfxutils.pas"/>
-        <Line Value="880"/>
+        <Line Value="882"/>
       </Item1>
-      <Item2>
-        <Source Value="gfxutils.pas"/>
-        <Line Value="416"/>
-      </Item2>
     </BreakPoints>
     <Watches Count="2">
       <Item1>

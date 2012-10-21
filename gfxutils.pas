@@ -329,10 +329,12 @@ begin
   m_canvas := canvas;
   m_bgColor := bgColor;
 
+  (*
   m_rx := 0.0;
   m_ry := 0.0;
   m_rz := 0.0;
   exit;
+  *)
 
   m_rx := -pi / 12.0;//pi / 3.0;(*pi / 2.0;*)(*pi / 12;*)
   m_ry := pi / 6.0;//pi / 4.0;(*pi / 6;*)
@@ -505,7 +507,7 @@ begin
   m_canvas.Brush.Style := bsSolid;
 
   m_canvas.Polyline(points, 0, poli.NbNodes);
-  m_canvas.Polygon(points, True, 0, poli.NbNodes);
+  m_canvas.Polygon(points, False, 0, poli.NbNodes);
 end;
 
 procedure TJakRandrProjector.DrawSphere(sphere: TSphere);
