@@ -2,6 +2,8 @@ unit CoreUtils;
 
 {$mode objfpc}{$H+}
 
+(*$UNDEF DEBUG_AILOOP*)
+
 interface
 
 uses
@@ -291,7 +293,7 @@ var
   i: integer;
   iface: IEntity3D;
 begin
-(*IFDEF DEBUG_AILOOP*)
+(*$IFDEF DEBUG_AILOOP*)
   writeln('------');
   writeln('Entities before rotation: ');
   writeln('------');
@@ -301,7 +303,7 @@ begin
     iface.Dump;
   end;
   writeln('======');
- (*ENDIF*)
+ (*$ENDIF*)
   incr(m_location.z, 2.0);
   for i := 0 to m_geometry.Count - 1 do begin
     iface := m_geometry.Items[i];
@@ -309,7 +311,7 @@ begin
     iface.Translate(Point3DFromCoords(0.0, 0.0, 2.0));
     (* N.B. there exists the DegToRad function *)
   end;
-(*IFDEF DEBUG_AILOOP*)
+(*$IFDEF DEBUG_AILOOP*)
   writeln('------');
   writeln('Entities after rotation: ');
   writeln('------');
@@ -319,7 +321,7 @@ begin
     iface.Dump;
   end;
   writeln('======');
- (*ENDIF*)
+ (*$ENDIF*)
 end;
 
 end.

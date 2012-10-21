@@ -6,7 +6,8 @@ unit GfxUtils;
 {$B-}
 
 {$DEFINE CHECK_PLANARITY}
-(*$DEFINE DEBUG_ADD_ENTITY*)
+(*  EFINE DEBUG_ADD_ENTITY*)
+(*$DEFINE AGGRESSIVE_CLIPPING*)
 
 (* utilities for creating, sorting and rendering 3d triangles, quadrangles,
    spheres and sprites to a canvas *)
@@ -232,6 +233,7 @@ procedure decr(var whom: real; value: real = 1.0);
 
 (* check if p is in front, behind of or on the plane *)
 function SideOfPlane(plane: TPolygon; p: TPoint3D): TPlanarity;
+function SideOfPlane(normal: TPoint3D; pointOnPlane, p: TPoint3D): TPlanarity;
 (* returns the normalized vector of the plane's normal *)
 function NormalForPlane(plane: TPolygon): TPoint3D;
 function DotProduct(v1, v2: TPoint3D): real;
@@ -372,8 +374,6 @@ begin
 
   distanceToLine := Distance(p, Pb);
 
-  writeln('d to viewport = ', sqrt(sqr(distanceToCamera) - sqr(distanceToLine)));
-
   DistanceToViewport := sqrt(sqr(distanceToCamera) - sqr(distanceToLine));
 end;
 
@@ -464,13 +464,41 @@ procedure TJakRandrProjector.DrawPolygon(poli: TPolygon);
 var
   points: array of TPoint;
   i: integer;
+  normal, p: TPoint3D;
+  (*$IFNDEF AGGRESSIVE_CLIPPING*)
+  thereExistsAtLeastOnePointInFrontOfClipPlane: boolean;
+  (*$ENDIF*)
 begin
+  normal := Point3DFromCoords(
+        O.x - GetViewportLocation.x,
+        O.y - GetViewportLocation.y,
+        O.z - GetViewportLocation.z);
+
   SetLength(points, poli.NbNodes);
 
+  (*$IFNDEF AGGRESSIVE_CLIPPING*)
+  thereExistsAtLeastOnePointInFrontOfClipPlane := false;
+  (*$ENDIF*)
+
   for i := 0 to poli.NbNodes - 1 do begin
-    (* TODO if poli.Nodes[i] behind clipping plane, return *)
-    points[i] := Project(GetRotatedPoint(poli.Nodes[i]));
+    (* if poli.Nodes[i] behind clipping plane, return *)
+    p := GetRotatedPoint(poli.Nodes[i]);
+    (*$IFDEF AGGRESSIVE_CLIPPING*)
+    if SideOfPlane(normal, GetViewportLocation, p) <> plFront then
+      exit;
+    (*$ELSE*)
+    if (not thereExistsAtLeastOnePointInFrontOfClipPlane)
+        and (SideOfPlane(normal, GetViewportLocation, p) = plFront) then
+      thereExistsAtLeastOnePointInFrontOfClipPlane := true;
+    (*$ENDIF*)
+
+    points[i] := Project(p);
   end;
+
+  (*$IFNDEF AGGRESSIVE_CLIPPING*)
+  if not thereExistsAtLeastOnePointInFrontOfClipPlane then
+    exit;
+  (*$ENDIF*)
 
   m_canvas.Pen.color := poli.ContourColour;
   m_canvas.Brush.color := poli.FillColour;
@@ -724,7 +752,9 @@ begin
   if min > max then
     goto test2;
 
+  (*$IFDEF DEBUG_NEWELL*)
   writeln('test1');
+  (*$ENDIF*)
   (* test passes *)
   InOrderPolygons := (Centroid(t1).z < Centroid(t2).z);
   exit;
@@ -744,7 +774,9 @@ begin
     if (t1.Nodes[i].p.x > min) and (t1.Nodes[i].p.x < max) then
       goto test3;
 
+  (*$IFDEF DEBUG_NEWELL*)
   writeln('test2');
+  (*$ENDIF*)
   InOrderPolygons := true;
   exit;
 
@@ -764,7 +796,9 @@ begin
     if (t1.Nodes[i].p.y > min) and (t1.Nodes[i].p.y < max) then
       goto test4;
 
+  (*$IFDEF DEBUG_NEWELL*)
   writeln('test3');
+  (*$ENDIF*)
   InOrderPolygons := true;
   exit;
 
@@ -775,7 +809,8 @@ begin
   viewportSide := SideOfPlane(t2,
         GetViewportLocation);
   if viewportSide = plOn then
-    Raise Exception.Create('TJakRandrProjector.InOrderPolygons: viewport is ON plane, don''t know what to do');
+    goto test5;
+    //Raise Exception.Create('TJakRandrProjector.InOrderPolygons: viewport is ON plane, don''t know what to do');
 
   for i := 0 to t1.NbNodes - 1 do begin
     side := SideOfPlane(t2, t1.Nodes[i].p);
@@ -783,7 +818,9 @@ begin
       goto test5;
   end;
 
+  (*$IFDEF DEBUG_NEWELL*)
   writeln('test4');
+  (*$ENDIF*)
   InOrderPolygons := true;
   exit;
 
@@ -793,7 +830,8 @@ begin
   viewportSide := SideOfPlane(t1,
         GetViewportLocation);
   if viewportSide = plOn then
-    Raise Exception.Create('TJakRandrProjector.InOrderPolygons: viewport is ON plane, don''t know what to do');
+    goto test6;
+    //Raise Exception.Create('TJakRandrProjector.InOrderPolygons: viewport is ON plane, don''t know what to do');
 
   for i := 0 to t2.NbNodes - 1 do begin
     side := SideOfPlane(t1, t2.Nodes[i].p);
@@ -802,7 +840,9 @@ begin
       goto test6;
   end;
 
+  (*$IFDEF DEBUG_NEWELL*)
   writeln('test5');
+  (*$ENDIF*)
   InOrderPolygons := true;
   exit;
 
@@ -827,7 +867,9 @@ begin
   SetLength(projection2, 0);
 
   if passes then begin
+    (*$IFDEF DEBUG_NEWELL*)
     writeln('test6');
+    (*$ENDIF*)
     InOrderPolygons := true;
     exit;
   end;
@@ -838,7 +880,8 @@ begin
   viewportSide := SideOfPlane(t1,
         GetViewportLocation);
   if viewportSide = plOn then
-    Raise Exception.Create('TJakRandrProjector.InOrderPolygons: viewport is ON plane, don''t know what to do');
+    goto test8;
+    //Raise Exception.Create('TJakRandrProjector.InOrderPolygons: viewport is ON plane, don''t know what to do');
 
   for i := 0 to t2.NbNodes - 1 do begin
     side := SideOfPlane(t1, t2.Nodes[i].p);
@@ -847,7 +890,9 @@ begin
     end;
   end;
 
+  (*$IFDEF DEBUG_NEWELL*)
   writeln('test7');
+  (*$ENDIF*)
   InOrderPolygons := false;
   exit;
 
@@ -857,7 +902,8 @@ begin
   viewportSide := SideOfPlane(t2,
         GetViewportLocation);
   if viewportSide = plOn then
-    Raise Exception.Create('TJakRandrProjector.InOrderPolygons: viewport is ON plane, don''t know what to do');
+    goto testOther;
+    //Raise Exception.Create('TJakRandrProjector.InOrderPolygons: viewport is ON plane, don''t know what to do');
 
   for i := 0 to t1.NbNodes - 1 do begin
     side := SideOfPlane(t2, t1.Nodes[i].p);
@@ -866,13 +912,18 @@ begin
       goto testOther;
   end;
 
-  writeln('test8');
+  (*$IFDEF DEBUG_NEWELL*)
+  writeln('test9');
+  (*$ENDIF*)
   InOrderPolygons := false;
   exit;
 
   testOther:
+  (*$IFDEF DEBUG_NEWELL*)
   writeln('test centroid');
+  (*$ENDIF*)
   InOrderPolygons := (Centroid(t1).z < Centroid(t2).z);
+  exit;
   (* else ... *)
   writeln('polygon splitting not supported, defaulting to true and hoping for the best');
   InOrderPolygons := true;
@@ -1245,6 +1296,28 @@ end;
   else if res < 0.00001 then SideOfPlane := plBehind
   else SideOfPlane := plOn;
 *)
+
+function SideOfPlane(normal: TPoint3D; pointOnPlane, p: TPoint3D): TPlanarity;
+var
+  myVector: TPoint3D;
+  prod: real;
+begin
+  NormalizeVector(normal);
+
+  myVector := Point3DFromCoords(
+        p.x - pointOnPlane.x,
+        p.y - pointOnPlane.y,
+        p.z - pointOnPlane.z);
+
+  prod := DotProduct(normal, myVector);
+
+  if prod < 0.00001 then
+    SideOfPlane := plBehind
+  else if prod > 0.00001 then
+    SideOfPlane := plFront
+  else
+    SIdeOfPlane := plOn;
+end;
 
 function SideOfPlane(plane: TPolygon; p: TPoint3D): TPlanarity;
 var
