@@ -1111,19 +1111,19 @@ var
 begin
   (* TODO also, offset points to O *)
   p1 := GetRotatedPoint(m_nodes[0]);
-  TranslateVector(p1, O);
+  //TranslateVector(p1, O);
   RotateNode(p1, O, -rx, -ry, -rz);
   p2 := GetRotatedPoint(m_nodes[1]);
-  TranslateVector(p2, O);
+  //TranslateVector(p2, O);
   RotateNode(p2, O, -rx, -ry, -rz);
   p3 := GetRotatedPoint(m_nodes[2]);
-  TranslateVector(p2, O);
+  //TranslateVector(p2, O);
   RotateNode(p3, O, -rx, -ry, -rz);
   if m_n = 3 then
     ret := TPolygon.Triangle(p1, p2, p3)
   else begin
     p4 := GetRotatedPoint(m_nodes[3]);
-    TranslateVector(p4, O);
+    //TranslateVector(p4, O);
     RotateNode(p4, O, -rx, -ry, -rz);
 
     ret := TPolygon.Quad(p1, p2, p3, p4);
@@ -1190,9 +1190,9 @@ end;
 
 procedure TranslateVector(var p: TPoint3D; dp: TPoint3D);
 begin
-  decr(p.x, dp.x);
-  decr(p.y, dp.y);
-  decr(p.z, dp.z);
+  incr(p.x, dp.x);
+  incr(p.y, dp.y);
+  incr(p.z, dp.z);
 end;
 
 function Point3DFromCoords(x, y, z: real): TPoint3D;
