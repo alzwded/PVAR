@@ -331,13 +331,6 @@ begin
   m_canvas := canvas;
   m_bgColor := bgColor;
 
-  (*
-  m_rx := 0.0;
-  m_ry := 0.0;
-  m_rz := 0.0;
-  exit;
-  *)
-
   m_rx := -pi / 12.0;//pi / 3.0;(*pi / 2.0;*)(*pi / 12;*)
   m_ry := pi / 6.0;//pi / 4.0;(*pi / 6;*)
   m_rz := 0.0;//pi / 2.0;
@@ -375,18 +368,13 @@ begin
   b := c1 / c2;
 
   Pb := Point3DFromCoords(
-        origin.x + b * v2.x, //old: origin + b * v1, then origin + b * v2
+        origin.x + b * v2.x,
         origin.y + b * v2.y,
         origin.z + b * v2.z);
 
   distanceToLine := Distance(p, Pb);
 
-  writeln('d to cm = ', distanceToCamera);
-  writeln('d to ln = ', distanceToLine);
-
   //TODO remove abs, do not draw offscreen entities
-  writeln('d to vp = ', sqrt(abs(sqr(distanceToCamera) - sqr(distanceToLine))));
-
   DistanceToViewport := sqrt(abs(sqr(distanceToCamera) - sqr(distanceToLine)));
 end;
 
@@ -406,16 +394,6 @@ begin
 
   rx := p.x;
   ry := p.y;
-
-  (*
-  b_x = (d_x * s_x) / (d_z * r_x) * r_z
-  b_y = (d_y * s_y) / (d_z * r_y) * r_z
-  b -- on screen point
-  d_Z -- distance of point being projected to camera
-  r_z -- distance of recording surface to camera
-  r_x,y = recording surface size
-  s -- display size
-  *)
 
   (* offset from origin *)
   (* TODO add actual offsetCamera procedure and properties to class *)
@@ -1366,13 +1344,6 @@ begin
   NormalizeVector(myVector);
 
   prod := DotProduct(normal, myVector);
-
-  (*
-  writeln('sideOfPlane, prod is = ', prod);
-  plane.Dump;
-  writeln('(', myVector.x, ',', myVector.y, ',', myVector.z, ')');
-  writeln('(', normal.x, ',', normal.y, ',', normal.z, ')');
-  *)
 
   if prod > 0.00001 then SideOfPlane := plFront
   else if prod < -0.00001 then SideOfPlane := plBehind
