@@ -208,6 +208,7 @@ type
 
   PJakRandrEngine = ^TJakRandrEngine;
 
+procedure TranslateVector(var p: TPoint3D; dp: TPoint3D);
 function Point3DFromCoords(x, y, z: real): TPoint3D;
 function RealPoint3DFromCoords(x, y, z: real): TRealPoint3D;
 function RealPoint3DFromPoint(p: TPoint3D): TRealPoint3D;
@@ -283,6 +284,7 @@ var
   i: integer;
   candidate: IEntity3D;
 begin
+  // problem is here
   candidate := entity.GetFacingCamera(
         m_visu.O,
         m_visu.m_rx,
@@ -353,6 +355,9 @@ begin
   viewport := GetViewportLocation;
   origin := O;
 
+  DistanceToViewport := abs(viewport.z - p.z);
+  exit;
+
   distanceToCamera := Distance(viewport, p);
 
   v1 := Point3DFromCoords(
@@ -370,13 +375,19 @@ begin
   b := c1 / c2;
 
   Pb := Point3DFromCoords(
-        origin.x + b * v1.x,
-        origin.y + b * v1.y,
-        origin.z + b * v1.z);
+        origin.x + b * v2.x, //old: origin + b * v1, then origin + b * v2
+        origin.y + b * v2.y,
+        origin.z + b * v2.z);
 
   distanceToLine := Distance(p, Pb);
 
-  DistanceToViewport := sqrt(sqr(distanceToCamera) - sqr(distanceToLine));
+  writeln('d to cm = ', distanceToCamera);
+  writeln('d to ln = ', distanceToLine);
+
+  //TODO remove abs, do not draw offscreen entities
+  writeln('d to vp = ', sqrt(abs(sqr(distanceToCamera) - sqr(distanceToLine))));
+
+  DistanceToViewport := sqrt(abs(sqr(distanceToCamera) - sqr(distanceToLine)));
 end;
 
 function TJakRandrProjector.Project(p: TPoint3D): TPoint;
@@ -572,13 +583,18 @@ var
 begin
   (* orthogonal (0, 0, 1) offset to O with rx, ry, rz rotations *)
   ret := Point3DFromCoords(0.0, 0.0, CAMERA_DISTANCE);
+  GetViewportLocation := ret;
+  (*
+  exit;
 
   incr(ret.x, O.x);
   incr(ret.y, O.y);
   incr(ret.z, O.z);
 
   RotateNode(ret, O, m_rx, m_ry, m_rz);
-  GetViewportLocation := ret;
+
+  writeln('camera location: (', ret.x, ',', ret.y, ',', ret.z, ')');
+  GetViewportLocation := ret;*)
 end;
 
 (* sort functions *)
@@ -1117,15 +1133,19 @@ var
 begin
   (* TODO also, offset points to O *)
   p1 := GetRotatedPoint(m_nodes[0]);
+  TranslateVector(p1, O);
   RotateNode(p1, O, -rx, -ry, -rz);
   p2 := GetRotatedPoint(m_nodes[1]);
+  TranslateVector(p2, O);
   RotateNode(p2, O, -rx, -ry, -rz);
   p3 := GetRotatedPoint(m_nodes[2]);
+  TranslateVector(p2, O);
   RotateNode(p3, O, -rx, -ry, -rz);
   if m_n = 3 then
     ret := TPolygon.Triangle(p1, p2, p3)
   else begin
     p4 := GetRotatedPoint(m_nodes[3]);
+    TranslateVector(p4, O);
     RotateNode(p4, O, -rx, -ry, -rz);
 
     ret := TPolygon.Quad(p1, p2, p3, p4);
@@ -1189,6 +1209,13 @@ end;
 
 
 (* globals *)
+
+procedure TranslateVector(var p: TPoint3D; dp: TPoint3D);
+begin
+  decr(p.x, dp.x);
+  decr(p.y, dp.y);
+  decr(p.z, dp.z);
+end;
 
 function Point3DFromCoords(x, y, z: real): TPoint3D;
 var

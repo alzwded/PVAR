@@ -60,6 +60,45 @@ begin
   m_geometry := TEntity3DList.Create;
 
   (*
+  // test2
+  e := TPolygon.Triangle(
+        Point3DFromCoords(
+                m_location.x + 100.0,
+                m_location.y,
+                m_location.z + 600.0),
+        Point3DFromCoords(
+                m_location.x + 200.0,
+                m_location.y,
+                m_location.z + 600.0),
+        Point3DFromCoords(
+                m_location.x + 100.0,
+                m_location.y + 100,
+                m_location.z + 600.0));
+  (e as TPolygon).ContourColour := clPurple;
+  (e as TPolygon).FillColour := clBlue;
+  m_geometry.Add(e);
+
+  e := TPolygon.Triangle(
+        Point3DFromCoords(
+                m_location.x - 100.0,
+                m_location.y,
+                m_location.z - 600.0),
+        Point3DFromCoords(
+                m_location.x - 200.0,
+                m_location.y,
+                m_location.z - 600.0),
+        Point3DFromCoords(
+                m_location.x - 100.0,
+                m_location.y + 100,
+                m_location.z - 600.0));
+  (e as TPolygon).ContourColour := clPurple;
+  (e as TPolygon).FillColour := clRed;
+  m_geometry.Add(e);
+
+  exit;
+            *)
+
+  (*
   //test
   e := TPolygon.Triangle(
         Point3DFromCoords(
@@ -294,7 +333,17 @@ procedure TTestWE.Loop;
 var
   i: integer;
   iface: IEntity3D;
+  dz: real;
 begin
+  inc(m_phase);
+  if m_phase >= 400 then begin
+    m_state := 1 - m_state;
+    m_phase := 0;
+  end;
+  if m_state = 0 then
+    dz := 3.0
+  else
+    dz := -3.0;
 (*$IFDEF DEBUG_AILOOP*)
   writeln('------');
   writeln('Entities before rotation: ');
@@ -306,11 +355,11 @@ begin
   end;
   writeln('======');
  (*$ENDIF*)
-  incr(m_location.z, 3.0);
+  incr(m_location.z, dz);
   for i := 0 to m_geometry.Count - 1 do begin
     iface := m_geometry.Items[i];
     iface.Rotate(m_location, pi / 200.0, pi / 43.0, pi / 173.0);
-    iface.Translate(Point3DFromCoords(0.0, 0.0, 3.0));
+    iface.Translate(Point3DFromCoords(0.0, 0.0, dz));
     (* N.B. there exists the DegToRad function *)
   end;
 (*$IFDEF DEBUG_AILOOP*)
