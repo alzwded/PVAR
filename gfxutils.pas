@@ -203,6 +203,8 @@ type
     procedure AddEntity(entity: IEntity3D);
   private
     m_visu: TJakRandrProjector;
+    m_buffer: TBitmap;
+    m_canvas: TCanvas;
     m_entities: TEntity3DList;
   end;
 
@@ -249,18 +251,23 @@ implementation
 
 constructor TJakRandrEngine.Create(canvas: TCanvas; bgColor: TColor);
 begin
-  m_visu := TJakRandrProjector.Create(canvas, bgColor);
   m_entities := TEntity3DList.Create;
+  m_canvas := canvas;
+  m_buffer := TBitmap.Create;
+  m_visu := TJakRandrProjector.Create(m_buffer.Canvas, bgColor);
 end;
 
 destructor TJakRandrEngine.Destroy;
 begin
   m_visu.Free;
   m_entities.Free;
+  m_buffer.Free;
 end;
 
 procedure TJakRandrEngine.BeginScene;
 begin
+  m_buffer.Width := m_canvas.Width;
+  m_buffer.Height := m_canvas.Height;
   m_entities.Clear;
   m_visu.Clear;
 end;
@@ -268,6 +275,7 @@ end;
 procedure TJakRandrEngine.AbortScene;
 begin
   m_entities.Clear;
+  m_visu.Clear;
 end;
 
 procedure TJakRandrEngine.CommitScene;
@@ -277,6 +285,7 @@ begin
   for i := 0 to m_entities.Count - 1 do begin
     m_visu.Draw(m_entities.Items[i])
   end;
+  m_canvas.Draw(0, 0, m_buffer);
 end;
 
 procedure TJakRandrEngine.AddEntity(entity: IEntity3D);

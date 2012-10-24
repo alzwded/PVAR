@@ -27,6 +27,7 @@ type
     { private declarations }
     m_disp: TJakRandrEngine;
     m_test: TTestWE;
+    m_test2: TTestWE;
   public
     { public declarations }
   end; 
@@ -44,6 +45,7 @@ procedure TJakRandr.FormCreate(Sender: TObject);
 begin
   m_disp := TJakRandrEngine.Create(DisplaySurface.Canvas, clBlack);
   m_test := TTestWE.Create(Point3DFromCoords(0.0, 0.0, 0.0), 0, 0);
+  m_test2 := TTestWE.Create(Point3DFromCoords(500.0, 0.0, 0.0), 1, 0);
 end;
 
 procedure TJakRandr.FormDeactivate(Sender: TObject);
@@ -69,6 +71,7 @@ procedure TJakRandr.FormDestroy(Sender: TObject);
 begin
   m_disp.Free;
   m_test.Free;
+  m_test2.Free;
 end;
 
 procedure TJakRandr.FormResize(Sender: TObject);
@@ -83,6 +86,7 @@ procedure TJakRandr.Timer1Timer(Sender: TObject);
 begin
   m_disp.BeginScene;
   m_test.Render(@m_disp);
+  m_test2.Render(@m_disp);
   m_disp.CommitScene;
 end;
 
