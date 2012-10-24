@@ -293,7 +293,7 @@ var
   i: integer;
   candidate: IEntity3D;
 begin
-  // problem is here
+  // FIXME problem is here
   candidate := entity.GetFacingCamera(
         m_visu.O,
         m_visu.m_rx,
