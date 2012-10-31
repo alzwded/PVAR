@@ -7,16 +7,29 @@ unit CoreUtils;
 interface
 
 uses
-  Classes, SysUtils, GfxUtils, ExtCtrls, Graphics;
+  Classes, SysUtils, GfxUtils, ExtCtrls, Graphics, fgl;
 
 type
   IWorldEntity = interface(IInterface)
-    procedure Render(engine: TJakRandrEngine);
+    procedure Render(engine: PJakRandrEngine);
     procedure Start;
     procedure Stop;
   end;
 
-  TTestWE = class(TInterfacedObject, IInterface)
+  TListOfWorldEntities = specialize TFPGInterfacedObjectList<IWorldEntity>;
+
+  TTestAxis = class(TInterfacedObject, IWorldEntity)
+    constructor Create;
+    destructor Destroy; override;
+    (* implementation of IWorldEntity *)
+    procedure Render(engine: PJakRandrEngine);
+    procedure Start;
+    procedure Stop;
+  private
+    m_geometry: TEntity3DList;
+  end;
+
+  TTestWE = class(TInterfacedObject, IWorldEntity)
     constructor Create(location: TPoint3D; state, phase: integer);
     destructor Destroy; override;
     (* implementation of IWorldEntity *)
@@ -43,6 +56,86 @@ type
   end;
 
 implementation
+
+destructor TTestAxis.Destroy;
+begin
+ m_geometry.Free;
+end;
+
+constructor TTestAxis.Create;
+var
+  e: IEntity3D;
+begin
+ m_geometry := TEntity3DList.Create;
+
+ e := TLine.Line(
+        Point3DFromCoords(0.0, 0.0, 0.0),
+        Point3DFromCoords(1000.0, 0.0, 0.0));
+ (e as TLine).ContourColour := clWhite;
+ m_geometry.Add(e);
+
+ e := TLine.Line(
+        Point3DFromCoords(0.0, 0.0, 0.0),
+        Point3DFromCoords(0.0, 1000.0, 0.0));
+ (e as TLine).ContourColour := clWhite;
+ m_geometry.Add(e);
+
+ e := TLine.Line(
+        Point3DFromCoords(0.0, 0.0, 0.0),
+        Point3DFromCoords(0.0, 0.0, 1000.0));
+ (e as TLine).ContourColour := clWhite;
+ m_geometry.Add(e);
+
+ e := TLine.Line(
+        Point3DFromCoords(0.0, 0.0, 1000.0),
+        Point3DFromCoords(0.0, 180.0, 1000.0));
+ (e as TLine).ContourColour := clAqua;
+ m_geometry.Add(e);
+
+ e := TLine.Line(
+        Point3DFromCoords(0.0, 180.0, 1000.0),
+        Point3DFromCoords(1000.0, 180.0, 1000.0));
+ (e as TLine).ContourColour := clAqua;
+ m_geometry.Add(e);
+
+ e := TLine.Line(
+        Point3DFromCoords(1000.0, 180.0, 1000.0),
+        Point3DFromCoords(1000.0, 0.0, 1000.0));
+ (e as TLine).ContourColour := clAqua;
+ m_geometry.Add(e);
+
+ e := TLine.Line(
+        Point3DFromCoords(1000.0, 0.0, 1000.0),
+        Point3DFromCoords(0.0, 0.0, 1000.0));
+ (e as TLine).ContourColour := clAqua;
+ m_geometry.Add(e);
+
+ e := TLine.Line(
+        Point3DFromCoords(1000.0, 0.0, 1000.0),
+        Point3DFromCoords(1000.0, 0.0, 0.0));
+ (e as TLine).ContourColour := clAqua;
+ m_geometry.Add(e);
+end;
+
+procedure TTestAxis.Start;
+begin
+end;
+
+procedure TTestAxis.Stop;
+begin
+end;
+
+procedure TTestAxis.Render(engine: PJakRandrEngine);
+var
+  i: integer;
+begin
+  if engine = Nil then
+    Raise Exception.Create('NULL engine parameter provided!');
+
+  for i := 0 to m_geometry.Count - 1 do begin
+    engine^.AddEntity(m_geometry[i]);
+  end;
+end;
 
 constructor TTestWE.Create(location: TPoint3D; state, phase: integer);
 var

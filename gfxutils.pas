@@ -6,7 +6,7 @@ unit GfxUtils;
 {$B-}
 
 {$DEFINE CHECK_PLANARITY}
-(*  EFINE DEBUG_ADD_ENTITY*)
+(*EFINE DEBUG_ADD_ENTITY*)
 (*$DEFINE AGGRESSIVE_CLIPPING*)
 
 (* utilities for creating, sorting and rendering 3d triangles, quadrangles,
@@ -75,7 +75,6 @@ type
   private
     m_nodes: array[0..1] of TRealPoint3D;
     m_contourColour: TColor;
-    m_fillColour: TColor;
 
     function GetNode(i: integer): TRealPoint3D;
     function GetNbNodes: integer; // because delphi doesn't do class constants
@@ -83,7 +82,6 @@ type
     property Nodes[i: integer]: TRealPoint3D read GetNode;
     property NbNodes: Integer read GetNbNodes;
     property ContourColour: TColor read m_contourColour write m_contourColour;
-    property FillColour: TColor read m_fillColour write m_fillColour;
   end;
 
   TSphere = class(TInterfacedObject, IEntity3D)
@@ -339,23 +337,32 @@ begin
   writeln('Begin sorting new entity');
   candidate.Dump;
   (*$ENDIF*)
-  for i := 0 to m_entities.Count - 1 do begin
+  //for i := 0 to m_entities.Count - 1 do begin
+  i := m_entities.Count;
+  while (i > 0)
+        and (m_visu.InOrder(candidate, m_entities.Items[i - 1]))
+  do begin
     (*$IFDEF DEBUG_ADD_ENTITY*)
     writeln('  comparing with:');
-    write('  '); m_entities.Items[i].Dump;
+    write('  '); m_entities.Items[i - 1].Dump;
     (*$ENDIF*)
-    if not m_visu.InOrder(candidate, m_entities.Items[i]) then begin
-      (*$IFDEF DEBUG_ADD_ENTITY*)
-      writeln('  inserting at ', i);
-      (*$ENDIF*)
-      m_entities.Insert(i, candidate);
-      exit;
-    end;
+    dec(i);
+  end;
+
+  (*$IFDEF DEBUG_ADD_ENTITY*)
+  writeln(i, ' ', m_entities.Count);
+  (*$ENDIF*)
+  if i = m_entities.Count then begin
+    (*$IFDEF DEBUG_ADD_ENTITY*)
+    writeln('  inserting at end');
+    (*$ENDIF*)
+    m_entities.Add(candidate);
+    exit;
   end;
   (*$IFDEF DEBUG_ADD_ENTITY*)
-  writeln('  inserting at end');
+  writeln('  inserting at ', i);
   (*$ENDIF*)
-  m_entities.Add(candidate);
+  m_entities.Insert(i, candidate);
 end;
 
 (* TJakRandrProjector *)
@@ -1067,11 +1074,18 @@ begin
         (GetRotatedPoint(l.Nodes[0]).x + GetRotatedPoint(l.Nodes[1]).x) / 2.0,
         (GetRotatedPoint(l.Nodes[0]).y + GetRotatedPoint(l.Nodes[1]).y) / 2.0,
         (GetRotatedPoint(l.Nodes[0]).z + GetRotatedPoint(l.Nodes[1]).z) / 2.0);
+
+  (*
+  writeln('a  ', cl.z, '   ', Centroid(p).z);
+  InOrderLinePolygon := cl.z < Centroid(p).z;
+  exit;
+  *)
+
   viewportSide := SideOfPlane(p, GetViewportLocation);
   if viewportSide = plOn then
     Raise Exception.Create('viewport is ON plane, don''t know what to do');
   side := SideOfPlane(p, cl);
-  if (side = plOn) or (side = viewportSide) then
+  if (side <> viewportSide) then
     InOrderLinePolygon := true
   else
     InOrderLinePolygon := false;
@@ -1114,8 +1128,7 @@ constructor TLine.Line(p1, p2: TPoint3D);
 begin
   m_nodes[0] := RealPoint3DFromPoint(p1);
   m_nodes[1] := RealPoint3DFromPoint(p2);
-  m_contourColour := clBlack;
-  m_fillColour := clWhite;
+  m_contourColour := clWhite;
 end;
 
 procedure TLine.Translate(dp: TPoint3D);
@@ -1142,12 +1155,18 @@ var
   i: integer;
   p: TPoint3D;
 begin
+  (*
   write('Line: ', 2, ' ');
   for i := 0 to 1 do begin
     p := GetRotatedPoint(m_nodes[i]);
     write('(', p.x, ',', p.y, ',', p.z, ') ');
   end;
-  writeln;
+  writeln;*)
+  p := Point3DFromCoords(
+        (GetRotatedPoint(m_nodes[0]).x + GetRotatedPoint(m_nodes[1]).x) / 2,
+        (GetRotatedPoint(m_nodes[0]).y + GetRotatedPoint(m_nodes[1]).y) / 2,
+        (GetRotatedPoint(m_nodes[0]).z + GetRotatedPoint(m_nodes[1]).z) / 2);
+  writeln('Line: ', p.x, ' ', p.y, ' ', p.z);
 end;
 
 function TLine.GetFacingCamera(O: TPoint3D; rx, ry, rz: real): IEntity3D;
@@ -1164,7 +1183,6 @@ begin
 
   ret := TLine.Line(p1, p2);
   (ret as TLine).m_contourColour := m_contourColour;
-  (ret as TLine).m_fillColour := m_fillColour;
 
   GetFacingCamera := ret;
 end;
@@ -1315,12 +1333,15 @@ var
   i: integer;
   p: TPoint3D;
 begin
+  writeln('Polygon: ', Centroid(Self).x, ' ', Centroid(Self).y, ' ', Centroid(Self).z);
+  (*
   write('Polygon: ', m_n, ' ');
   for i := 0 to m_n - 1 do begin
     p := GetRotatedPoint(m_nodes[i]);
     write('(', p.x, ',', p.y, ',', p.z, ') ');
   end;
   writeln;
+  *)
 end;
 
 function TPolygon.GetFacingCamera(O: TPoint3D; rx, ry, rz: real): IEntity3D;
