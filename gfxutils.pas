@@ -1075,20 +1075,21 @@ begin
         (GetRotatedPoint(l.Nodes[0]).y + GetRotatedPoint(l.Nodes[1]).y) / 2.0,
         (GetRotatedPoint(l.Nodes[0]).z + GetRotatedPoint(l.Nodes[1]).z) / 2.0);
 
-  (*
-  writeln('a  ', cl.z, '   ', Centroid(p).z);
+  // this one is much better
+  //writeln('a  ', cl.z, '   ', Centroid(p).z);
   InOrderLinePolygon := cl.z < Centroid(p).z;
   exit;
-  *)
 
+  (*
+  // has weird clipping bugs
   viewportSide := SideOfPlane(p, GetViewportLocation);
   if viewportSide = plOn then
     Raise Exception.Create('viewport is ON plane, don''t know what to do');
   side := SideOfPlane(p, cl);
-  if (side <> viewportSide) then
+  if (side = plOn) or (side <> viewportSide) then
     InOrderLinePolygon := true
   else
-    InOrderLinePolygon := false;
+    InOrderLinePolygon := false;*)
 end;
 
 function TJakRandrProjector.InOrderPolygonLine(p: TPolygon; l: TLine): boolean;
