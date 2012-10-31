@@ -65,6 +65,27 @@ type
     function GetFacingCamera(O: TPoint3D; rx, ry, rz: real): IEntity3D;
   end;
 
+  TLine = class(TInterfacedObject, IEntity3D)
+    constructor Line(p1, p2: TPoint3D);
+    (* implementation of IEntity3D *)
+    procedure Translate(dp: TPoint3D);
+    procedure Rotate(centre: TPoint3D; rotx, roty, rotz: real);
+    procedure Dump;
+    function GetFacingCamera(O: TPoint3D; rx, ry, rz: real): IEntity3D;
+  private
+    m_nodes: array[0..1] of TRealPoint3D;
+    m_contourColour: TColor;
+    m_fillColour: TColor;
+
+    function GetNode(i: integer): TRealPoint3D;
+    function GetNbNodes: integer; // because delphi doesn't do class constants
+  public
+    property Nodes[i: integer]: TRealPoint3D read GetNode;
+    property NbNodes: Integer read GetNbNodes;
+    property ContourColour: TColor read m_contourColour write m_contourColour;
+    property FillColour: TColor read m_fillColour write m_fillColour;
+  end;
+
   TSphere = class(TInterfacedObject, IEntity3D)
     constructor Sphere(centre: TPoint3D; radius: real);
     (* implementation of IEntity3D *)
@@ -969,6 +990,79 @@ end;
 function TJakRandrProjector.InOrderPolygonSprite(p: TPolygon; sprite: TSprite): boolean;
 begin
   InOrderPolygonSprite := not InOrderSpritePolygon(sprite, p);
+end;
+
+(* TLine *)
+
+constructor TLine.Line(p1, p2: TPoint3D);
+begin
+  m_nodes[0] := RealPoint3DFromPoint(p1);
+  m_nodes[1] := RealPoint3DFromPoint(p2);
+  m_contourColour := clBlack;
+  m_fillColour := clWhite;
+end;
+
+procedure TLine.Translate(dp: TPoint3D);
+var
+  i: integer;
+begin
+  for i := 0 to 1 do begin
+    TranslateVector(m_nodes[i].p, dp);
+    TranslateVector(m_nodes[i].rotationCentre, dp);
+  end;
+end;
+
+procedure TLine.Rotate(centre: TPoint3D; rotx, roty, rotz: real);
+var
+  i: integer;
+begin
+  for i := 0 to 1 do begin
+    ApplyRotationToPoint(m_nodes[i], RealPoint3DFromPoint(centre), rotx, roty, rotz);
+  end;
+end;
+
+procedure TLine.Dump;
+var
+  i: integer;
+  p: TPoint3D;
+begin
+  write('Line: ', 2, ' ');
+  for i := 0 to 1 do begin
+    p := GetRotatedPoint(m_nodes[i]);
+    write('(', p.x, ',', p.y, ',', p.z, ') ');
+  end;
+  writeln;
+end;
+
+function TLine.GetFacingCamera(O: TPoint3D; rx, ry, rz: real): IEntity3D;
+var
+  p1, p2: TPoint3D;
+  ret: IEntity3D;
+begin
+  p1 := GetRotatedPoint(m_nodes[0]);
+  //TranslateVector(p1, O);
+  RotateNode(p1, O, -rx, -ry, -rz);
+  p2 := GetRotatedPoint(m_nodes[1]);
+  //TranslateVector(p2, O);
+  RotateNode(p2, O, -rx, -ry, -rz);
+
+  ret := TLine.Line(p1, p2);
+  (ret as TLine).m_contourColour := m_contourColour;
+  (ret as TLine).m_fillColour := m_fillColour;
+
+  GetFacingCamera := ret;
+end;
+
+function TLine.GetNbNodes: integer;
+begin
+  GetNbNodes := 2;
+end;
+
+function TLine.GetNode(i: integer): TRealPoint3D;
+begin
+  if (i >= 2) or (i < 0) then
+    Raise Exception.Create('out of range!');
+  GetNode := m_nodes[i];
 end;
 
 (* TSphere *)
