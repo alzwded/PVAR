@@ -56,10 +56,9 @@ TODO
 * GfxUtils
     - camera origin position thingy (rotation works, though)
     - sprite, sphere rendering / scaling
-    - TLine3D entity
+    - sorting decision when viewport is on the plane of the polygon :-D
 * JakRandr
     - implement rendering on separate thread because lcl is stupid and timers are kinda executed serially and that's what I DON'T want
     - ^ although, that's what I want for state machines where timers need to be based on a global timer (like in the real world)
-    - implement good scaling for TImage because it sucks (the engine knows how to scale itself vectorially)
 * JakOmlette
     - implementat particularităţiile proiectului (adică scopul acestui proiect)

@@ -1068,8 +1068,27 @@ end;
 function TJakRandrProjector.InOrderLinePolygon(l: TLine; p: TPolygon): boolean;
 var
   cl: TPoint3D;
-  viewportSide, side: TPlanarity;
+  viewportSide, side1, side2: TPlanarity;
+  b: boolean;
+  i: integer;
 begin
+  viewportSide := SideOfPlane(p, GetViewportLocation);
+  if viewportSide = plOn then
+    Raise Exception.Create('viewport is ON plane, don''t know what to do');
+
+  side1 := SideOfPlane(p, GetRotatedPoint(l.Nodes[0]));
+  side2 := SideOfPlane(p, GetRotatedPoint(l.Nodes[1]));
+  if (side1 = plOn) then
+    if (side2 <> viewportSide) then
+      InOrderLinePolygon := true
+    else
+      InOrderLinePolygon := false
+  else if (side2 = plOn) or (side1 = side2) then
+    if (side1 <> viewportSide) then
+      InOrderLinePolygon := true
+    else
+      InOrderLinePolygon := false;
+
   cl := Point3DFromCoords(
         (GetRotatedPoint(l.Nodes[0]).x + GetRotatedPoint(l.Nodes[1]).x) / 2.0,
         (GetRotatedPoint(l.Nodes[0]).y + GetRotatedPoint(l.Nodes[1]).y) / 2.0,
