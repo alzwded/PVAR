@@ -168,6 +168,7 @@ type
     procedure DrawPolygon(poli: TPolygon);
     procedure DrawSphere(sphere: TSphere);
     procedure DrawSprite(sprite: TSprite);
+    procedure DrawLine(line: TLine);
 
     (* draw 2d entities *)
     procedure DrawPoint(p: TPoint3D; color: TColor);
@@ -209,6 +210,20 @@ type
     function InOrderSpritePolygon(sprite: TSprite; p: TPolygon): boolean;
     (* implementation for polygon-sprite *)
     function InOrderPolygonSprite(p: TPolygon; sprite: TSprite): boolean;
+    (* implementation for line-line *)
+    function InOrderLines(l1, l2: TLine): boolean;
+    (* implementation for line-Polygon *)
+    function InOrderLinePolygon(l: TLine; p: TPolygon): boolean;
+    (* implementation for Polygon-line *)
+    function InOrderPolygonLine(p: TPolygon; l: TLine): boolean;
+    (* implementation for line-sprite *)
+    function InOrderLineSprite(l: TLine; s: TSprite): boolean;
+    (* implementation for sprite-line *)
+    function InOrderSpriteLine(s: TSprite; l: TLine): boolean;
+    (* implementation for line-sphere *)
+    function InOrderLineSphere(l: TLine; s: TSphere): boolean;
+    (* implementation for sphere-line *)
+    function InOrderSphereLine(s: TSphere; l: TLine): boolean;
   end;
 
   (* TBD: see if a buffer is necessary of if Canvas suffices *)
@@ -473,11 +488,32 @@ begin
   m_canvas.Line(OSP_p1, OSP_p2);
 end;
 
+procedure TJakRandrProjector.DrawLine(line: TLine);
+var
+  p1, p2: TPoint;
+  pWidth: integer;
+begin
+  p1 := Project(GetRotatedPoint(line.Nodes[0]));
+  p2 := Project(GetRotatedPoint(line.Nodes[1]));
+
+  // store pen width
+  pWidth := m_canvas.Pen.Width;
+
+  // draw
+  m_canvas.Pen.Width := 2;
+  m_canvas.Pen.Color := line.m_contourColour;
+  m_canvas.Line(p1, p2);
+
+  // restore pen width
+  m_canvas.Pen.Width := pWidth;
+end;
+
 procedure TJakRandrProjector.Draw(entity: IEntity3D);
 begin
   if entity is TPolygon then DrawPolygon(entity as TPolygon)
   else if entity is TSphere then DrawSphere(entity as TSphere)
   else if entity is TSprite then DrawSprite(entity as TSprite)
+  else if entity is TLine then DrawLine(entity as TLine)
   ;
 end;
 
@@ -637,6 +673,27 @@ begin
   else if (e1 is TSphere)  and (e2 is TSprite)  then
     InOrder := InOrderSphereSprite
           (e1 as TSphere,       e2 as TSprite )
+  else if (e1 is TLine)    and (e2 is TLine)    then
+    InOrder := InOrderLines
+          (e1 as TLine,         e2 as TLine)
+  else if (e1 is TLine)    and (e2 is TPolygon)    then
+    InOrder := InOrderLinePolygon
+          (e1 as TLine,         e2 as TPolygon)
+  else if (e1 is TPolygon)    and (e2 is TLine)    then
+    InOrder := InOrderPolygonLine
+          (e1 as TPolygon,         e2 as TLine)
+  else if (e1 is TLine)    and (e2 is TSphere)    then
+    InOrder := InOrderLineSphere
+          (e1 as TLine,         e2 as TSphere)
+  else if (e1 is TSphere)    and (e2 is TLine)    then
+    InOrder := InOrderSphereLine
+          (e1 as TSphere,         e2 as TLine)
+  else if (e1 is TLine)    and (e2 is TSprite)    then
+    InOrder := InOrderLineSprite
+          (e1 as TLine,         e2 as TSprite)
+  else if (e1 is TSprite)    and (e2 is TLine)    then
+    InOrder := InOrderSpriteLine
+          (e1 as TSprite,         e2 as TLine)
   else Raise Exception.Create('Not implemented for given object types');
 end;
 
@@ -990,6 +1047,65 @@ end;
 function TJakRandrProjector.InOrderPolygonSprite(p: TPolygon; sprite: TSprite): boolean;
 begin
   InOrderPolygonSprite := not InOrderSpritePolygon(sprite, p);
+end;
+
+function TJakRandrProjector.InOrderLines(l1, l2: TLine): boolean;
+var
+  cz1, cz2: real;
+begin
+  cz1 := (GetRotatedPoint(l1.Nodes[0]).z + GetRotatedPoint(l1.Nodes[1]).z) / 2.0;
+  cz2 := (GetRotatedPoint(l2.Nodes[0]).z + GetRotatedPoint(l2.Nodes[1]).z) / 2.0;
+  InOrderLines := cz1 <= cz2;
+end;
+
+function TJakRandrProjector.InOrderLinePolygon(l: TLine; p: TPolygon): boolean;
+var
+  cl: TPoint3D;
+  viewportSide, side: TPlanarity;
+begin
+  cl := Point3DFromCoords(
+        (GetRotatedPoint(l.Nodes[0]).x + GetRotatedPoint(l.Nodes[1]).x) / 2.0,
+        (GetRotatedPoint(l.Nodes[0]).y + GetRotatedPoint(l.Nodes[1]).y) / 2.0,
+        (GetRotatedPoint(l.Nodes[0]).z + GetRotatedPoint(l.Nodes[1]).z) / 2.0);
+  viewportSide := SideOfPlane(p, GetViewportLocation);
+  if viewportSide = plOn then
+    Raise Exception.Create('viewport is ON plane, don''t know what to do');
+  side := SideOfPlane(p, cl);
+  if (side = plOn) or (side = viewportSide) then
+    InOrderLinePolygon := true
+  else
+    InOrderLinePolygon := false;
+end;
+
+function TJakRandrProjector.InOrderPolygonLine(p: TPolygon; l: TLine): boolean;
+begin
+  InOrderPolygonLine := not InOrderLinePolygon(l, p);
+end;
+
+function TJakRandrProjector.InOrderLineSprite(l: TLine; s: TSprite): boolean;
+var
+  clz: real;
+begin
+  clz := ((GetRotatedPoint(l.Nodes[0]).z + GetRotatedPoint(l.Nodes[1]).z)) / 2.0;
+  InOrderLineSprite := clz <= GetRotatedPoint(s.Centre).z;
+end;
+
+function TJakRandrProjector.InOrderSpriteLine(s: TSprite; l: TLine): boolean;
+begin
+  InOrderSpriteLine := not InOrderLineSprite(l, s);
+end;
+
+function TJakRandrProjector.InOrderLineSphere(l: TLine; s: TSphere): boolean;
+var
+  clz: real;
+begin
+  clz := ((GetRotatedPoint(l.Nodes[0]).z + GetRotatedPoint(l.Nodes[1]).z)) / 2.0;
+  InOrderLineSphere := clz <= GetRotatedPoint(s.Centre).z;
+end;
+
+function TJakRandrProjector.InOrderSphereLine(s: TSphere; l: TLine): boolean;
+begin
+  InOrderSphereLine := not InOrderLineSphere(l, s);
 end;
 
 (* TLine *)
