@@ -59,6 +59,8 @@ TODO
 * GfxUtils
     - test sprite, sphere rendering / scaling
     - sorting decision when viewport is on the plane of the polygon :-D
+    - fix memory leaks related to IEntity3D (I know they're there, but no profiling was done yet)
+    - use constants/singletons where aplicable
 * JakRandr
     - implement rendering on separate thread because lcl is stupid and timers are kinda executed serially and that's what I DON'T want
     - ^ although, that's what I want for state machines where timers need to be based on a global timer (like in the real world)

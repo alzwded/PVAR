@@ -144,9 +144,6 @@ type
   end;
 
   TPlanarity = ( plOn, plFront, plBehind ); (* points ON the plane are ignored *)
-  (* viewpoint is somewhere @ plane.m_p1.x, plane.m_p1.y, 100000 *)
-
-  //PCanvas = ^TCanvas; //effin delphi
 
   TEntity3DList = specialize TFPGInterfacedObjectList<IEntity3D>;
 
@@ -155,16 +152,15 @@ type
     (* constructors *)
     constructor Create(canvas: TCanvas; bgColor: TColor);
 
-    (* fine tuning parameters *)
-    procedure SetCameraRotation(rx, ry, rz: real);
-
     (* draw 3d entities *)
     procedure Draw(entity: IEntity3D);
+  private
     procedure DrawPolygon(poli: TPolygon);
     procedure DrawSphere(sphere: TSphere);
     procedure DrawSprite(sprite: TSprite);
     procedure DrawLine(line: TLine);
 
+  public
     (* draw 2d entities *)
     procedure DrawPoint(p: TPoint3D; color: TColor);
     procedure DrawLine(p1, p2: TPoint3D; color: TColor);
@@ -198,6 +194,7 @@ type
     (* entry function for determining if e1 is closer to the viewport than e2
        true means e1 is closer than e2, hence e2 should be drawn first *)
     function InOrder(e1, e2: IEntity3D): boolean;
+  private
     (* implementation for sphere-sphere *)
     function InOrderSpheres(s1, s2: TSphere): boolean;
     (* implementation for sphere-polygon *)
@@ -232,7 +229,8 @@ type
     function InOrderSphereLine(s: TSphere; l: TLine): boolean;
   end;
 
-  (* TBD: see if a buffer is necessary of if Canvas suffices *)
+  (* TBD: see if a buffer is necessary of if Canvas suffices
+     -- it is *)
   TJakRandrEngine = class(TObject)
     constructor Create(canvas: TCanvas; bgColor: TColor);
     destructor Destroy; override;
@@ -616,13 +614,6 @@ begin
   m_canvas.StretchDraw(magicRect, sprite.Graphic);
 end;
 
-procedure TJakRandrProjector.SetCameraRotation(rx, ry, rz: real);
-begin
-  m_rx := rx;
-  m_ry := ry;
-  m_rz := rz;
-end;
-
 procedure TJakRandrProjector.Clear;
 begin
   m_canvas.Brush.Color := m_bgColor;
@@ -634,20 +625,8 @@ function TJakRandrProjector.GetViewportLocation: TPoint3D;
 var
   ret: TPoint3D;
 begin
-  (* orthogonal (0, 0, 1) offset to O with rx, ry, rz rotations *)
   ret := Point3DFromCoords(0.0, 0.0, CAMERA_DISTANCE);
   GetViewportLocation := ret;
-  (*
-  exit;
-
-  incr(ret.x, O.x);
-  incr(ret.y, O.y);
-  incr(ret.z, O.z);
-
-  RotateNode(ret, O, m_rx, m_ry, m_rz);
-
-  writeln('camera location: (', ret.x, ',', ret.y, ',', ret.z, ')');
-  GetViewportLocation := ret;*)
 end;
 
 (* sort functions *)
@@ -1071,8 +1050,6 @@ function TJakRandrProjector.InOrderLinePolygon(l: TLine; p: TPolygon): boolean;
 var
   cl: TPoint3D;
   viewportSide, side1, side2: TPlanarity;
-  b: boolean;
-  i: integer;
 begin
   viewportSide := SideOfPlane(p, GetViewportLocation);
   if viewportSide = plOn then
@@ -1096,21 +1073,7 @@ begin
         (GetRotatedPoint(l.Nodes[0]).y + GetRotatedPoint(l.Nodes[1]).y) / 2.0,
         (GetRotatedPoint(l.Nodes[0]).z + GetRotatedPoint(l.Nodes[1]).z) / 2.0);
 
-  // this one is much better
-  //writeln('a  ', cl.z, '   ', Centroid(p).z);
   InOrderLinePolygon := cl.z < Centroid(p).z;
-  exit;
-
-  (*
-  // has weird clipping bugs
-  viewportSide := SideOfPlane(p, GetViewportLocation);
-  if viewportSide = plOn then
-    Raise Exception.Create('viewport is ON plane, don''t know what to do');
-  side := SideOfPlane(p, cl);
-  if (side = plOn) or (side <> viewportSide) then
-    InOrderLinePolygon := true
-  else
-    InOrderLinePolygon := false;*)
 end;
 
 function TJakRandrProjector.InOrderPolygonLine(p: TPolygon; l: TLine): boolean;
@@ -1174,7 +1137,7 @@ end;
 
 procedure TLine.Dump;
 var
-  i: integer;
+  //i: integer;
   p: TPoint3D;
 begin
   (*
@@ -1352,9 +1315,9 @@ begin
 end;
 
 procedure TPolygon.Dump;
-var
+(*var
   i: integer;
-  p: TPoint3D;
+  p: TPoint3D;*)
 begin
   writeln('Polygon: ', Centroid(Self).x, ' ', Centroid(Self).y, ' ', Centroid(Self).z);
   (*
