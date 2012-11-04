@@ -136,6 +136,26 @@ begin
         Point3DFromCoords(1000.0, 0.0, -1000.0));
  (e as TLine).ContourColour := clRed;
  m_geometry.Add(e);
+
+
+
+ e := TLine.Line(
+        Point3DFromCoords(1000.0, 180.0, -1000.0),
+        Point3DFromCoords(1000.0, 0.0, -1000.0));
+ (e as TLine).ContourColour := clRed;
+ m_geometry.Add(e);
+
+ e := TLine.Line(
+        Point3DFromCoords(1000.0, 180.0, -1000.0),
+        Point3DFromCoords(0.0, 180.0, -1000.0));
+ (e as TLine).ContourColour := clRed;
+ m_geometry.Add(e);
+
+ e := TLine.Line(
+        Point3DFromCoords(0.0, 0.0, -1000.0),
+        Point3DFromCoords(0.0, 180.0, -1000.0));
+ (e as TLine).ContourColour := clRed;
+ m_geometry.Add(e);
 end;
 
 procedure TTestAxis.Start;

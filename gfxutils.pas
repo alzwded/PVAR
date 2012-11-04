@@ -44,9 +44,6 @@ interface
 uses
   Classes, SysUtils, Graphics, fgl;
 
-const
-  CAMERA_DISTANCE = 3000.0;
-
 type
   TPoint3D = record
     x, y, z: real;
@@ -176,11 +173,22 @@ type
     procedure Clear;
 
     function GetViewportLocation: TPoint3D;
-    function O: TPoint3D;
+
+  private
+    m_O: TPoint3D;
+    m_rx, m_ry, m_rz: real;
+    m_focalDistance: real;
+
+  public
+    property O: TPoint3D read m_O write m_O;
+    property CRX: real read m_rx write m_rx;
+    property CRY: real read m_ry write m_ry;
+    property CRZ: real read m_rz write m_rz;
+    property CAMERA_DISTANCE: real read m_focalDistance write m_focalDistance;
+
   private
     m_canvas: TCanvas;
     m_bgColor: TColor;
-    m_rx, m_ry, m_rz: real;
 
     function Project(p: TPoint3D): TPoint;
     function DistanceToViewport(p: TPoint3D): real;
@@ -245,6 +253,7 @@ type
   PJakRandrEngine = ^TJakRandrEngine;
 
 procedure TranslateVector(var p: TPoint3D; dp: TPoint3D);
+procedure SubstractVector(var p: TPoint3D; dp: TPoint3D);
 function Point3DFromCoords(x, y, z: real): TPoint3D;
 function RealPoint3DFromCoords(x, y, z: real): TRealPoint3D;
 function RealPoint3DFromPoint(p: TPoint3D): TRealPoint3D;
@@ -367,15 +376,6 @@ end;
 
 (* TJakRandrProjector *)
 
-function TJakRandrProjector.O: TPoint3D;
-var
-  ret: TPoint3D;
-begin
-  (* TODO members *)
-  ret := Point3DFromCoords(0.0, 0.0, 0.0);
-  O := ret;
-end;
-
 constructor TJakRandrProjector.Create(canvas: TCanvas; bgColor: TColor);
 begin
   if canvas = Nil then
@@ -383,9 +383,11 @@ begin
   m_canvas := canvas;
   m_bgColor := bgColor;
 
-  m_rx := -pi / 12.0;//pi / 3.0;(*pi / 2.0;*)(*pi / 12;*)
-  m_ry := pi / 6.0;//pi / 4.0;(*pi / 6;*)
+  m_O := Point3DFromCoords(0, 0, 0);
+  m_rx := 0.0; //-pi / 12.0;//pi / 3.0;(*pi / 2.0;*)(*pi / 12;*)
+  m_ry := 0.0; //pi / 6.0;//pi / 4.0;(*pi / 6;*)
   m_rz := 0.0;//pi / 2.0;
+  m_focalDistance := 5000;
 end;
 
 function TJakRandrProjector.DistanceToViewport(p: TPoint3D): real;
@@ -459,8 +461,8 @@ begin
   s := CAMERA_DISTANCE / DistanceToViewport(p);
 
   (* scale down *)
-  rx := m_canvas.Width * rx / 4000.0 * s;
-  ry := m_canvas.Height * ry / 3000.0 * s;
+  rx := (rx * m_canvas.Width) / 4000.0 * s;
+  ry := (ry * m_canvas.Height) / 3000.0 * s;
   (* note on relevance of z: *)
   (* rx := p.x * screenWidth / p.z; ry := p.y * screenWidth / p.z *)
 
@@ -1195,11 +1197,11 @@ var
   ret: IEntity3D;
 begin
   p1 := GetRotatedPoint(m_nodes[0]);
-  //TranslateVector(p1, O);
-  RotateNode(p1, O, -rx, -ry, -rz);
+  SubstractVector(p1, O);
+  RotateNode(p1, Point3DFromCoords(0, 0, 0), -rx, -ry, -rz);
   p2 := GetRotatedPoint(m_nodes[1]);
-  //TranslateVector(p2, O);
-  RotateNode(p2, O, -rx, -ry, -rz);
+  SubstractVector(p2, O);
+  RotateNode(p2, Point3DFromCoords(0, 0, 0), -rx, -ry, -rz);
 
   ret := TLine.Line(p1, p2);
   (ret as TLine).m_contourColour := m_contourColour;
@@ -1259,7 +1261,8 @@ var
 begin
   (* TODO also, offset point to O *)
   c := GetRotatedPoint(m_c);
-  RotateNode(c, O, -rx, -ry, -rz);
+  SubstractVector(c, O);
+  RotateNode(c, Point3DFromCoords(0, 0, 0), -rx, -ry, -rz);
 
   ret := TSphere.Sphere(c, m_r);
   (ret as TSphere).m_contourColour := m_contourColour;
@@ -1371,20 +1374,20 @@ var
 begin
   (* TODO also, offset points to O *)
   p1 := GetRotatedPoint(m_nodes[0]);
-  //TranslateVector(p1, O);
-  RotateNode(p1, O, -rx, -ry, -rz);
+  SubstractVector(p1, O);
+  RotateNode(p1, Point3DFromCoords(0, 0, 0), -rx, -ry, -rz);
   p2 := GetRotatedPoint(m_nodes[1]);
-  //TranslateVector(p2, O);
-  RotateNode(p2, O, -rx, -ry, -rz);
+  SubstractVector(p2, O);
+  RotateNode(p2, Point3DFromCoords(0, 0, 0), -rx, -ry, -rz);
   p3 := GetRotatedPoint(m_nodes[2]);
-  //TranslateVector(p2, O);
-  RotateNode(p3, O, -rx, -ry, -rz);
+  SubstractVector(p3, O);
+  RotateNode(p3, Point3DFromCoords(0, 0, 0), -rx, -ry, -rz);
   if m_n = 3 then
     ret := TPolygon.Triangle(p1, p2, p3)
   else begin
     p4 := GetRotatedPoint(m_nodes[3]);
-    //TranslateVector(p4, O);
-    RotateNode(p4, O, -rx, -ry, -rz);
+    SubstractVector(p4, O);
+    RotateNode(p4, Point3DFromCoords(0, 0, 0), -rx, -ry, -rz);
 
     ret := TPolygon.Quad(p1, p2, p3, p4);
   end;
@@ -1440,7 +1443,8 @@ var
 begin
   (* TODO also offset point to O *)
   c := GetRotatedPoint(m_c);
-  RotateNode(c, O, -rx, -ry, -rz);
+  SubstractVector(c, O);
+  RotateNode(c, Point3DFromCoords(0, 0, 0), -rx, -ry, -rz);
 
   GetFacingCamera := TSprite.Sprite(c, m_g, m_width, m_height);
 end;
@@ -1453,6 +1457,13 @@ begin
   incr(p.x, dp.x);
   incr(p.y, dp.y);
   incr(p.z, dp.z);
+end;
+
+procedure SubstractVector(var p: TPoint3D; dp: TPoint3D);
+begin
+  decr(p.x, dp.x);
+  decr(p.y, dp.y);
+  decr(p.z, dp.z);
 end;
 
 function Point3DFromCoords(x, y, z: real): TPoint3D;
@@ -1671,12 +1682,46 @@ procedure RotateNode(var node: TPoint3D; centre: TPoint3D; rx, ry, rz: real);
 var
   translationVector: TPoint3D;
   x, y, z: real;
+  sinX, sinY, sinZ: real;
+  cosX, cosY, cosZ: real;
 begin
   (* offset node into 0,0 *)
-  translationVector.x := node.x - centre.x;
-  translationVector.y := node.y - centre.y;
-  translationVector.z := node.z - centre.z;
+  x := node.x - centre.x;
+  y := node.y - centre.y;
+  z := node.z - centre.z;
 
+  (*
+        cosYcosZ   -cosXsinZ+sinXsinYcosZ   sinXsinZ+cosXsinYcosZ       x
+        cosYsinZ    cosXcosZ+sinXsinYsinZ  -sinXcosZ+cosXsinYsinZ       y
+          -sinY            sinXcosY                cosXcosY             z
+
+    x' := x*cosYcosZ - y*cosXsinZ + y*sinXsinYcosZ + z*sinXsinZ + z*cosXsinYcosZ
+    y' := x*cosYsinZ + y*cosXcosZ + y*sinXsinYsinZ - z*sinXcosZ + z*cosXsinYsinZ
+    z' := -x*sinY    + y*sinXcosY                  + z*cosXcosY
+  *)
+
+  sinX := sin(rx);
+  sinY := sin(ry);
+  sinZ := sin(rz);
+  cosX := cos(rx);
+  cosY := cos(ry);
+  cosZ := cos(rz);
+
+  translationVector.x :=
+          x * cosY * cosZ
+        - y * (cosX * sinZ - sinX * sinY * cosZ)
+        + z * (sinX * sinZ + cosX * sinY * cosZ);
+  translationVector.y :=
+          x * (cosY * sinZ)
+        + y * (cosX * cosZ + sinX * sinY * sinZ)
+        - z * (sinX * cosZ - cosX * sinY * sinZ);
+  translationVector.z :=
+        - x * sinY
+        + y * sinX * cosY
+        + z * cosX * cosY;
+
+
+  (*     gimbal-like rotations -- do not use
   if rx <> 0.0 then begin
     y := cos(rx) * translationVector.y - sin(rx) * translationVector.z;
     z := sin(rx) * translationVector.y + cos(rx) * translationVector.z;
@@ -1697,6 +1742,7 @@ begin
     translationVector.x := x;
     translationVector.y := y;
   end;
+  *)
 
   (* offset node back to where it was *)
   node.x := centre.x + translationVector.x;
@@ -1780,6 +1826,10 @@ there exists TInterfaceList which does ref counting in list form
   there are too many floating point multiplications if we use only
   one matrix, and most of the time we'll only be rotating around a
   single axis (e.g. spin around ry)
+
+  OVERRULED
+  I'm getting weird coordinates with individual gyro rotations, so switching to
+  one rotation matrix
 
   for RX:
   | 1   0    0  |

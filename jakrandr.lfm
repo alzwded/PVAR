@@ -22,10 +22,14 @@ object JakRandr: TJakRandr
     AutoSize = True
     Center = True
     OnClick = DisplaySurfaceClick
+    OnMouseDown = DisplaySurfaceMouseDown
+    OnMouseLeave = DisplaySurfaceMouseLeave
+    OnMouseMove = DisplaySurfaceMouseMove
+    OnMouseUp = DisplaySurfaceMouseUp
     OnResize = DisplaySurfaceResize
   end
   object Timer1: TTimer
-    Interval = 17
+    Interval = 35
     OnTimer = Timer1Timer
     left = 124
     top = 94
