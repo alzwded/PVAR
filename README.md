@@ -39,7 +39,7 @@ Using the camera
 
 Camera manipulation is currently implemented dumbly. This will be fixed in a future version.
 
-Right now it rotates the geometry around 0,0,0 and panning works as if it were centred on 0,0,0 looking from 0,0,1. When computing the displacements we will have to take the current displacement and current rotation using many wonderful matrices and equations. Whoopy!
+Right now rotation seems to be okay, it's just the panning that's weird. Panning currently works by assuming the camera is oriented on (0,0,1) which causes confusion, especially when Z is rotated.
 
 Left mouse button:
 * normal:	pan X and Y coordinates
