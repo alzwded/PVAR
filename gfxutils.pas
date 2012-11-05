@@ -42,7 +42,7 @@ unit GfxUtils;
 interface
 
 uses
-  Classes, SysUtils, Graphics, fgl;
+  Classes, SysUtils, Graphics, fgl, Math;
 
 type
   TPoint3D = record
@@ -246,6 +246,8 @@ type
     m_buffer: TBitmap;
     m_canvas: TCanvas;
     m_entities: TEntity3DList;
+
+    procedure ClearEntities;
   public
     property O: TPoint3D read m_visu.m_O write m_visu.m_O;
     property RX: real read m_visu.m_rx write m_visu.m_rx;
@@ -311,18 +313,32 @@ begin
   m_buffer.Free;
 end;
 
+procedure nop; begin end;
+procedure TJakRandrEngine.ClearEntities;
+var
+  i: integer;
+begin
+  (* yeah, I really don't understand how delphi uses COM internally,
+     but sometimes I get a ref count of 2 here, which means mem leak,
+     (at least on linux) so fuck you delphi *)
+  for i := 0 to m_entities.Count - 1 do
+    while m_entities[i]._Release > 1 do nop;
+
+  m_entities.Clear;
+end;
+
 procedure TJakRandrEngine.BeginScene;
 begin
   m_buffer.Width := m_canvas.Width;
   m_buffer.Height := m_canvas.Height;
   m_buffer.Canvas.Pen.Width := 1;
-  m_entities.Clear;
+  ClearEntities;
   m_visu.Clear;
 end;
 
 procedure TJakRandrEngine.AbortScene;
 begin
-  m_entities.Clear;
+  ClearEntities;
   m_visu.Clear;
 end;
 
@@ -473,6 +489,17 @@ begin
 
   rx := rx + m_canvas.Width / 2;
   ry := ry + m_canvas.Height / 2;
+
+  (* treat infinities *)
+  if rx = Infinity then
+    rx := 2 * m_canvas.Width
+  else if rx = NegInfinity then
+    ry := -2 * m_canvas.Width;
+
+  if ry = Infinity then
+    ry := 2 * m_canvas.Height
+  else if ry = NegInfinity then
+    ry := -2 * m_canvas.Height;
 
   (* convert to int, flip Y axis for normality's sake *)
   ret.X := round(rx);

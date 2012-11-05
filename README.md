@@ -68,6 +68,10 @@ provided that you link back to this repository.
 TODO
 ====
 
+* :general
+    - replace com interfaces with regular abstract classes because delphi
+      uses them weirdly
+
 * CoreUtils
     - câteva exemple pentru a vedea ce cod rămâne comun
     - finalizat designul

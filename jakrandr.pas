@@ -179,7 +179,7 @@ begin
       m_disp.RX := m_disp.RX + 2.0 * pi;
     end;
   cmRotZ: begin
-    r := dx * 2.0 * pi / DisplaySurface.Canvas.Width;
+    r := -dx * 2.0 * pi / DisplaySurface.Canvas.Width;
     m_disp.RZ := m_disp.RZ + r;
     (* normalize angles *)
     while m_disp.RZ > 2.0 * pi do
