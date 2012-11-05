@@ -125,10 +125,11 @@
         <ComponentName Value="JakRandr"/>
         <ResourceBaseClass Value="Form"/>
         <UnitName Value="JakRandr"/>
+        <IsVisibleTab Value="True"/>
         <EditorIndex Value="0"/>
         <WindowIndex Value="0"/>
-        <TopLine Value="141"/>
-        <CursorPos X="29" Y="147"/>
+        <TopLine Value="140"/>
+        <CursorPos X="25" Y="157"/>
         <UsageCount Value="216"/>
         <Loaded Value="True"/>
         <LoadedDesigner Value="True"/>
@@ -137,11 +138,10 @@
         <Filename Value="gfxutils.pas"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="GfxUtils"/>
-        <IsVisibleTab Value="True"/>
         <EditorIndex Value="1"/>
         <WindowIndex Value="0"/>
-        <TopLine Value="164"/>
-        <CursorPos X="75" Y="173"/>
+        <TopLine Value="244"/>
+        <CursorPos X="79" Y="254"/>
         <UsageCount Value="216"/>
         <Loaded Value="True"/>
       </Unit2>
@@ -162,7 +162,7 @@
         <WindowIndex Value="0"/>
         <TopLine Value="665"/>
         <CursorPos X="73" Y="682"/>
-        <UsageCount Value="51"/>
+        <UsageCount Value="46"/>
       </Unit4>
       <Unit5>
         <Filename Value="/usr/lib/lazarus/lcl/interfaces/gtk2/gtk2winapi.inc"/>
@@ -187,129 +187,129 @@
         <WindowIndex Value="0"/>
         <TopLine Value="100"/>
         <CursorPos X="3" Y="110"/>
-        <UsageCount Value="10"/>
+        <UsageCount Value="5"/>
       </Unit7>
     </Units>
     <JumpHistory Count="30" HistoryIndex="29">
       <Position1>
-        <Filename Value="gfxutils.pas"/>
-        <Caret Line="472" Column="41" TopLine="460"/>
+        <Filename Value="jakrandr.pas"/>
+        <Caret Line="28" Column="16" TopLine="18"/>
       </Position1>
       <Position2>
-        <Filename Value="gfxutils.pas"/>
-        <Caret Line="394" Column="75" TopLine="381"/>
+        <Filename Value="jakrandr.pas"/>
+        <Caret Line="74" Column="14" TopLine="57"/>
       </Position2>
       <Position3>
         <Filename Value="jakrandr.pas"/>
-        <Caret Line="112" Column="23" TopLine="103"/>
+        <Caret Line="79" Column="16" TopLine="62"/>
       </Position3>
       <Position4>
         <Filename Value="jakrandr.pas"/>
-        <Caret Line="28" Column="11" TopLine="18"/>
+        <Caret Line="87" Column="23" TopLine="70"/>
       </Position4>
       <Position5>
-        <Filename Value="jakrandr.pas"/>
-        <Caret Line="47" Column="25" TopLine="38"/>
+        <Filename Value="gfxutils.pas"/>
+        <Caret Line="386" Column="15" TopLine="381"/>
       </Position5>
       <Position6>
-        <Filename Value="jakrandr.pas"/>
-        <Caret Line="28" Column="16" TopLine="18"/>
+        <Filename Value="gfxutils.pas"/>
+        <Caret Line="1" Column="1" TopLine="1"/>
       </Position6>
       <Position7>
         <Filename Value="jakrandr.pas"/>
-        <Caret Line="74" Column="14" TopLine="57"/>
+        <Caret Line="105" Column="20" TopLine="97"/>
       </Position7>
       <Position8>
         <Filename Value="jakrandr.pas"/>
-        <Caret Line="79" Column="16" TopLine="62"/>
+        <Caret Line="112" Column="20" TopLine="108"/>
       </Position8>
       <Position9>
         <Filename Value="jakrandr.pas"/>
-        <Caret Line="87" Column="23" TopLine="70"/>
+        <Caret Line="109" Column="36" TopLine="102"/>
       </Position9>
       <Position10>
-        <Filename Value="gfxutils.pas"/>
-        <Caret Line="386" Column="15" TopLine="381"/>
+        <Filename Value="jakrandr.pas"/>
+        <Caret Line="135" Column="28" TopLine="115"/>
       </Position10>
       <Position11>
-        <Filename Value="gfxutils.pas"/>
-        <Caret Line="1" Column="1" TopLine="1"/>
+        <Filename Value="jakrandr.pas"/>
+        <Caret Line="114" Column="3" TopLine="110"/>
       </Position11>
       <Position12>
         <Filename Value="jakrandr.pas"/>
-        <Caret Line="105" Column="20" TopLine="97"/>
+        <Caret Line="50" Column="27" TopLine="41"/>
       </Position12>
       <Position13>
         <Filename Value="jakrandr.pas"/>
-        <Caret Line="112" Column="20" TopLine="108"/>
+        <Caret Line="117" Column="42" TopLine="104"/>
       </Position13>
       <Position14>
         <Filename Value="jakrandr.pas"/>
-        <Caret Line="109" Column="36" TopLine="102"/>
+        <Caret Line="138" Column="3" TopLine="136"/>
       </Position14>
       <Position15>
-        <Filename Value="jakrandr.pas"/>
-        <Caret Line="135" Column="28" TopLine="115"/>
+        <Filename Value="gfxutils.pas"/>
+        <Caret Line="156" Column="65" TopLine="148"/>
       </Position15>
       <Position16>
-        <Filename Value="jakrandr.pas"/>
-        <Caret Line="114" Column="3" TopLine="110"/>
+        <Filename Value="gfxutils.pas"/>
+        <Caret Line="630" Column="67" TopLine="627"/>
       </Position16>
       <Position17>
-        <Filename Value="jakrandr.pas"/>
-        <Caret Line="50" Column="27" TopLine="41"/>
+        <Filename Value="gfxutils.pas"/>
+        <Caret Line="1151" Column="18" TopLine="1136"/>
       </Position17>
       <Position18>
-        <Filename Value="jakrandr.pas"/>
-        <Caret Line="117" Column="42" TopLine="104"/>
+        <Filename Value="gfxutils.pas"/>
+        <Caret Line="1055" Column="48" TopLine="1046"/>
       </Position18>
       <Position19>
-        <Filename Value="jakrandr.pas"/>
-        <Caret Line="138" Column="3" TopLine="136"/>
+        <Filename Value="gfxutils.pas"/>
+        <Caret Line="1056" Column="3" TopLine="1046"/>
       </Position19>
       <Position20>
         <Filename Value="gfxutils.pas"/>
-        <Caret Line="156" Column="65" TopLine="148"/>
+        <Caret Line="1055" Column="42" TopLine="1046"/>
       </Position20>
       <Position21>
         <Filename Value="gfxutils.pas"/>
-        <Caret Line="630" Column="67" TopLine="627"/>
+        <Caret Line="1144" Column="17" TopLine="1133"/>
       </Position21>
       <Position22>
         <Filename Value="gfxutils.pas"/>
-        <Caret Line="1151" Column="18" TopLine="1136"/>
+        <Caret Line="1323" Column="17" TopLine="1312"/>
       </Position22>
       <Position23>
         <Filename Value="gfxutils.pas"/>
-        <Caret Line="1055" Column="48" TopLine="1046"/>
+        <Caret Line="1327" Column="27" TopLine="1313"/>
       </Position23>
       <Position24>
         <Filename Value="gfxutils.pas"/>
-        <Caret Line="1056" Column="3" TopLine="1046"/>
+        <Caret Line="1142" Column="1" TopLine="1142"/>
       </Position24>
       <Position25>
         <Filename Value="gfxutils.pas"/>
-        <Caret Line="1055" Column="42" TopLine="1046"/>
+        <Caret Line="1736" Column="35" TopLine="1727"/>
       </Position25>
       <Position26>
         <Filename Value="gfxutils.pas"/>
-        <Caret Line="1144" Column="17" TopLine="1133"/>
+        <Caret Line="245" Column="59" TopLine="234"/>
       </Position26>
       <Position27>
         <Filename Value="gfxutils.pas"/>
-        <Caret Line="1323" Column="17" TopLine="1312"/>
+        <Caret Line="249" Column="64" TopLine="235"/>
       </Position27>
       <Position28>
         <Filename Value="gfxutils.pas"/>
-        <Caret Line="1327" Column="27" TopLine="1313"/>
+        <Caret Line="254" Column="79" TopLine="240"/>
       </Position28>
       <Position29>
-        <Filename Value="gfxutils.pas"/>
-        <Caret Line="1142" Column="1" TopLine="1142"/>
+        <Filename Value="jakrandr.pas"/>
+        <Caret Line="147" Column="29" TopLine="141"/>
       </Position29>
       <Position30>
-        <Filename Value="gfxutils.pas"/>
-        <Caret Line="1736" Column="35" TopLine="1727"/>
+        <Filename Value="jakrandr.pas"/>
+        <Caret Line="98" Column="16" TopLine="86"/>
       </Position30>
     </JumpHistory>
   </ProjectOptions>
@@ -352,7 +352,7 @@
     <BreakPoints Count="1">
       <Item1>
         <Source Value="gfxutils.pas"/>
-        <Line Value="503"/>
+        <Line Value="509"/>
       </Item1>
     </BreakPoints>
     <Watches Count="3">

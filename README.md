@@ -64,5 +64,6 @@ TODO
 * JakRandr
     - implement rendering on separate thread because lcl is stupid and timers are kinda executed serially and that's what I DON'T want
     - ^ although, that's what I want for state machines where timers need to be based on a global timer (like in the real world)
+    - Camera rotation based on currently rotated camera (yeah, THIS is where I need to compute rotations and displacements based on current rotation and displacement)
 * JakOmlette
     - implementat particularităţiile proiectului (adică scopul acestui proiect)

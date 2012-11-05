@@ -246,6 +246,12 @@ type
     m_buffer: TBitmap;
     m_canvas: TCanvas;
     m_entities: TEntity3DList;
+  public
+    property O: TPoint3D read m_visu.m_O write m_visu.m_O;
+    property RX: real read m_visu.m_rx write m_visu.m_rx;
+    property RY: real read m_visu.m_ry write m_visu.m_ry;
+    property RZ: real read m_visu.m_rz write m_visu.m_rz;
+    property D: real read m_visu.m_focalDistance write m_visu.m_focalDistance;
   end;
 
   PJakRandrEngine = ^TJakRandrEngine;

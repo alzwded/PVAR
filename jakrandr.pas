@@ -93,9 +93,9 @@ begin
 end;
 
 procedure TJakRandr.DisplaySurfaceClick(Sender: TObject);
-var
+(*var
   i: integer;
-  b: boolean;
+  b: boolean;*)
 begin
   (* move in Pause method
   b := not RenderClock.Enabled;
@@ -142,6 +142,7 @@ procedure TJakRandr.DisplaySurfaceMouseMove(Sender: TObject;
   Shift: TShiftState; X, Y: Integer);
 var
   dx, dy: integer;
+  r: real;
 begin
   dx := m_lastClicked.X - X;
   dy := m_lastClicked.Y - Y;
@@ -149,11 +150,45 @@ begin
   m_lastClicked.Y := y;
 
   case m_cameraManip of
-  cmPanUV: writeln('TODO');
-  cmPanH: writeln('TODO');
-  cmRot: writeln('TODO');
-  cmRotZ: writeln('TODO');
-  cmZoom: writeln('TODO');
+  cmPanUV: begin
+    r := dx * 4000.0 / DisplaySurface.Canvas.Width;
+    incr(m_disp.O.x, r);
+    r := -dy * 3000.0 / DisplaySurface.Canvas.Height; (* y is flipped *)
+    incr(m_disp.O.y, r);
+    end;
+  cmPanH: begin
+    r := dy * 3000.0 / DisplaySurface.Canvas.Height;
+    incr(m_disp.O.z, r);
+    end;
+  cmRot: begin
+    r := dx * 2.0 * pi / DisplaySurface.Canvas.Width;
+    m_disp.RY := m_disp.RY + r;
+    (* normalize angles *)
+    while m_disp.RY > 2.0 * pi do
+      m_disp.RY := m_disp.RY - 2.0 * pi;
+    while m_disp.RY < 0 do
+      m_disp.RY := m_disp.RY + 2.0 * pi;
+    r := dy * 2.0 * pi / DisplaySurface.Canvas.Height;
+    m_disp.RX := m_disp.RX + r;
+    (* normalize angles *)
+    while m_disp.RX > 2.0 * pi do
+      m_disp.RX := m_disp.RX - 2.0 * pi;
+    while m_disp.RX < 0 do
+      m_disp.RX := m_disp.RX + 2.0 * pi;
+    end;
+  cmRotZ: begin
+    r := dx * 2.0 * pi / DisplaySurface.Canvas.Width;
+    m_disp.RZ := m_disp.RZ + r;
+    (* normalize angles *)
+    while m_disp.RZ > 2.0 * pi do
+      m_disp.RZ := m_disp.RZ - 2.0 * pi;
+    while m_disp.RZ < 0 do
+      m_disp.RZ := m_disp.RZ + 2.0 * pi;
+    end;
+  cmZoom: begin
+    r := dy * 5000.0 / DisplaySurface.Canvas.Height;
+    m_disp.D := m_disp.D + r;
+    end;
   end;
 end;
 
