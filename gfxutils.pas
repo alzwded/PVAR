@@ -315,6 +315,7 @@ procedure TJakRandrEngine.BeginScene;
 begin
   m_buffer.Width := m_canvas.Width;
   m_buffer.Height := m_canvas.Height;
+  m_buffer.Canvas.Pen.Width := 1;
   m_entities.Clear;
   m_visu.Clear;
 end;
@@ -505,9 +506,33 @@ procedure TJakRandrProjector.DrawLine(line: TLine);
 var
   p1, p2: TPoint;
   pWidth: integer;
+  normal: TPoint3D;
+  (*$IFNDEF AGGRESSIVE_CLIPPING*)
+  thereExistsAtLeastOnPointInFrontOfClipPlane: boolean;
+  (*$ENDIF*)
 begin
   p1 := Project(GetRotatedPoint(line.Nodes[0]));
   p2 := Project(GetRotatedPoint(line.Nodes[1]));
+
+  normal := Point3DFromCoords(
+        O.x - GetViewportLocation.x,
+        O.y - GetViewportLocation.y,
+        O.z - GetViewportLocation.z);
+
+  (*$IFNDEF AGGRESSIVE_CLIPPING*)
+  thereExistsAtLeastOnePointInFrontOfClipPlane := false;
+  (*$ENDIF*)
+
+  if (SideOfPlane(normal, GetViewportLocation, GetRotatedPoint(line.Nodes[0]))
+                <> plFront)
+        (*$IFDEF AGGRESSIVE_CLIPPING*)
+        or
+        (*$ELSE*)
+        and
+        (*$ENDIF*)
+        (SideOfPlane(normal, GetViewportLocation, GetRotatedPoint(line.Nodes[1]))
+                <> plFront) then
+    exit;
 
   // store pen width
   pWidth := m_canvas.Pen.Width;

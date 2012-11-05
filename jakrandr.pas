@@ -159,7 +159,7 @@ begin
     incr(m_disp.O.y, r);
     end;
   cmPanH: begin
-    r := dy * 3000.0 / DisplaySurface.Canvas.Height;
+    r := -dy * 3000.0 / DisplaySurface.Canvas.Height; (* y is still flipped *)
     incr(m_disp.O.z, r);
     end;
   cmRot: begin
