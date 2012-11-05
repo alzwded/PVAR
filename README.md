@@ -34,8 +34,23 @@ Fiecare entitate rulează independent pe propriul ceas, rendarea se face la ~30h
 
 Arhitectură cât de cât MVC.
 
+Using the camera
+================
+
+Camera manipulation is currently implemented dumbly. This will be fixed in a future version.
+
+Right now it rotates the geometry around 0,0,0 and panning works as if it were centred on 0,0,0 looking from 0,0,1. When computing the displacements we will have to take the current displacement and current rotation using many wonderful matrices and equations. Whoopy!
+
+Left mouse button:
+* normal:	pan X and Y coordinates
+* +control:	pan Z coordinate
+* +shift:	change focal distance
+Right mouse button:
+* normal:	rotate X and Y axes
+* +control:	rotate Z axis
+
 Acknowledgements
-===============
+================
 
 Polygon sorting uses a twisted implementation of Newell's algorithm.
 
