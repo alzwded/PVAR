@@ -43,7 +43,7 @@ type
     procedure FormDeactivate(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
     procedure FormResize(Sender: TObject);
-    procedure Timer1Timer(Sender: TObject);
+    procedure RenderClockTimer(Sender: TObject);
   private
     { private declarations }
     m_disp: TJakRandrEngine;
@@ -91,7 +91,7 @@ end;
 
 procedure TJakRandr.FormActivate(Sender: TObject);
 begin
-  //RenderClock.Enabled := true;
+  RenderClock.Enabled := true;
 end;
 
 procedure TJakRandr.DisplaySurfaceClick(Sender: TObject);
@@ -224,7 +224,7 @@ begin
   DisplaySurface.Picture.Bitmap.Height:=DisplaySurface.Height;
 end;
 
-procedure TJakRandr.Timer1Timer(Sender: TObject);
+procedure TJakRandr.RenderClockTimer(Sender: TObject);
 var
   i: integer;
 begin

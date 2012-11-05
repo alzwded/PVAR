@@ -28,9 +28,9 @@ object JakRandr: TJakRandr
     OnMouseUp = DisplaySurfaceMouseUp
     OnResize = DisplaySurfaceResize
   end
-  object Timer1: TTimer
+  object RenderClock: TTimer
     Interval = 35
-    OnTimer = Timer1Timer
+    OnTimer = RenderClockTimer
     left = 124
     top = 94
   end
