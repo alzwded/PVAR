@@ -780,8 +780,9 @@ begin
   last_test:
   viewport := GetViewportLocation;
   viewportSide := SideOfPlane(p, viewport);
-  if viewportSide = plOn then
-    Raise Exception.Create('TJakRandrProjector.InOrderSpherePolygon: viewport is on plane, don''t know what to do');
+  if viewportSide = plOn then begin
+    InOrderSpherePolygon := s.Centre.p.z < Centroid(p).z;
+  end;
 
   side := SideOfPlane(p, s.Centre.p);
   if (side = viewportSide) then
@@ -887,7 +888,6 @@ begin
         GetViewportLocation);
   if viewportSide = plOn then
     goto test5;
-    //Raise Exception.Create('TJakRandrProjector.InOrderPolygons: viewport is ON plane, don''t know what to do');
 
   for i := 0 to t1.NbNodes - 1 do begin
     side := SideOfPlane(t2, t1.Nodes[i].p);
@@ -908,7 +908,6 @@ begin
         GetViewportLocation);
   if viewportSide = plOn then
     goto test6;
-    //Raise Exception.Create('TJakRandrProjector.InOrderPolygons: viewport is ON plane, don''t know what to do');
 
   for i := 0 to t2.NbNodes - 1 do begin
     side := SideOfPlane(t1, t2.Nodes[i].p);
@@ -958,7 +957,6 @@ begin
         GetViewportLocation);
   if viewportSide = plOn then
     goto test8;
-    //Raise Exception.Create('TJakRandrProjector.InOrderPolygons: viewport is ON plane, don''t know what to do');
 
   for i := 0 to t2.NbNodes - 1 do begin
     side := SideOfPlane(t1, t2.Nodes[i].p);
@@ -980,7 +978,6 @@ begin
         GetViewportLocation);
   if viewportSide = plOn then
     goto testOther;
-    //Raise Exception.Create('TJakRandrProjector.InOrderPolygons: viewport is ON plane, don''t know what to do');
 
   for i := 0 to t1.NbNodes - 1 do begin
     side := SideOfPlane(t2, t1.Nodes[i].p);
@@ -1056,10 +1053,12 @@ function TJakRandrProjector.InOrderLinePolygon(l: TLine; p: TPolygon): boolean;
 var
   cl: TPoint3D;
   viewportSide, side1, side2: TPlanarity;
+label
+  lastTest;
 begin
   viewportSide := SideOfPlane(p, GetViewportLocation);
   if viewportSide = plOn then
-    Raise Exception.Create('viewport is ON plane, don''t know what to do');
+    goto lastTest;
 
   side1 := SideOfPlane(p, GetRotatedPoint(l.Nodes[0]));
   side2 := SideOfPlane(p, GetRotatedPoint(l.Nodes[1]));
@@ -1074,6 +1073,7 @@ begin
     else
       InOrderLinePolygon := false;
 
+lastTest:
   cl := Point3DFromCoords(
         (GetRotatedPoint(l.Nodes[0]).x + GetRotatedPoint(l.Nodes[1]).x) / 2.0,
         (GetRotatedPoint(l.Nodes[0]).y + GetRotatedPoint(l.Nodes[1]).y) / 2.0,

@@ -80,6 +80,8 @@ begin
   m_worldEntities.Add(e);
 
   m_cameraManip := cmNone;
+
+  Self.DoubleBuffered := true;
 end;
 
 procedure TJakRandr.FormDeactivate(Sender: TObject);
