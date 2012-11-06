@@ -884,7 +884,7 @@ begin
       min := t2.Nodes[i].p.z;
 
   for i := 0 to t1.NbNodes - 1 do
-    if (t1.Nodes[i].p.z >= min) and (t1.Nodes[i].p.z <= max) then
+    if (t1.Nodes[i].p.z > min) and (t1.Nodes[i].p.z < max) then
       goto test2;
 
   (*$IFDEF DEBUG_NEWELL*)
@@ -912,7 +912,7 @@ begin
   (*$IFDEF DEBUG_NEWELL*)
   writeln('test2');
   (*$ENDIF*)
-  InOrderPolygons := true;
+  InOrderPolygons := Centroid(t1).z < Centroid(t2).z; // right, lines too, not just polys
   exit;
 
   test3:
@@ -934,7 +934,7 @@ begin
   (*$IFDEF DEBUG_NEWELL*)
   writeln('test3');
   (*$ENDIF*)
-  InOrderPolygons := true;
+  InOrderPolygons := Centroid(t1).z < Centroid(t2).z; // lines too
   exit;
 
   test4:
@@ -1615,9 +1615,9 @@ begin
 
   prod := DotProduct(normal, myVector);
 
-  if prod < 0.00001 then
+  if prod < -0.000000001 then
     SideOfPlane := plBehind
-  else if prod > 0.00001 then
+  else if prod > 0.000000001 then
     SideOfPlane := plFront
   else
     SIdeOfPlane := plOn;
@@ -1642,8 +1642,8 @@ begin
 
   prod := DotProduct(normal, myVector);
 
-  if prod > 0.00001 then SideOfPlane := plFront
-  else if prod < -0.00001 then SideOfPlane := plBehind
+  if prod < 0.00001 then SideOfPlane := plFront
+  else if prod > -0.00001 then SideOfPlane := plBehind
   else SideOfPlane := plOn;
 end;
 
