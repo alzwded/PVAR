@@ -366,6 +366,7 @@ begin
         m_visu.m_rx,
         m_visu.m_ry,
         m_visu.m_rz);
+
   (*$IFDEF DEBUG_ADD_ENTITY*)
   writeln('Begin sorting new entity');
   candidate.Dump;
@@ -874,16 +875,17 @@ label
 begin
   (* test 1 - no overlap on Z *)
   (*   get minZ of t2, get maxZ of t2 *)
-  min := t1.Nodes[0].p.z;
+  min := t2.Nodes[0].p.z;
   max := t2.Nodes[0].p.z;
   for i := 1 to t2.NbNodes - 1 do
     if t2.Nodes[i].p.z > max then
-      max := t2.Nodes[i].p.z;
-  for i := 1 to t1.NbNodes - 1 do
-    if t1.Nodes[i].p.z < min then
-      min := t1.Nodes[i].p.z;
-  if min > max then
-    goto test2;
+      max := t2.Nodes[i].p.z
+    else if t2.Nodes[i].p.z < min then
+      min := t2.Nodes[i].p.z;
+
+  for i := 0 to t1.NbNodes - 1 do
+    if (t1.Nodes[i].p.z >= min) and (t1.Nodes[i].p.z <= max) then
+      goto test2;
 
   (*$IFDEF DEBUG_NEWELL*)
   writeln('test1');
@@ -1221,11 +1223,11 @@ var
   ret: IEntity3D;
 begin
   p1 := GetRotatedPoint(m_nodes[0]);
+  RotateNode(p1, O, -rx, -ry, -rz);
   SubstractVector(p1, O);
-  RotateNode(p1, Point3DFromCoords(0, 0, 0), -rx, -ry, -rz);
   p2 := GetRotatedPoint(m_nodes[1]);
+  RotateNode(p2, O, -rx, -ry, -rz);
   SubstractVector(p2, O);
-  RotateNode(p2, Point3DFromCoords(0, 0, 0), -rx, -ry, -rz);
 
   ret := TLine.Line(p1, p2);
   (ret as TLine).m_contourColour := m_contourColour;
