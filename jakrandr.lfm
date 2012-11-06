@@ -11,6 +11,8 @@ object JakRandr: TJakRandr
   OnCreate = FormCreate
   OnDeactivate = FormDeactivate
   OnDestroy = FormDestroy
+  OnKeyPress = FormKeyPress
+  OnKeyUp = FormKeyUp
   OnResize = FormResize
   LCLVersion = '0.9.30.4'
   object DisplaySurface: TImage

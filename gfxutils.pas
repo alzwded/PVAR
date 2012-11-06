@@ -44,6 +44,9 @@ interface
 uses
   Classes, SysUtils, Graphics, fgl, Math;
 
+const
+  MIN_CAMERA_DISTANCE = 50.0;
+
 type
   TPoint3D = record
     x, y, z: real;
