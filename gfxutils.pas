@@ -495,14 +495,14 @@ begin
   ry := ry + m_canvas.Height / 2;
 
   (* treat infinities *)
-  if rx = Infinity then
+  if (rx = Infinity) or (rx > 1.0E+9)then
     rx := 2 * m_canvas.Width
-  else if rx = NegInfinity then
+  else if (rx = NegInfinity) or (rx < -1.0E+9) then
     ry := -2 * m_canvas.Width;
 
-  if ry = Infinity then
+  if (ry = Infinity) or (ry > 1.0E+9) then
     ry := 2 * m_canvas.Height
-  else if ry = NegInfinity then
+  else if (ry = NegInfinity) or (ry < -1.0E+9) then
     ry := -2 * m_canvas.Height;
 
   (* convert to int, flip Y axis for normality's sake *)
@@ -1579,8 +1579,8 @@ begin
   for i := start to start + count - 1 do begin
     if ((poli[i].y > p.y) <> (poli[j].y > p.y))
         and (p.x < ((poli[j].x - poli[i].x)
-                * (p.y - poli[i].y)
-                / (poli[j].y - poli[i].y)
+                * ((p.y - poli[i].y)
+                / (poli[j].y - poli[i].y))
                 + poli[i].x)) then
       c := not c;
     j := i;
