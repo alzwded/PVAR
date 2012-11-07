@@ -228,13 +228,9 @@ begin
 end;
 
 procedure TJakRandr.FormDestroy(Sender: TObject);
-var
-  i: integer;
 begin
   m_disp.Free;
 
-  for i := 0 to m_worldEntities.Count - 1 do
-    m_worldEntities.Items[i]._Release;
   m_worldEntities.Clear;
   m_worldEntities.Free;
 end;

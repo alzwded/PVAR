@@ -10,32 +10,32 @@ uses
   Classes, SysUtils, GfxUtils, ExtCtrls, Graphics, fgl;
 
 type
-  IWorldEntity = interface(IInterface)
-    procedure Render(engine: PJakRandrEngine);
-    procedure Start;
-    procedure Stop;
+  IWorldEntity = class(TObject)
+    procedure Render(engine: PJakRandrEngine); virtual; abstract;
+    procedure Start; virtual; abstract;
+    procedure Stop; virtual; abstract;
   end;
 
-  TListOfWorldEntities = specialize TFPGInterfacedObjectList<IWorldEntity>;
+  TListOfWorldEntities = specialize TFPGObjectList<IWorldEntity>;
 
-  TTestAxis = class(TInterfacedObject, IWorldEntity)
+  TTestAxis = class(IWorldEntity)
     constructor Create;
     destructor Destroy; override;
     (* implementation of IWorldEntity *)
-    procedure Render(engine: PJakRandrEngine);
-    procedure Start;
-    procedure Stop;
+    procedure Render(engine: PJakRandrEngine); override;
+    procedure Start; override;
+    procedure Stop; override;
   private
     m_geometry: TEntity3DList;
   end;
 
-  TTestWE = class(TInterfacedObject, IWorldEntity)
+  TTestWE = class(IWorldEntity)
     constructor Create(location: TPoint3D; state, phase: integer);
     destructor Destroy; override;
     (* implementation of IWorldEntity *)
-    procedure Render(engine: PJakRandrEngine);
-    procedure Start;
-    procedure Stop;
+    procedure Render(engine: PJakRandrEngine); override;
+    procedure Start; override;
+    procedure Stop; override;
   protected
     (* called on clock tick *)
     procedure Loop;
@@ -58,12 +58,8 @@ type
 implementation
 
 destructor TTestAxis.Destroy;
-var
-  i: integer;
 begin
-  for i := 0 to m_geometry.Count - 1 do
-    m_geometry[i].Free;
-
+ m_geometry.Clear;
  m_geometry.Free;
 end;
 
@@ -430,13 +426,10 @@ begin
 end;
 
 destructor TTestWE.Destroy;
-var
-  i: integer;
 begin
   m_clock.Free;
-  for i := 0 to m_geometry.Count - 1 do
-    m_geometry[i].Free;
   m_geometry.Clear;
+  m_geometry.Free;
 end;
 
 function TTestWE.GetInterval: Cardinal;
