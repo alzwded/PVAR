@@ -1731,9 +1731,13 @@ begin
   (* v_n = --- *)
   (*       |v| *)
   lngth := sqrt(sqr(v.x) + sqr(v.y) + sqr(v.z));
-  v.x := v.x / lngth;
-  v.y := v.y / lngth;
-  v.z := v.z / lngth;
+
+  if (lngth = 0) and (v.x = 0) then v.x := 0
+  else v.x := v.x / lngth;
+  if (lngth = 0) and (v.y = 0) then v.y := 0
+  else v.y := v.y / lngth;
+  if (lngth = 0) and (v.z = 0) then v.z := 0
+  else v.z := v.z / lngth;
 end;
 
 function Distance(p1, p2: TPoint3D): real;
