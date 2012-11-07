@@ -58,20 +58,20 @@ type
     rx, ry, rz: real;
   end;
 
-  IEntity3D = interface(IInterface)
-    procedure Translate(dp: TPoint3D);
-    procedure Rotate(centre: TPoint3D; rotx, roty, rotz: real);
-    procedure Dump;
-    function GetFacingCamera(O: TPoint3D; rx, ry, rz: real): IEntity3D;
+  IEntity3D = class(TObject)
+    procedure Translate(dp: TPoint3D); virtual; abstract;
+    procedure Rotate(centre: TPoint3D; rotx, roty, rotz: real); virtual; abstract;
+    procedure Dump; virtual; abstract;
+    function GetFacingCamera(O: TPoint3D; rx, ry, rz: real): IEntity3D; virtual; abstract;
   end;
 
-  TLine = class(TInterfacedObject, IEntity3D)
+  TLine = class(IEntity3D)
     constructor Line(p1, p2: TPoint3D);
     (* implementation of IEntity3D *)
-    procedure Translate(dp: TPoint3D);
-    procedure Rotate(centre: TPoint3D; rotx, roty, rotz: real);
-    procedure Dump;
-    function GetFacingCamera(O: TPoint3D; rx, ry, rz: real): IEntity3D;
+    procedure Translate(dp: TPoint3D); override;
+    procedure Rotate(centre: TPoint3D; rotx, roty, rotz: real); override;
+    procedure Dump; override;
+    function GetFacingCamera(O: TPoint3D; rx, ry, rz: real): IEntity3D; override;
   private
     m_nodes: array[0..1] of TRealPoint3D;
     m_contourColour: TColor;
@@ -84,13 +84,13 @@ type
     property ContourColour: TColor read m_contourColour write m_contourColour;
   end;
 
-  TSphere = class(TInterfacedObject, IEntity3D)
+  TSphere = class(IEntity3D)
     constructor Sphere(centre: TPoint3D; radius: real);
     (* implementation of IEntity3D *)
-    procedure Translate(dp: TPoint3D);
-    procedure Rotate(centre: TPoint3D; rotx, roty, rotz: real);
-    procedure Dump;
-    function GetFacingCamera(O: TPoint3D; rx, ry, rz: real): IEntity3D;
+    procedure Translate(dp: TPoint3D); override;
+    procedure Rotate(centre: TPoint3D; rotx, roty, rotz: real); override;
+    procedure Dump; override;
+    function GetFacingCamera(O: TPoint3D; rx, ry, rz: real): IEntity3D; override;
   private
     m_c: TRealPoint3D;
     m_r: real;
@@ -103,15 +103,15 @@ type
     property FillColour: TColor read m_fillColour write m_fillColour;
   end;
 
-  TPolygon = class(TInterfacedObject, IEntity3D)
+  TPolygon = class(IEntity3D)
     constructor Triangle(p1, p2, p3: TPoint3D);
     constructor Quad(p1, p2, p3, p4: TPoint3D);
     destructor Destroy; override;
     (* implementation of IEntity3D *)
-    procedure Translate(dp: TPoint3D);
-    procedure Rotate(centre: TPoint3D; rotx, roty, rotz: real);
-    procedure Dump;
-    function GetFacingCamera(O: TPoint3D; rx, ry, rz: real): IEntity3D;
+    procedure Translate(dp: TPoint3D); override;
+    procedure Rotate(centre: TPoint3D; rotx, roty, rotz: real); override;
+    procedure Dump; override;
+    function GetFacingCamera(O: TPoint3D; rx, ry, rz: real): IEntity3D; override;
   private
     m_n: Integer;
     m_nodes: array of TRealPoint3D;
@@ -126,14 +126,14 @@ type
     property FillColour: TColor read m_fillColour write m_fillColour;
   end;
 
-  TSprite = class(TInterfacedObject, IEntity3D)
+  TSprite = class(IEntity3D)
     constructor Sprite(centre: TPoint3D; graphic: TBitmap; width, height: real);
     destructor Destroy; override;
     (* implementation of IEntity3D *)
-    procedure Translate(dp: TPoint3D);
-    procedure Rotate(centre: TPoint3D; rotx, roty, rotz: real);
-    procedure Dump;
-    function GetFacingCamera(O: TPoint3D; rx, ry, rz: real): IEntity3D;
+    procedure Translate(dp: TPoint3D); override;
+    procedure Rotate(centre: TPoint3D; rotx, roty, rotz: real); override;
+    procedure Dump; override;
+    function GetFacingCamera(O: TPoint3D; rx, ry, rz: real): IEntity3D; override;
   private
     m_c: TRealPoint3D;
     m_g: TBitmap;
@@ -148,7 +148,7 @@ type
 
   TPlanarity = ( plOn, plFront, plBehind ); (* points ON the plane are ignored *)
 
-  TEntity3DList = specialize TFPGInterfacedObjectList<IEntity3D>;
+  TEntity3DList = specialize TFPGObjectList<IEntity3D>;
 
   (* projects triangles, quadrangles, spheres or sprites to canvas *)
   TJakRandrProjector = class(TObject)
@@ -312,20 +312,18 @@ end;
 destructor TJakRandrEngine.Destroy;
 begin
   m_visu.Free;
+  ClearEntities;
   m_entities.Free;
   m_buffer.Free;
 end;
 
-procedure nop; begin end;
 procedure TJakRandrEngine.ClearEntities;
 var
   i: integer;
 begin
-  (* yeah, I really don't understand how delphi uses COM internally,
-     but sometimes I get a ref count of 2 here, which means mem leak,
-     (at least on linux) so fuck you delphi *)
-  for i := 0 to m_entities.Count - 1 do
-    while m_entities[i]._Release > 1 do nop;
+  (* in theory TFGLObjectList autofrees objects *)
+  (*for i := 0 to m_entities.Count - 1 do
+    m_entities[i].Free;*)
 
   m_entities.Clear;
 end;

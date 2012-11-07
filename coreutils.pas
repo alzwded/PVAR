@@ -58,7 +58,12 @@ type
 implementation
 
 destructor TTestAxis.Destroy;
+var
+  i: integer;
 begin
+  for i := 0 to m_geometry.Count - 1 do
+    m_geometry[i].Free;
+
  m_geometry.Free;
 end;
 
@@ -294,7 +299,8 @@ begin
                 m_location.y + 200.0,
                 m_location.z));
   (e as TPolygon).ContourColour := clPurple;
-  (e as TPolygon).FillColour := RGBToColor(64, 32, 32);
+  //(e as TPolygon).FillColour := RGBToColor(64, 32, 32);
+  (e as TPolygon).FillColour := RGBToColor(128, 64, 64);
   m_geometry.Add(e);
 
   e := TPolygon.Triangle(
@@ -311,7 +317,8 @@ begin
                 m_location.y + 200.0,
                 m_location.z));
   (e as TPolygon).ContourColour := clPurple;
-  (e as TPolygon).FillColour := RGBToColor(96, 48, 48);
+  //(e as TPolygon).FillColour := RGBToColor(96, 48, 48);
+  (e as TPolygon).FillColour := RGBToColor(128, 64, 64);
   m_geometry.Add(e);
 
   e := TPolygon.Triangle(
@@ -345,7 +352,8 @@ begin
                 m_location.y,
                 m_location.z));
   (e as TPolygon).ContourColour := clPurple;
-  (e as TPolygon).FillColour := RGBToColor(196, 96, 96);
+  //(e as TPolygon).FillColour := RGBToColor(196, 96, 96);
+  (e as TPolygon).FillColour := RGBToColor(128, 64, 64);
   m_geometry.Add(e);
 
   (* bottom side *)
@@ -363,7 +371,8 @@ begin
                 m_location.y - 200.0,
                 m_location.z));
   (e as TPolygon).ContourColour := clPurple;
-  (e as TPolygon).FillColour := RGBToColor(32, 32, 64);
+  //(e as TPolygon).FillColour := RGBToColor(32, 32, 64);
+  (e as TPolygon).FillColour := RGBToColor(64, 64, 128);
   m_geometry.Add(e);
 
   e := TPolygon.Triangle(
@@ -380,7 +389,8 @@ begin
                 m_location.y - 200.0,
                 m_location.z));
   (e as TPolygon).ContourColour := clPurple;
-  (e as TPolygon).FillColour := RGBToColor(48, 48, 96);
+  //(e as TPolygon).FillColour := RGBToColor(48, 48, 96);
+  (e as TPolygon).FillColour := RGBToColor(64, 64, 128);
   m_geometry.Add(e);
 
   e := TPolygon.Triangle(
@@ -414,16 +424,19 @@ begin
                 m_location.y,
                 m_location.z));
   (e as TPolygon).ContourColour := clPurple;
-  (e as TPolygon).FillColour := RGBToColor(96, 96, 196);
+  //(e as TPolygon).FillColour := RGBToColor(96, 96, 196);
+  (e as TPolygon).FillColour := RGBToColor(64, 64, 128);
   m_geometry.Add(e);
 end;
 
 destructor TTestWE.Destroy;
+var
+  i: integer;
 begin
   m_clock.Free;
-  m_geometry.Clear; (* _in theory_ this should clean up all items since they
-                       were declared as IEntity3D *)
-  (* TODO check if above comment is true *)
+  for i := 0 to m_geometry.Count - 1 do
+    m_geometry[i].Free;
+  m_geometry.Clear;
 end;
 
 function TTestWE.GetInterval: Cardinal;
