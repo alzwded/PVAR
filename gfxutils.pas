@@ -230,6 +230,10 @@ type
     function InOrderLineSphere(l: TLine; s: TSphere): boolean;
     (* implementation for sphere-line *)
     function InOrderSphereLine(s: TSphere; l: TLine): boolean;
+
+  private
+    (* simple polygon shading *)
+    procedure Shade(var poli: TPolygon);
   end;
 
   (* TBD: see if a buffer is necessary of if Canvas suffices
@@ -623,6 +627,8 @@ begin
   if not thereExistsAtLeastOnePointInFrontOfClipPlane then
     exit;
   (*$ENDIF*)
+
+  Shade(poli);
 
   m_canvas.Pen.color := poli.ContourColour;
   m_canvas.Brush.color := poli.FillColour;
@@ -1166,6 +1172,55 @@ end;
 function TJakRandrProjector.InOrderSphereLine(s: TSphere; l: TLine): boolean;
 begin
   InOrderSphereLine := not InOrderLineSphere(l, s);
+end;
+
+procedure TJakRandrProjector.Shade(var poli: TPolygon);
+var
+  normal, cameraNormal: TPoint3D;
+  r, g, b: byte;
+  v: TPoint3D;
+  varAmount: real;
+  xAmount, yAmount: real;
+  clAmount: real;
+  max: integer;
+
+  floaty: real;
+begin
+  normal := NormalForPlane(poli);
+  cameraNormal := Point3DFromCoords(0, 0, 1);
+
+  b := poli.FillColour mod 256;
+  g := (poli.FillColour shr 8) mod 256;
+  r := (poli.FillColour shr 16) mod 256;
+
+  v := Point3DFromCoords(
+        normal.x - cameraNormal.x,
+        normal.y - cameraNormal.y,
+        normal.z - cameraNormal.z);
+
+  varAmount := sqrt(sqr(v.x) + sqr(v.y) + sqr(v.z));
+  xAmount := v.x;
+  yAmount := v.y;
+
+  varAmount := arctan2(yAmount, xAmount) / (2 * pi);
+
+    varAmount := 0.5 - varAmount;
+
+
+  clAmount := r / 256;
+  max := r * 2;
+  clAmount := clAmount * varAmount;
+  r := round(clAmount * 256);
+
+  clAmount := g / 256;
+  clAmount := clAmount * varAmount;
+  g := round(clAmount * 256);
+
+  clAmount := b / 256;
+  clAmount := clAmount * varAmount;
+  b := round(clAmount * 256);
+
+  poli.FillColour := RGBToColor(r, g, b);
 end;
 
 (* TLine *)
