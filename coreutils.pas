@@ -288,12 +288,12 @@ begin
                 m_location.z),
         Point3DFromCoords(
                 m_location.x,
-                m_location.y,
-                m_location.z - 200.0),
+                m_location.y + 200.0,
+                m_location.z),
         Point3DFromCoords(
                 m_location.x,
-                m_location.y + 200.0,
-                m_location.z));
+                m_location.y,
+                m_location.z - 200.0));
   (e as TPolygon).ContourColour := clPurple;
   //(e as TPolygon).FillColour := RGBToColor(64, 32, 32);
   (e as TPolygon).FillColour := RGBToColor(128, 64, 64);
@@ -301,13 +301,13 @@ begin
 
   e := TPolygon.Triangle(
         Point3DFromCoords(
-                m_location.x,
-                m_location.y,
-                m_location.z - 200.0),
-        Point3DFromCoords(
                 m_location.x + 200.0,
                 m_location.y,
                 m_location.z),
+        Point3DFromCoords(
+                m_location.x,
+                m_location.y,
+                m_location.z - 200.0),
         Point3DFromCoords(
                 m_location.x,
                 m_location.y + 200.0,
@@ -368,7 +368,7 @@ begin
                 m_location.z));
   (e as TPolygon).ContourColour := clPurple;
   //(e as TPolygon).FillColour := RGBToColor(32, 32, 64);
-  (e as TPolygon).FillColour := RGBToColor(64, 64, 128);
+  (e as TPolygon).FillColour := RGBToColor(128, 64, 64);
   m_geometry.Add(e);
 
   e := TPolygon.Triangle(
@@ -386,42 +386,43 @@ begin
                 m_location.z));
   (e as TPolygon).ContourColour := clPurple;
   //(e as TPolygon).FillColour := RGBToColor(48, 48, 96);
-  (e as TPolygon).FillColour := RGBToColor(64, 64, 128);
+  (e as TPolygon).FillColour := RGBToColor(128, 64, 64);
   m_geometry.Add(e);
 
   e := TPolygon.Triangle(
+        Point3DFromCoords(
+                m_location.x,
+                m_location.y - 200.0,
+                m_location.z),
         Point3DFromCoords(
                 m_location.x + 200.0,
                 m_location.y,
                 m_location.z),
         Point3DFromCoords(
                 m_location.x,
-                m_location.y - 200.0,
-                m_location.z),
-        Point3DFromCoords(
-                m_location.x,
                 m_location.y,
                 m_location.z + 200.0));
   (e as TPolygon).ContourColour := clPurple;
-  (e as TPolygon).FillColour := RGBToColor(64, 64, 128);
+  //(e as TPolygon).FillColour := RGBToColor(64, 64, 128);
+  (e as TPolygon).FillColour := RGBToColor(128, 64, 64);
   m_geometry.Add(e);
 
   e := TPolygon.Triangle(
         Point3DFromCoords(
                 m_location.x,
-                m_location.y,
-                m_location.z + 200.0),
-        Point3DFromCoords(
-                m_location.x,
                 m_location.y - 200.0,
                 m_location.z),
+        Point3DFromCoords(
+                m_location.x,
+                m_location.y,
+                m_location.z + 200.0),
         Point3DFromCoords(
                 m_location.x - 200.0,
                 m_location.y,
                 m_location.z));
   (e as TPolygon).ContourColour := clPurple;
   //(e as TPolygon).FillColour := RGBToColor(96, 96, 196);
-  (e as TPolygon).FillColour := RGBToColor(64, 64, 128);
+  (e as TPolygon).FillColour := RGBToColor(128, 64, 64);
   m_geometry.Add(e);
 end;
 

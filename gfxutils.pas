@@ -322,8 +322,6 @@ begin
 end;
 
 procedure TJakRandrEngine.ClearEntities;
-var
-  i: integer;
 begin
   (* in theory TFGLObjectList autofrees objects *)
   (*for i := 0 to m_entities.Count - 1 do
@@ -1178,37 +1176,23 @@ procedure TJakRandrProjector.Shade(var poli: TPolygon);
 var
   normal, cameraNormal: TPoint3D;
   r, g, b: byte;
-  v: TPoint3D;
   varAmount: real;
-  xAmount, yAmount: real;
   clAmount: real;
-  max: integer;
-
-  floaty: real;
 begin
   normal := NormalForPlane(poli);
-  cameraNormal := Point3DFromCoords(0, 0, 1);
+  cameraNormal := Point3DFromCoords(1, 1, 1);
+  NormalizeVector(cameraNormal);
 
   b := poli.FillColour mod 256;
   g := (poli.FillColour shr 8) mod 256;
   r := (poli.FillColour shr 16) mod 256;
 
-  v := Point3DFromCoords(
-        normal.x - cameraNormal.x,
-        normal.y - cameraNormal.y,
-        normal.z - cameraNormal.z);
-
-  varAmount := sqrt(sqr(v.x) + sqr(v.y) + sqr(v.z));
-  xAmount := v.x;
-  yAmount := v.y;
-
-  varAmount := arctan2(yAmount, xAmount) / (2 * pi);
-
-    varAmount := 0.5 - varAmount;
-
+  varAmount := DotProduct(normal, cameraNormal);
+  if varAmount < 0 then varAmount := 0
+  else if varAmount > 1 then varAmount := 1;
+  varAmount := 0.25 + 3 * varAmount / 4;
 
   clAmount := r / 256;
-  max := r * 2;
   clAmount := clAmount * varAmount;
   r := round(clAmount * 256);
 
