@@ -1003,7 +1003,7 @@ begin
     (*$IFDEF DEBUG_NEWELL*)
     writeln('test6');
     (*$ENDIF*)
-    InOrderPolygons := true;
+    InOrderPolygons := Centroid(t1).z < Centroid(t2).z;
     exit;
   end;
 
