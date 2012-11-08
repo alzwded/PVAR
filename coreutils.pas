@@ -424,6 +424,90 @@ begin
   //(e as TPolygon).FillColour := RGBToColor(96, 96, 196);
   (e as TPolygon).FillColour := RGBToColor(128, 64, 64);
   m_geometry.Add(e);
+
+  // flaps
+  e := TPolygon.Quad(
+        Point3DFromCoords(
+                m_location.x - 200.0,
+                m_location.y + 200.0,
+                m_location.z),
+        Point3DFromCoords(
+                m_location.x + 200.0,
+                m_location.y + 200.0,
+                m_location.z),
+        Point3DFromCoords(
+                m_location.x + 200.0,
+                m_location.y + 400.0,
+                m_location.z),
+        Point3DFromCoords(
+                m_location.x - 200.0,
+                m_location.y + 400.0,
+                m_location.z));
+  (e as TPolygon).ContourColour := clPurple;
+  (e as TPolygon).FillColour := RGBToColor(96, 96, 200);
+  m_geometry.Add(e);
+  e := TPolygon.Quad(
+        Point3DFromCoords(
+                m_location.x - 200.0,
+                m_location.y + 200.0,
+                m_location.z),
+        Point3DFromCoords(
+                m_location.x - 200.0,
+                m_location.y + 400.0,
+                m_location.z),
+        Point3DFromCoords(
+                m_location.x + 200.0,
+                m_location.y + 400.0,
+                m_location.z),
+        Point3DFromCoords(
+                m_location.x + 200.0,
+                m_location.y + 200.0,
+                m_location.z));
+  (e as TPolygon).ContourColour := clPurple;
+  (e as TPolygon).FillColour := RGBToColor(96, 96, 200);
+  m_geometry.Add(e);
+
+  e := TPolygon.Quad(
+        Point3DFromCoords(
+                m_location.x - 200.0,
+                m_location.y - 200.0,
+                m_location.z),
+        Point3DFromCoords(
+                m_location.x + 200.0,
+                m_location.y - 200.0,
+                m_location.z),
+        Point3DFromCoords(
+                m_location.x + 200.0,
+                m_location.y - 400.0,
+                m_location.z),
+        Point3DFromCoords(
+                m_location.x - 200.0,
+                m_location.y - 400.0,
+                m_location.z));
+  (e as TPolygon).ContourColour := clPurple;
+  (e as TPolygon).FillColour := RGBToColor(96, 96, 200);
+  m_geometry.Add(e);
+  e := TPolygon.Quad(
+        Point3DFromCoords(
+                m_location.x - 200.0,
+                m_location.y - 200.0,
+                m_location.z),
+        Point3DFromCoords(
+                m_location.x - 200.0,
+                m_location.y - 400.0,
+                m_location.z),
+        Point3DFromCoords(
+                m_location.x + 200.0,
+                m_location.y - 400.0,
+                m_location.z),
+        Point3DFromCoords(
+                m_location.x + 200.0,
+                m_location.y - 200.0,
+                m_location.z));
+  (e as TPolygon).ContourColour := clPurple;
+  (e as TPolygon).FillColour := RGBToColor(96, 96, 200);
+  m_geometry.Add(e);
+
 end;
 
 destructor TTestWE.Destroy;

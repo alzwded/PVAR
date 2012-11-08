@@ -45,7 +45,13 @@ uses
   Classes, SysUtils, Graphics, fgl, Math;
 
 const
-  MIN_CAMERA_DISTANCE = 50.0;
+  MIN_CAMERA_DISTANCE = 100.0;
+  MAX_CAMERA_DISTANCE = 60000.0;
+
+  (* control lighting
+     sum of these should be <= 1 *)
+  AMBIENT_PERCENTAGE = 0.2;
+  LIGHT_PERCENTAGE = 0.8;
 
 type
   TPoint3D = record
@@ -366,6 +372,11 @@ begin
         m_visu.m_rx,
         m_visu.m_ry,
         m_visu.m_rz);
+
+  if (candidate is TPolygon) and
+          (SideOfPlane(candidate as TPolygon, m_visu.GetViewportLocation)
+                  = plBehind) then
+    exit;
 
   (*$IFDEF DEBUG_ADD_ENTITY*)
   writeln('Begin sorting new entity');
@@ -1190,7 +1201,9 @@ begin
   varAmount := DotProduct(normal, cameraNormal);
   if varAmount < 0 then varAmount := 0
   else if varAmount > 1 then varAmount := 1;
-  varAmount := 0.25 + 3 * varAmount / 4;
+
+  (* decay by square root of angle *)
+  varAmount := sqrt(AMBIENT_PERCENTAGE + LIGHT_PERCENTAGE * varAmount);
 
   clAmount := r / 256;
   clAmount := clAmount * varAmount;
@@ -1679,8 +1692,8 @@ begin
 
   prod := DotProduct(normal, myVector);
 
-  if prod < 0.00001 then SideOfPlane := plFront
-  else if prod > -0.00001 then SideOfPlane := plBehind
+  if prod < -0.000000001 then SideOfPlane := plBehind
+  else if prod > 0.000000001 then SideOfPlane := plFront
   else SideOfPlane := plOn;
 end;
 

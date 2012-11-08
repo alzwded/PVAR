@@ -32,6 +32,7 @@ type
     procedure DisplaySurfaceClick(Sender: TObject);
     procedure DisplaySurfaceMouseDown(Sender: TObject; Button: TMouseButton;
       Shift: TShiftState; X, Y: Integer);
+    procedure DisplaySurfaceMouseEnter(Sender: TObject);
     procedure DisplaySurfaceMouseLeave(Sender: TObject);
     procedure DisplaySurfaceMouseMove(Sender: TObject; Shift: TShiftState; X,
       Y: Integer);
@@ -129,6 +130,11 @@ begin
   end;
 end;
 
+procedure TJakRandr.DisplaySurfaceMouseEnter(Sender: TObject);
+begin
+  m_cameraManip := cmNone;
+end;
+
 procedure TJakRandr.DisplaySurfaceMouseLeave(Sender: TObject);
 begin
 
@@ -212,7 +218,9 @@ begin
     r := -dy * 5000.0 / DisplaySurface.Canvas.Height;
     m_disp.D := m_disp.D + r;
     if m_disp.D < MIN_CAMERA_DISTANCE then
-      m_disp.D := MIN_CAMERA_DISTANCE;
+      m_disp.D := MIN_CAMERA_DISTANCE
+    else if m_disp.D > MAX_CAMERA_DISTANCE then
+      m_disp.D := MAX_CAMERA_DISTANCE;
     end;
   end;
 end;
