@@ -375,8 +375,10 @@ begin
 
   if (candidate is TPolygon) and
           (SideOfPlane(candidate as TPolygon, m_visu.GetViewportLocation)
-                  = plBehind) then
+                  = plBehind) then begin
+    candidate.Free;
     exit;
+  end;
 
   (*$IFDEF DEBUG_ADD_ENTITY*)
   writeln('Begin sorting new entity');
