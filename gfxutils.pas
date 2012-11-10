@@ -645,7 +645,8 @@ begin
   m_canvas.Brush.color := poli.FillColour;
   m_canvas.Brush.Style := bsSolid;
 
-  m_canvas.Polyline(points, 0, poli.NbNodes);
+  if poli.ContourColour <> clNone then
+    m_canvas.Polyline(points, 0, poli.NbNodes);
   m_canvas.Polygon(points, False, 0, poli.NbNodes);
 end;
 
