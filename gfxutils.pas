@@ -623,8 +623,10 @@ begin
     (* if poli.Nodes[i] behind clipping plane, return *)
     p := GetRotatedPoint(poli.Nodes[i]);
     (*$IFDEF AGGRESSIVE_CLIPPING*)
-    if SideOfPlane(normal, GetViewportLocation, p) <> plFront then
+    if SideOfPlane(normal, GetViewportLocation, p) <> plFront then begin
+      SetLength(points, 0);
       exit;
+    end;
     (*$ELSE*)
     if (not thereExistsAtLeastOnePointInFrontOfClipPlane)
         and (SideOfPlane(normal, GetViewportLocation, p) = plFront) then
@@ -648,6 +650,8 @@ begin
   if poli.ContourColour <> clNone then
     m_canvas.Polyline(points, 0, poli.NbNodes);
   m_canvas.Polygon(points, False, 0, poli.NbNodes);
+
+  SetLength(points, 0);
 end;
 
 procedure TJakRandrProjector.DrawSphere(sphere: TSphere);
