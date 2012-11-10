@@ -1,0 +1,23 @@
+::geometry
+q rf gf bf b rc gc bc
+x0 y0 z0 x1 y1 z1 x2 y2 z2 x3 y3 z3
+rx ry rz
+
+t rf gf bf b rc gc bc
+x0 y0 z0 x1 y1 z1 x2 y2 z2
+rz ry rz
+
+l rc gc bc
+x0 y0 z0 x1 y1 z1
+rx ry rz
+
+qs rf gf bf b rc gc bc
+
+qr x0 y0 z0 x1 y1 z1 x2 y2 z2 x3 y3 z3
+
+qR rx ry rz
+
+
+ts rf gf bf b rc gc bc
+tr x0 y0 z0 x1 y1 z1 x2 y2 z2
+tR rx ry rz
