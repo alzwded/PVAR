@@ -15,11 +15,11 @@
     <VersionInfo>
       <StringTable ProductVersion=""/>
     </VersionInfo>
-    <BuildModes Count="3" Active="linux-i686-debug">
+    <BuildModes Count="4" Active="win32-debug">
       <Item1 Name="linux-i686-debug" Default="True"/>
-      <Item2 Name="win32">
+      <Item2 Name="win32-release">
         <CompilerOptions>
-          <Version Value="9"/>
+          <Version Value="11"/>
           <Target>
             <Filename Value="JakOmlette-win32"/>
           </Target>
@@ -37,6 +37,7 @@
           </CodeGeneration>
           <Linking>
             <Debugging>
+              <GenerateDebugInfo Value="False"/>
               <UseLineInfoUnit Value="False"/>
               <StripSymbols Value="True"/>
               <UseExternalDbgSyms Value="True"/>
@@ -57,7 +58,7 @@
       </Item2>
       <Item3 Name="linux-i686-release">
         <CompilerOptions>
-          <Version Value="9"/>
+          <Version Value="11"/>
           <Target>
             <Filename Value="JakOmlette-i686"/>
           </Target>
@@ -75,6 +76,7 @@
           </CodeGeneration>
           <Linking>
             <Debugging>
+              <GenerateDebugInfo Value="False"/>
               <UseLineInfoUnit Value="False"/>
               <StripSymbols Value="True"/>
               <UseExternalDbgSyms Value="True"/>
@@ -93,6 +95,54 @@
           </Other>
         </CompilerOptions>
       </Item3>
+      <Item4 Name="win32-debug">
+        <CompilerOptions>
+          <Version Value="11"/>
+          <Target>
+            <Filename Value="JakOmlette-win32"/>
+          </Target>
+          <SearchPaths>
+            <IncludeFiles Value="$(ProjOutDir)"/>
+            <UnitOutputDirectory Value="lib/$(TargetCPU)-$(TargetOS)"/>
+          </SearchPaths>
+          <CodeGeneration>
+            <Checks>
+              <IOChecks Value="True"/>
+              <RangeChecks Value="True"/>
+              <OverflowChecks Value="True"/>
+              <StackChecks Value="True"/>
+            </Checks>
+            <VerifyObjMethodCallValidity Value="True"/>
+            <TargetProcessor Value="pentium3"/>
+            <TargetCPU Value="i386"/>
+            <TargetOS Value="win32"/>
+            <Optimizations>
+              <OptimizationLevel Value="0"/>
+            </Optimizations>
+          </CodeGeneration>
+          <Linking>
+            <Debugging>
+              <UseHeaptrc Value="True"/>
+              <StripSymbols Value="True"/>
+              <UseExternalDbgSyms Value="True"/>
+            </Debugging>
+            <Options>
+              <Win32>
+                <GraphicApplication Value="True"/>
+              </Win32>
+            </Options>
+          </Linking>
+          <Other>
+            <Verbosity>
+              <ShoLineNum Value="True"/>
+            </Verbosity>
+            <CompilerMessages>
+              <UseMsgFile Value="True"/>
+            </CompilerMessages>
+            <CompilerPath Value="$(CompPath)"/>
+          </Other>
+        </CompilerOptions>
+      </Item4>
     </BuildModes>
     <PublishOptions>
       <Version Value="2"/>
@@ -123,6 +173,7 @@
         <Filename Value="jakrandr.pas"/>
         <IsPartOfProject Value="True"/>
         <ComponentName Value="JakRandr"/>
+        <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
         <UnitName Value="JakRandr"/>
         <EditorIndex Value="0"/>
@@ -149,7 +200,7 @@
         <Filename Value="coreutils.pas"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="CoreUtils"/>
-        <EditorIndex Value="4"/>
+        <EditorIndex Value="2"/>
         <WindowIndex Value="0"/>
         <TopLine Value="516"/>
         <CursorPos X="31" Y="516"/>
@@ -166,21 +217,17 @@
       </Unit4>
       <Unit5>
         <Filename Value="/usr/lib/lazarus/lcl/interfaces/gtk2/gtk2winapi.inc"/>
-        <EditorIndex Value="3"/>
         <WindowIndex Value="0"/>
         <TopLine Value="1677"/>
         <CursorPos X="7" Y="1688"/>
         <UsageCount Value="185"/>
-        <Loaded Value="True"/>
       </Unit5>
       <Unit6>
         <Filename Value="/usr/lib/lazarus/lcl/include/canvas.inc"/>
-        <EditorIndex Value="2"/>
         <WindowIndex Value="0"/>
         <TopLine Value="807"/>
         <CursorPos X="1" Y="818"/>
         <UsageCount Value="185"/>
-        <Loaded Value="True"/>
       </Unit6>
     </Units>
     <JumpHistory Count="30" HistoryIndex="29">
@@ -307,7 +354,7 @@
     </JumpHistory>
   </ProjectOptions>
   <CompilerOptions>
-    <Version Value="9"/>
+    <Version Value="11"/>
     <Target>
       <Filename Value="JakOmlette"/>
     </Target>
