@@ -5,8 +5,8 @@ object JakRandr: TJakRandr
   Width = 640
   Anchors = [akTop, akLeft, akRight, akBottom]
   Caption = 'JakRandr'
-  ClientHeight = 480
-  ClientWidth = 640
+  ClientHeight = 0
+  ClientWidth = 0
   OnActivate = FormActivate
   OnCreate = FormCreate
   OnDeactivate = FormDeactivate
@@ -14,7 +14,7 @@ object JakRandr: TJakRandr
   OnKeyPress = FormKeyPress
   OnKeyUp = FormKeyUp
   OnResize = FormResize
-  LCLVersion = '0.9.30.4'
+  LCLVersion = '1.0.2.0'
   object DisplaySurface: TImage
     Left = 0
     Height = 482

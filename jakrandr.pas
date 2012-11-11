@@ -17,7 +17,7 @@ interface
 
 uses
   Classes, SysUtils, FileUtil, Forms, Controls, Graphics, Dialogs, ExtCtrls,
-  GfxUtils, CoreUtils, LCLType;
+  GfxUtils, CoreUtils, LCLType, TestUtils;
 
 type
 
