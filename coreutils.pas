@@ -14,19 +14,17 @@ type
     procedure Render(engine: PJakRandrEngine); virtual; abstract;
     procedure Start; virtual; abstract;
     procedure Stop; virtual; abstract;
+    (* Movable *)
+    procedure MoveTo(p: TPoint3D); virtual;
+    procedure Translate(dp: TPoint3D); virtual;
+    procedure Rotate(rx, ry, rz: real); virtual;
+    procedure RotateAround(c: TPoint3D; rx, ry, rz: real); virtual;
   end;
 
   TListOfWorldEntities = specialize TFPGObjectList<IWorldEntity>;
 
-  IMovable = class
-    procedure MoveTo(p: TPoint3D); virtual; abstract;
-    procedure Translate(dp: TPoint3D); virtual; abstract;
-    procedure Rotate(rx, ry, rz: real); virtual; abstract;
-    procedure RotateAround(c: TPoint3D; rx, ry, rz: real); virtual; abstract;
-  end;
-
   (* undrawable set of points floating around to act as support for skin *)
-  TSupport = class(IWorldEntity, IMovable)
+  TSupport = class(IWorldEntity)
     constructor Support(centre: TPoint3D);
     procedure AddNode(p: TPoint3D);
     (* implementation of IWorldEntity *)
@@ -34,10 +32,10 @@ type
     procedure Start; override;
     procedure Stop; override;
     (* implementation of IMovable *)
-    procedure MoveTo(p: TPoint3D); override;
-    procedure Translate(dp: TPoint3D); override;
-    procedure Rotate(rx, ry, rz: real); override;
-    procedure RotateAround(c: TPoint3D; rx, ry, rz: real); override;
+    procedure MoveTo(p: TPoint3D);
+    procedure Translate(dp: TPoint3D);
+    procedure Rotate(rx, ry, rz: real);
+    procedure RotateAround(c: TPoint3D; rx, ry, rz: real);
   private
     m_nodes: array of TRealPoint3D;
     m_c: TRealPoint3D;
@@ -51,12 +49,12 @@ type
     procedure Render(engine: PJakRandrEngine); override;
     procedure Start; override;
     procedure Stop; override;
-  private
+  protected (* because TranslateVector needs var access *)
     m_geometry: TEntity3DList;
     m_c: TRealPoint3D;
   public
     property Geometry: TEntity3DList read m_geometry write m_geometry;
-    property Location: TRealPoitn3D read m_c write m_c;
+    property Location: TRealPoint3D read m_c write m_c;
   end;
 
   (* flexible skin *)
@@ -66,8 +64,8 @@ type
   end;
 
   (* rigid entity *)
-  TPart = class(AWorldEntity, IMovable)
-    constructor Part(location: TPoint3D);
+  TPart = class(AWorldEntity)
+    constructor Part(c: TPoint3D);
     procedure InitMesh; virtual; (* called right before returning from ctor*)
     (* implementation of IMovable *)
     procedure MoveTo(p: TPoint3D); override;
@@ -78,7 +76,7 @@ type
 
   (* rigid entity with AI *)
   TSentientEntity = class(TPart)
-    constructor SentientEntity(location: TPoint3D; interval: integer);
+    constructor SentientEntity(c: TPoint3D; interval: integer);
     procedure InitAI; virtual; (* called right before returning from constructor
                                   but after InitMesh *)
     procedure Loop; virtual; (* called OnClock *)
@@ -128,6 +126,128 @@ type
   end;
 
 implementation
+
+(* buggery *)
+
+procedure IWorldEntity.MoveTo(p: TPoint3D); begin end;
+procedure IWorldEntity.Translate(dp: TPoint3D); begin end;
+procedure IWorldEntity.Rotate(rx, ry, rz: real); begin end;
+procedure IWorldEntity.RotateAround(c: TPoint3D; rx, ry, rz: real); begin end;
+
+(* AWorldEntity *)
+
+constructor AWorldEntity.AWorldEntity(location: TPoint3D);
+begin
+ m_c := RealPoint3DFromPoint(location);
+ m_geometry := TEntity3DList.Create;
+end;
+
+destructor AWorldEntity.Destroy;
+begin
+ m_geometry.Clear;
+ m_geometry.Free;
+end;
+
+procedure AWorldEntity.Render(engine: PJakRandrEngine);
+var
+  i: integer;
+begin
+  if engine = Nil then
+    Raise Exception.Create('NULL engine parameter provided!');
+
+  for i := 0 to m_geometry.Count - 1 do
+    engine^.AddEntity(m_geometry.Items[i]);
+end;
+
+procedure AWorldEntity.Start; begin end;
+
+procedure AWorldEntity.Stop; begin end;
+
+(* TSkin *)
+
+procedure TSkin.BindTria(p1, p2, p3: PRealPoint3D; contourColour, fillColour: TColor);
+var
+  e: IEntity3D;
+begin
+  e := TPointerPolygon.Triangle(p1, p2, p3);
+  (e as TPointerPolygon).ContourColour := contourColour;
+  (e as TPointerPolygon).FillColour := fillColour;
+
+  Geometry.Add(e);
+end;
+
+procedure TSkin.BindQuad(p1, p2, p3, p4: PRealPoint3D; contourColour, fillColour: TColor);
+var
+  e: IEntity3D;
+begin
+  e := TPointerPolygon.Quad(p1, p2, p3, p4);
+  (e as TPointerPolygon).ContourColour := contourColour;
+  (e as TPointerPolygon).FillColour := fillColour;
+
+  Geometry.Add(e);
+end;
+
+(* TPart *)
+
+constructor TPart.Part(c: TPoint3D);
+begin
+  inherited AWorldEntity(c); (* note to self -- can be called at the end
+                                as well :-D *)
+  InitMesh;
+end;
+
+procedure TPart.InitMesh; begin end;
+
+procedure TPart.MoveTo(p: TPoint3D);
+var
+  i: integer;
+  e: IEntity3D;
+  reverse: TPoint3D;
+  rp: TPoint3D;
+begin
+  rp := GetRotatedPoint(Location);
+  reverse := Point3DFromCoords(-rp.x, -rp.y, -rp.z);
+  for i := 0 to Geometry.Count - 1 do begin
+    Geometry.Items[i].Translate(reverse);
+    Geometry.Items[i].Translate(p);
+  end;
+  incr(m_c.rotationCentre.x, p.x - Location.p.x);
+  incr(m_c.rotationCentre.y, p.y - Location.p.y);
+  incr(m_c.rotationCentre.z, p.z - Location.p.z);
+  m_c.p.x := p.x;
+  m_c.p.y := p.x;
+  m_c.p.z := p.x;
+end;
+
+procedure TPart.Translate(dp: TPoint3D);
+var
+  i: integer;
+begin
+  TranslateVector(m_c.p, dp);
+  TranslateVector(m_c.rotationCentre, dp);
+  for i := 0 to Geometry.Count - 1 do
+    Geometry.Items[i].Translate(dp);
+end;
+
+procedure TPart.Rotate(rx, ry, rz: real);
+var
+  i: integer;
+begin
+  for i := 0 to Geometry.Count - 1 do
+    Geometry.Items[i].Rotate(GetRotatedPoint(Location), rx, ry, rz);
+end;
+
+procedure TPart.RotateAround(c: TPoint3D; rx, ry, rz: real);
+var
+  i: integer;
+begin
+  ApplyRotationToPoint(m_c, RealPoint3DFromPoint(c), rx, ry, rz);
+  for i := 0 to Geometry.Count - 1 do
+    Geometry.Items[i].Rotate(c, rx, ry, rz);
+end;
+
+(* test entities *)
+(* TTestAxis *)
 
 destructor TTestAxis.Destroy;
 begin
@@ -250,6 +370,8 @@ begin
     engine^.AddEntity(m_geometry[i]);
   end;
 end;
+
+(* TTestWE *)
 
 constructor TTestWE.Create(location: TPoint3D; state, phase: integer);
 var
