@@ -71,6 +71,30 @@ type
     function GetFacingCamera(O: TPoint3D; rx, ry, rz: real): IEntity3D; virtual; abstract;
   end;
 
+  PRealPoint3D = ^TRealPoint3D;
+
+  TPointerPolygon = class(IEntity3D)
+    constructor Triangle(p1, p2, p3: PRealPoint3D);
+    constructor Quad(p1, p2, p3, p4: PRealPoint3D);
+    (* implementation of IEntity3D *)
+    procedure Translate(dp: TPoint3D); override;
+    procedure Rotate(centre: TPoint3D; rotx, roty, rotz: real); override;
+    procedure Dump; override;
+    function GetFacingCamera(O: TPoint3D; rx, ry, rz: real): IEntity3D; override;
+  private
+    m_nodes: array of PRealPoint3D;
+    m_n: integer;
+    m_contourColour: TColor;
+    m_fillColour: TColor;
+
+    function GetNode(i: integer): PRealPoint3D;
+  public
+    property Nodes[i: integer]: PRealPoint3D read GetNode;
+    property NbNodes: integer read m_n;
+    property ContourColour: TColor read m_contourColour write m_contourColour;
+    property FillColour: TColor read m_fillColour write m_fillColour;
+  end;
+
   TLine = class(IEntity3D)
     constructor Line(p1, p2: TPoint3D);
     (* implementation of IEntity3D *)
@@ -1350,6 +1374,84 @@ begin
   ret := TSphere.Sphere(c, m_r);
   (ret as TSphere).m_contourColour := m_contourColour;
   (ret as TSphere).m_fillColour := m_fillColour;
+
+  GetFacingCamera := ret;
+end;
+
+(* TPointerPolygon *)
+
+constructor TPointerPolygon.Triangle(p1, p2, p3: PRealPoint3D);
+begin
+  m_n := 3;
+  SetLength(m_nodes, 3);
+  m_nodes[0] := p1;
+  m_nodes[1] := p2;
+  m_nodes[2] := p3;
+
+  m_contourColour := clBlack;
+  m_fillColour := clWhite;
+end;
+
+constructor TPointerPolygon.Quad(p1, p2, p3, p4: PRealPoint3D);
+begin
+  m_n := 4;
+  SetLength(m_nodes, 4);
+  m_nodes[0] := p1;
+  m_nodes[1] := p2;
+  m_nodes[2] := p3;
+  m_nodes[3] := p4;
+
+  m_contourColour := clBlack;
+  m_fillColour := clWhite;
+end;
+
+function TPointerPolygon.GetNode(i: integer): PRealPoint3D;
+begin
+  if (i >= 0) and (i < m_n) then
+    GetNode := m_nodes[i]
+  else
+    Raise Exception.Create('Out of range!');
+end;
+
+procedure TPointerPolygon.Translate(dp: TPoint3D);
+begin
+end;
+
+procedure TPointerPolygon.Rotate(centre: TPoint3D; rotx, roty, rotz: real);
+begin
+end;
+
+procedure TPointerPolygon.Dump;
+begin
+end;
+
+function TPointerPolygon.GetFacingCamera(O: TPoint3D; rx, ry, rz: real): IEntity3D;
+var
+  p1, p2, p3, p4: TPoint3D;
+  ret: IEntity3D;
+begin
+  (* TODO also, offset points to O *)
+  p1 := GetRotatedPoint(m_nodes[0]^);
+  SubstractVector(p1, O);
+  RotateNode(p1, Point3DFromCoords(0, 0, 0), -rx, -ry, -rz);
+  p2 := GetRotatedPoint(m_nodes[1]^);
+  SubstractVector(p2, O);
+  RotateNode(p2, Point3DFromCoords(0, 0, 0), -rx, -ry, -rz);
+  p3 := GetRotatedPoint(m_nodes[2]^);
+  SubstractVector(p3, O);
+  RotateNode(p3, Point3DFromCoords(0, 0, 0), -rx, -ry, -rz);
+  if m_n = 3 then
+    ret := TPolygon.Triangle(p1, p2, p3)
+  else begin
+    p4 := GetRotatedPoint(m_nodes[3]^);
+    SubstractVector(p4, O);
+    RotateNode(p4, Point3DFromCoords(0, 0, 0), -rx, -ry, -rz);
+
+    ret := TPolygon.Quad(p1, p2, p3, p4);
+  end;
+
+  (ret as TPolygon).m_contourColour := m_contourColour;
+  (ret as TPolygon).m_fillColour := m_fillColour;
 
   GetFacingCamera := ret;
 end;

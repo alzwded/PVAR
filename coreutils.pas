@@ -18,6 +18,78 @@ type
 
   TListOfWorldEntities = specialize TFPGObjectList<IWorldEntity>;
 
+  IMovable = class
+    procedure MoveTo(p: TPoint3D); virtual; abstract;
+    procedure Translate(dp: TPoint3D); virtual; abstract;
+    procedure Rotate(rx, ry, rz: real); virtual; abstract;
+    procedure RotateAround(c: TPoint3D; rx, ry, rz: real); virtual; abstract;
+  end;
+
+  (* undrawable set of points floating around to act as support for skin *)
+  TSupport = class(IWorldEntity, IMovable)
+    constructor Support(centre: TPoint3D);
+    procedure AddNode(p: TPoint3D);
+    (* implementation of IWorldEntity *)
+    procedure Render(engine: PJakRandrEngine); override;
+    procedure Start; override;
+    procedure Stop; override;
+    (* implementation of IMovable *)
+    procedure MoveTo(p: TPoint3D); override;
+    procedure Translate(dp: TPoint3D); override;
+    procedure Rotate(rx, ry, rz: real); override;
+    procedure RotateAround(c: TPoint3D; rx, ry, rz: real); override;
+  private
+    m_nodes: array of TRealPoint3D;
+    m_c: TRealPoint3D;
+    m_n: integer;
+  end;
+
+  AWorldEntity = class(IWorldEntity)
+    constructor AWorldEntity(location: TPoint3D);
+    destructor Destroy; override;
+    (* implementation of IWorldEntity *)
+    procedure Render(engine: PJakRandrEngine); override;
+    procedure Start; override;
+    procedure Stop; override;
+  private
+    m_geometry: TEntity3DList;
+    m_c: TRealPoint3D;
+  public
+    property Geometry: TEntity3DList read m_geometry write m_geometry;
+    property Location: TRealPoitn3D read m_c write m_c;
+  end;
+
+  (* flexible skin *)
+  TSkin = class(AWorldEntity)
+    procedure BindTria(p1, p2, p3: PRealPoint3D; contourColour, fillColour: TColor);
+    procedure BindQuad(p1, p2, p3, p4: PRealPoint3D; contourColour, fillColour: TColor);
+  end;
+
+  (* rigid entity *)
+  TPart = class(AWorldEntity, IMovable)
+    constructor Part(location: TPoint3D);
+    procedure InitMesh; virtual; (* called right before returning from ctor*)
+    (* implementation of IMovable *)
+    procedure MoveTo(p: TPoint3D); override;
+    procedure Translate(dp: TPoint3D); override;
+    procedure Rotate(rx, ry, rz: real); override;
+    procedure RotateAround(c: TPoint3D; rx, ry, rz: real); override;
+  end;
+
+  (* rigid entity with AI *)
+  TSentientEntity = class(TPart)
+    constructor SentientEntity(location: TPoint3D; interval: integer);
+    procedure InitAI; virtual; (* called right before returning from constructor
+                                  but after InitMesh *)
+    procedure Loop; virtual; (* called OnClock *)
+    (* implementation of IWorldEntity *)
+    procedure Start; override;
+    procedure Stop; override;
+  private
+    m_clock: TTimer;
+    procedure OnClock(Sender: TObject);
+  end;
+
   TTestAxis = class(IWorldEntity)
     constructor Create;
     destructor Destroy; override;
