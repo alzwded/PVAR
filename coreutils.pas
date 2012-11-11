@@ -41,6 +41,11 @@ type
     m_nodes: array of TRealPoint3D;
     m_c: TRealPoint3D;
     m_n: integer;
+
+    function GetPNode(i: integer): PRealPoint3D;
+  public
+    property Location: TRealPoint3D read m_c write m_c;
+    property Nodes[i: integer]: PRealPoint3D read GetPNode;
   end;
 
   AWorldEntity = class(IWorldEntity)
@@ -56,6 +61,24 @@ type
   public
     property Geometry: TEntity3DList read m_geometry write m_geometry;
     property Location: TRealPoint3D read m_c write m_c;
+  end;
+
+  ACompound = class(IWorldEntity)
+    constructor Compound(interval: cardinal);
+    destructor Destroy; override;
+    procedure Init; virtual;
+    procedure AddEntity(e: IWorldEntity);
+    procedure Loop; virtual;
+    (* implementation of IWorldEntity *)
+    procedure Render(engine: PJakRandrEngine); override;
+    procedure Start; override;
+    procedure Stop; override;
+  protected
+    m_entities: TListOfWorldEntities;
+  private
+    m_clock: TTimer;
+
+    procedure OnClock(Sender: TObject);
   end;
 
   (* flexible skin *)
@@ -171,6 +194,85 @@ begin
   ApplyRotationToPoint(m_c, rc, rx, ry, rz);
   for i := 0 to m_n - 1 do
     ApplyRotationToPoint(m_nodes[i], rc, rx, ry, rz);
+end;
+
+function TSupport.GetPNode(i: integer): PRealPoint3D;
+begin
+  if (i < 0) or (i > m_n) then
+    Raise Exception.CreatE('out of range');
+  GetPNode := @m_nodes[i];
+end;
+
+(* ACompound *)
+
+constructor ACompound.Compound(interval: cardinal);
+begin
+  m_clock := TTimer.Create(Nil);
+  m_clock.Interval := interval;
+  if interval > 0 then
+    m_clock.Enabled := True
+  else
+    m_clock.Enabled := False;
+  m_clock.OnTimer := @OnClock;
+
+  m_entities := TListOfWorldEntities.Create;
+
+  Init;
+end;
+
+destructor ACompound.Destroy;
+begin
+  m_entities.Clear;
+  m_entities.Free;
+  m_clock.Free;
+
+  inherited;
+end;
+
+procedure ACompound.Init; begin end;
+
+procedure ACompound.AddEntity(e: IWorldEntity);
+begin
+  m_entities.Add(e);
+end;
+
+procedure ACompound.Render(engine: PJakRandrEngine);
+var
+  i: integer;
+begin
+  for i := 0 to m_entities.Count - 1 do
+    m_entities[i].Render(engine);
+end;
+
+procedure ACompound.Start;
+var
+  i: integer;
+begin
+  for i := 0 to m_entities.Count - 1 do
+    m_entities[i].Start;
+end;
+
+procedure ACompound.Stop;
+var
+  i: integer;
+begin
+  for i := 0 to m_entities.Count - 1 do
+    m_entities[i].Stop;
+end;
+
+procedure ACompound.Loop;
+var
+  i: integer;
+begin
+  for i := 0 to m_entities.Count - 1 do
+    if (m_entities[i] is TSentientEntity)
+       and not (m_entities[i] as TSentientEntity).m_clock.Enabled then
+      (m_entities[i] as TSentientEntity).Loop;
+end;
+
+procedure ACompound.OnClock(Sender: TObject);
+begin
+  Loop;
 end;
 
 (* AWorldEntity *)

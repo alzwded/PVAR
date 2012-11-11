@@ -9,6 +9,16 @@ uses
 
 type
 
+  PSupport = ^TSupport;
+
+  TArm = class(ACompound)
+    constructor Create(p: TPoint3D);
+    procedure Init; override;
+  private
+    m_c: TRealPoint3D;
+    pSup1, pSup2: TSupport;
+  end;
+
   TTestAxis = class(IWorldEntity)
     constructor Create;
     destructor Destroy; override;
@@ -48,8 +58,61 @@ type
 
 implementation
 
-
 (* test entities *)
+
+(* TArm *)
+
+constructor TArm.Create(p: TPoint3D);
+begin
+  m_c := RealPoint3DFromPoint(p);
+  inherited Compound(0);
+end;
+
+procedure TArm.Init;
+var
+  sup1, sup2: TSupport;
+  e: TSkin;
+  p: TPoint3D;
+begin
+  sup1 := TSupport.Support(Point3DFromCoords(m_c.p.x, m_c.p.y - 200, m_c.p.z - 200));
+  sup1.AddNode(Point3DFromCoords(m_c.p.x, m_c.p.y - 250, m_c.p.z - 200));
+  sup1.AddNode(Point3DFromCoords(m_c.p.x, m_c.p.y - 150, m_c.p.z - 200));
+  sup1.AddNode(Point3DFromCoords(m_c.p.x - 50, m_c.p.y - 200, m_c.p.z - 200));
+  AddEntity(sup1);
+  pSup1 := sup1;
+
+  sup2 := TSupport.Support(Point3DFromCoords(m_c.p.x, m_c.p.y + 100, m_c.p.z + 200));
+  sup1.AddNode(Point3DFromCoords(m_c.p.x, m_c.p.y + 150, m_c.p.z + 200));
+  sup1.AddNode(Point3DFromCoords(m_c.p.x, m_c.p.y + 250, m_c.p.z + 200));
+  sup1.AddNode(Point3DFromCoords(m_c.p.x - 50, m_c.p.y + 200, m_c.p.z + 200));
+  AddEntity(sup2);
+  pSup2 := sup2;
+
+  e := TSkin.Create;
+  e.BindQuad(
+          sup1.Nodes[1],
+          sup1.Nodes[0],
+          sup2.Nodes[1],
+          sup2.Nodes[0],
+          clRed,
+          clRed);
+  e.BindQuad(
+          sup1.Nodes[2],
+          sup1.Nodes[1],
+          sup2.Nodes[1],
+          sup2.Nodes[2],
+          clRed,
+          clRed);
+  e.BindQuad(
+          sup1.Nodes[2],
+          sup1.Nodes[0],
+          sup2.Nodes[0],
+          sup2.Nodes[2],
+          clRed,
+          clRed);
+  AddEntity(e);
+end;
+
 (* TTestAxis *)
 
 destructor TTestAxis.Destroy;
