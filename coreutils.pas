@@ -49,6 +49,7 @@ type
   end;
 
   AWorldEntity = class(IWorldEntity)
+    constructor AWorldEntity;
     constructor AWorldEntity(location: TPoint3D);
     destructor Destroy; override;
     (* implementation of IWorldEntity *)
@@ -83,6 +84,8 @@ type
 
   (* flexible skin *)
   TSkin = class(AWorldEntity)
+    constructor Skin;
+    destructor Destroy; override;
     procedure BindTria(p1, p2, p3: PRealPoint3D; contourColour, fillColour: TColor);
     procedure BindQuad(p1, p2, p3, p4: PRealPoint3D; contourColour, fillColour: TColor);
   end;
@@ -140,6 +143,7 @@ begin
   inc(m_n);
   if m_n > High(m_nodes) then
     SetLength(m_nodes, m_n * 2);
+  m_nodes[m_n - 1] := RealPoint3DFromPoint(p);
 end;
 
 procedure TSupport.Render(engine: PJakRandrEngine); begin end;
@@ -277,6 +281,12 @@ end;
 
 (* AWorldEntity *)
 
+constructor AWorldEntity.AWorldEntity;
+begin
+ m_c := RealPoint3DFromCoords(0, 0, 0);
+ m_geometry := TEntity3DList.Create;
+end;
+
 constructor AWorldEntity.AWorldEntity(location: TPoint3D);
 begin
  m_c := RealPoint3DFromPoint(location);
@@ -307,6 +317,16 @@ procedure AWorldEntity.Start; begin end;
 procedure AWorldEntity.Stop; begin end;
 
 (* TSkin *)
+
+constructor TSkin.Skin;
+begin
+  inherited AWorldEntity;
+end;
+
+destructor TSkin.Destroy;
+begin
+  inherited Destroy;
+end;
 
 procedure TSkin.BindTria(p1, p2, p3: PRealPoint3D; contourColour, fillColour: TColor);
 var

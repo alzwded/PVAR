@@ -82,25 +82,25 @@ begin
   pSup1 := sup1;
 
   sup2 := TSupport.Support(Point3DFromCoords(m_c.p.x, m_c.p.y + 100, m_c.p.z + 200));
-  sup1.AddNode(Point3DFromCoords(m_c.p.x, m_c.p.y + 150, m_c.p.z + 200));
-  sup1.AddNode(Point3DFromCoords(m_c.p.x, m_c.p.y + 250, m_c.p.z + 200));
-  sup1.AddNode(Point3DFromCoords(m_c.p.x - 50, m_c.p.y + 200, m_c.p.z + 200));
+  sup2.AddNode(Point3DFromCoords(m_c.p.x, m_c.p.y + 150, m_c.p.z + 200));
+  sup2.AddNode(Point3DFromCoords(m_c.p.x, m_c.p.y + 250, m_c.p.z + 200));
+  sup2.AddNode(Point3DFromCoords(m_c.p.x - 50, m_c.p.y + 200, m_c.p.z + 200));
   AddEntity(sup2);
   pSup2 := sup2;
 
-  e := TSkin.Create;
+  e := TSkin.Skin;
   e.BindQuad(
-          sup1.Nodes[1],
           sup1.Nodes[0],
+          sup1.Nodes[1],
           sup2.Nodes[1],
           sup2.Nodes[0],
           clRed,
           clRed);
   e.BindQuad(
-          sup1.Nodes[2],
-          sup1.Nodes[1],
-          sup2.Nodes[1],
           sup2.Nodes[2],
+          sup2.Nodes[1],
+          sup1.Nodes[1],
+          sup1.Nodes[2],
           clRed,
           clRed);
   e.BindQuad(
@@ -110,6 +110,18 @@ begin
           sup2.Nodes[2],
           clRed,
           clRed);
+  e.BindTria(
+          sup1.Nodes[2],
+          sup1.Nodes[1],
+          sup1.Nodes[0],
+          clRed,
+          clRed);
+  e.BindTria(
+          sup2.Nodes[0],
+          sup2.Nodes[1],
+          sup2.Nodes[2],
+          clRed,
+          clBlue);
   AddEntity(e);
 end;
 
