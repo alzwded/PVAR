@@ -6,6 +6,9 @@ backup/*
 # ignore binaries
 lib/*
 JakOmlette
+*.exe
+*.dbg
+*.pdb
 
 # ignore backups
 *~
