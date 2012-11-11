@@ -70,11 +70,13 @@ TODO
 ====
 
 * CoreUtils
-    - câteva exemple pentru a vedea ce cod rămâne comun
+    - ~~câteva exemple pentru a vedea ce cod rămâne comun~~
+    - test new classes
     - finalizat designul
 * GfxUtils
-    - test sprite, sphere rendering / scaling
+    - ~~test sprite, sphere rendering / scaling~~ actually, I don't think I'll use those
     - use constants/singletons where aplicable
+    - improve performance of InOrderLinePolygon
 * JakRandr
     - implement rendering on separate thread because lcl is stupid and timers are kinda executed serially and that's what I DON'T want
     - ^ although, that's what I want for state machines where timers need to be based on a global timer (like in the real world)
