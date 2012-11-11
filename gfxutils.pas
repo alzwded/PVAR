@@ -302,6 +302,7 @@ function RealPoint3DFromCoords(x, y, z: real): TRealPoint3D;
 function RealPoint3DFromPoint(p: TPoint3D): TRealPoint3D;
 function GetRotatedPoint(p: TRealPoint3D): TPoint3D;
 function Centroid(p: TPolygon): TPoint3D;
+function SameVector(v1, v2: TPoint3D): boolean;
 
 (* warning! careful what you do with this
    if unsure, just don't use it and apply rotations manually
@@ -1685,6 +1686,15 @@ begin
   RealPoint3DFromPoint := ret;
 end;
 
+function SameVector(v1, v2: TPoint3D): boolean;
+begin
+  if (abs(v1.x - v2.x) > 0.000000001)
+     or (abs(v1.y - v2.y) > 0.000000001)
+     or (abs(v1.z - v2.z) > 0.000000001) then
+    SameVector := false
+  else
+    SameVector := true;
+end;
 (* warning! careful what you do with this
    if unsure, just don't use it and apply rotations manually
 *)
@@ -1693,10 +1703,34 @@ procedure ApplyRotationToPoint(
   rotCentre: TRealPoint3D;
   rx, ry, rz: real);
 begin
+  (* fail safe :D *)
+  if (p.rx <> 0) and (p.ry <> 0) and (p.rz <> 0) and
+     not SameVector(p.rotationCentre, GetRotatedPoint(rotCentre)) then begin
+    RotateNode(p.p, p.rotationCentre, p.rx, p.ry, p.rz);
+    p.rx := 0.0;
+    p.ry := 0.0;
+    p.rz := 0.0;
+  end;
+
   p.rotationCentre := GetRotatedPoint(rotCentre);
+
   incr(p.rx, rx);
+  while p.rx > 2 * pi do
+    decr(p.rx, 2 * pi);
+  while p.rx < 0 do
+    incr(p.rx, 2 * pi);
+
   incr(p.ry, ry);
+  while p.ry > 2 * pi do
+    decr(p.ry, 2 * pi);
+  while p.ry < 0 do
+    incr(p.ry, 2 * pi);
+
   incr(p.rz, rz);
+  while p.rz > 2 * pi do
+    decr(p.rz, 2 * pi);
+  while p.rz < 0 do
+    incr(p.rz, 2 * pi);
 end;
 
 function GetRotatedPoint(p: TRealPoint3D): TPoint3D;

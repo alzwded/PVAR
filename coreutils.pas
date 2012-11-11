@@ -26,6 +26,7 @@ type
   (* undrawable set of points floating around to act as support for skin *)
   TSupport = class(IWorldEntity)
     constructor Support(centre: TPoint3D);
+    destructor Destroy; override;
     procedure AddNode(p: TPoint3D);
     (* implementation of IWorldEntity *)
     procedure Render(engine: PJakRandrEngine); override;
@@ -76,7 +77,8 @@ type
 
   (* rigid entity with AI *)
   TSentientEntity = class(TPart)
-    constructor SentientEntity(c: TPoint3D; interval: integer);
+    constructor SentientEntity(c: TPoint3D; interval: cardinal);
+    destructor Destroy; override;
     procedure InitAI; virtual; (* called right before returning from constructor
                                   but after InitMesh *)
     procedure Loop; virtual; (* called OnClock *)
@@ -97,6 +99,80 @@ procedure IWorldEntity.Translate(dp: TPoint3D); begin end;
 procedure IWorldEntity.Rotate(rx, ry, rz: real); begin end;
 procedure IWorldEntity.RotateAround(c: TPoint3D; rx, ry, rz: real); begin end;
 
+(* TSupport *)
+
+constructor TSupport.Support(centre: TPoint3D);
+begin
+  m_c := RealPoint3DFromPoint(centre);
+  m_n := 0;
+end;
+
+destructor TSupport.Destroy;
+begin
+  SetLength(m_nodes, 0);
+end;
+
+procedure TSupport.AddNode(p: TPoint3D);
+begin
+  inc(m_n);
+  if m_n > High(m_nodes) then
+    SetLength(m_nodes, m_n * 2);
+end;
+
+procedure TSupport.Render(engine: PJakRandrEngine); begin end;
+procedure TSupport.Start; begin end;
+procedure TSupport.Stop; begin end;
+
+procedure TSupport.MoveTo(p: TPoint3D);
+var
+  reverse: TPoint3D;
+  rp: TPoint3D;
+  i: integer;
+begin
+  rp := GetRotatedPoint(m_c);
+  reverse := Point3DFromCoords(-rp.x, -rp.y, -rp.z);
+  for i := 0 to m_n - 1 do begin
+    TranslateVector(m_nodes[i].p, reverse);
+    TranslateVector(m_nodes[i].rotationCentre, reverse);
+    TranslateVector(m_nodes[i].p, p);
+    TranslateVector(m_nodes[i].rotationCentre, p);
+  end;
+  TranslateVector(m_c.rotationCentre, reverse);
+  TranslateVector(m_c.rotationCentre, p);
+  m_c.p := p;
+end;
+
+procedure TSupport.Translate(dp: TPoint3D);
+var
+  i: integer;
+begin
+  for i := 0 to m_n - 1 do begin
+    TranslateVector(m_nodes[i].p, dp);
+    TranslateVector(m_nodes[i].rotationCentre, dp);
+  end;
+  TranslateVector(m_c.rotationCentre, dp);
+  TranslateVector(m_c.p, dp);
+end;
+
+procedure TSupport.Rotate(rx, ry, rz: real);
+var
+  i: integer;
+begin
+  for i := 0 to m_n - 1do
+    ApplyRotationToPoint(m_nodes[i], m_c, rx, ry, rz);
+end;
+
+procedure TSupport.RotateAround(c: TPoint3D; rx, ry, rz: real);
+var
+  i: integer;
+  rc: TRealPoint3D;
+begin
+  rc := RealPoint3DFromPoint(c);
+  ApplyRotationToPoint(m_c, rc, rx, ry, rz);
+  for i := 0 to m_n - 1 do
+    ApplyRotationToPoint(m_nodes[i], rc, rx, ry, rz);
+end;
+
 (* AWorldEntity *)
 
 constructor AWorldEntity.AWorldEntity(location: TPoint3D);
@@ -109,6 +185,8 @@ destructor AWorldEntity.Destroy;
 begin
  m_geometry.Clear;
  m_geometry.Free;
+
+ inherited;
 end;
 
 procedure AWorldEntity.Render(engine: PJakRandrEngine);
@@ -210,6 +288,43 @@ begin
 end;
 
 (* TSentientEntity *)
+
+constructor TSentientEntity.SentientEntity(c: TPoint3D; interval: cardinal);
+begin
+  inherited Part(c);
+
+  m_clock := TTimer.Create(Nil);
+  m_clock.Interval := interval;
+  m_clock.OnTimer := @OnClock;
+  m_clock.Enabled := true;
+
+  InitAI;
+end;
+
+destructor TSentientEntity.Destroy;
+begin
+  m_clock.Free;
+  inherited;
+end;
+
+procedure TSentientEntity.InitAI; begin end;
+
+procedure TSentientEntity.Start;
+begin
+  m_clock.Enabled := true;
+end;
+
+procedure TSentientEntity.Stop;
+begin
+  m_clock.Enabled := false;
+end;
+
+procedure TSentientEntity.Loop; begin end;
+
+procedure TSentientEntity.OnClock(Sender: TObject);
+begin
+  Loop;
+end;
 
 end.
 
