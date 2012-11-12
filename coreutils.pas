@@ -33,10 +33,10 @@ type
     procedure Start; override;
     procedure Stop; override;
     (* implementation of IMovable *)
-    procedure MoveTo(p: TPoint3D);
-    procedure Translate(dp: TPoint3D);
-    procedure Rotate(rx, ry, rz: real);
-    procedure RotateAround(c: TPoint3D; rx, ry, rz: real);
+    procedure MoveTo(p: TPoint3D); override;
+    procedure Translate(dp: TPoint3D); override;
+    procedure Rotate(rx, ry, rz: real); override;
+    procedure RotateAround(c: TPoint3D; rx, ry, rz: real); override;
   private
     m_nodes: array of TRealPoint3D;
     m_c: TRealPoint3D;
@@ -192,13 +192,11 @@ end;
 procedure TSupport.RotateAround(c: TPoint3D; rx, ry, rz: real);
 var
   i: integer;
-  rc: TRealPoint3D;
   dv, p: TPoint3D;
 begin
   dv := GetRotatedPoint(m_c);
-  rc := RealPoint3DFromPoint(c);
+  ApplyRotationToPoint(m_c, RealPoint3DFromPoint(c), rx, ry, rz);
 
-  ApplyRotationToPoint(m_c, rc, rx, ry, rz);
   p := GetRotatedPoint(m_c);
   dv.x := -dv.x + p.x;
   dv.y := -dv.y + p.y;
@@ -208,7 +206,6 @@ begin
     TranslateVector(m_nodes[i].p, dv);
     TranslateVector(m_nodes[i].rotationCentre, dv);
   end;
-    //ApplyRotationToPoint(m_nodes[i], rc, rx, ry, rz);
 end;
 
 function TSupport.GetPNode(i: integer): PRealPoint3D;
@@ -377,7 +374,6 @@ procedure TPart.InitMesh; begin end;
 procedure TPart.MoveTo(p: TPoint3D);
 var
   i: integer;
-  e: IEntity3D;
   reverse: TPoint3D;
   rp: TPoint3D;
 begin
@@ -416,10 +412,18 @@ end;
 procedure TPart.RotateAround(c: TPoint3D; rx, ry, rz: real);
 var
   i: integer;
+  dv, p: TPoint3D;
 begin
+  dv := GetRotatedPoint(m_c);
   ApplyRotationToPoint(m_c, RealPoint3DFromPoint(c), rx, ry, rz);
+
+  p := GetRotatedPoint(m_c);
+  dv.x := -dv.x + p.x;
+  dv.y := -dv.y + p.y;
+  dv.z := -dv.z + p.z;
+
   for i := 0 to Geometry.Count - 1 do
-    Geometry.Items[i].Rotate(c, rx, ry, rz);
+    Geometry.Items[i].Translate(dv);
 end;
 
 (* TSentientEntity *)

@@ -74,7 +74,6 @@ procedure TArm.Init;
 var
   sup1, sup2: TSupport;
   e: TSkin;
-  p: TPoint3D;
 begin
   state := 0;
   phase := 0;
@@ -138,8 +137,8 @@ begin
   p.z := p.z - 200.0;
   case state of
   0: begin
-    if phase < 20 then begin
-      pSup1.RotateAround(p, 0.0, 0.0, -pi / 20.0);
+    if phase < 34 then begin
+      pSup1.RotateAround(p, 0.0, 0.0, -pi / 34.0);
       inc(phase);
     end else begin
       inc(state);
@@ -147,8 +146,8 @@ begin
     end;
     end;
   1: begin
-    if phase < 20 then begin
-      pSup1.Translate(Point3DFromCoords(0.0, -400.0 / 20, 0.0));
+    if phase < 30 then begin
+      pSup1.Translate(Point3DFromCoords(0.0, -400.0 / 30, 0.0));
       inc(phase);
     end else begin
       state := 0;
