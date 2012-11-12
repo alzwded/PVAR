@@ -86,7 +86,7 @@ begin
   e := TTestAxis.Create;
   m_worldEntities.Add(e);
 
-  e := TArm.Create(Point3DFromCoords(-300.0, 0.0, 0.0));
+  e := TArm.Create(Point3DFromCoords(-300.0, 0.0, 0.0), 20);
   m_worldEntities.Add(e);
 
   m_cameraManip := cmNone;

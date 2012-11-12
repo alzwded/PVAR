@@ -1226,9 +1226,9 @@ begin
   cameraNormal := Point3DFromCoords(1, 1, 1);
   NormalizeVector(cameraNormal);
 
-  b := poli.FillColour mod 256;
+  r := poli.FillColour mod 256;
   g := (poli.FillColour shr 8) mod 256;
-  r := (poli.FillColour shr 16) mod 256;
+  b := (poli.FillColour shr 16) mod 256;
 
   varAmount := DotProduct(normal, cameraNormal);
   if varAmount < 0 then varAmount := 0
@@ -1704,9 +1704,10 @@ procedure ApplyRotationToPoint(
   rx, ry, rz: real);
 begin
   (* fail safe :D *)
-  if (p.rx <> 0) and (p.ry <> 0) and (p.rz <> 0) and
+  if ((p.rx <> 0) or (p.ry <> 0) or (p.rz <> 0)) and
      not SameVector(p.rotationCentre, GetRotatedPoint(rotCentre)) then begin
-    RotateNode(p.p, p.rotationCentre, p.rx, p.ry, p.rz);
+    //RotateNode(p.p, p.rotationCentre, p.rx, p.ry, p.rz);
+    p.p := GetRotatedPoint(p);
     p.rx := 0.0;
     p.ry := 0.0;
     p.rz := 0.0;

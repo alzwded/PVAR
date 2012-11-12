@@ -193,11 +193,22 @@ procedure TSupport.RotateAround(c: TPoint3D; rx, ry, rz: real);
 var
   i: integer;
   rc: TRealPoint3D;
+  dv, p: TPoint3D;
 begin
+  dv := GetRotatedPoint(m_c);
   rc := RealPoint3DFromPoint(c);
+
   ApplyRotationToPoint(m_c, rc, rx, ry, rz);
-  for i := 0 to m_n - 1 do
-    ApplyRotationToPoint(m_nodes[i], rc, rx, ry, rz);
+  p := GetRotatedPoint(m_c);
+  dv.x := -dv.x + p.x;
+  dv.y := -dv.y + p.y;
+  dv.z := -dv.z + p.z;
+
+  for i := 0 to m_n - 1 do begin
+    TranslateVector(m_nodes[i].p, dv);
+    TranslateVector(m_nodes[i].rotationCentre, dv);
+  end;
+    //ApplyRotationToPoint(m_nodes[i], rc, rx, ry, rz);
 end;
 
 function TSupport.GetPNode(i: integer): PRealPoint3D;
@@ -254,6 +265,7 @@ var
 begin
   for i := 0 to m_entities.Count - 1 do
     m_entities[i].Start;
+  m_clock.Enabled := true;
 end;
 
 procedure ACompound.Stop;
@@ -262,6 +274,7 @@ var
 begin
   for i := 0 to m_entities.Count - 1 do
     m_entities[i].Stop;
+  m_clock.Enabled := false;
 end;
 
 procedure ACompound.Loop;

@@ -12,11 +12,13 @@ type
   PSupport = ^TSupport;
 
   TArm = class(ACompound)
-    constructor Create(p: TPoint3D);
+    constructor Create(p: TPoint3D; interval: integer);
     procedure Init; override;
+    procedure Loop; override;
   private
     m_c: TRealPoint3D;
     pSup1, pSup2: TSupport;
+    state, phase: integer;
   end;
 
   TTestAxis = class(IWorldEntity)
@@ -62,10 +64,10 @@ implementation
 
 (* TArm *)
 
-constructor TArm.Create(p: TPoint3D);
+constructor TArm.Create(p: TPoint3D; interval: integer);
 begin
   m_c := RealPoint3DFromPoint(p);
-  inherited Compound(0);
+  inherited Compound(interval);
 end;
 
 procedure TArm.Init;
@@ -74,6 +76,9 @@ var
   e: TSkin;
   p: TPoint3D;
 begin
+  state := 0;
+  phase := 0;
+
   sup1 := TSupport.Support(Point3DFromCoords(m_c.p.x, m_c.p.y - 200, m_c.p.z - 200));
   sup1.AddNode(Point3DFromCoords(m_c.p.x, m_c.p.y - 250, m_c.p.z - 200));
   sup1.AddNode(Point3DFromCoords(m_c.p.x, m_c.p.y - 150, m_c.p.z - 200));
@@ -121,8 +126,36 @@ begin
           sup2.Nodes[1],
           sup2.Nodes[2],
           clRed,
-          clBlue);
+          clRed);
   AddEntity(e);
+end;
+
+procedure TArm.Loop;
+var
+  p: TPoint3D;
+begin
+  p := GetRotatedPoint(m_c);
+  p.z := p.z - 200.0;
+  case state of
+  0: begin
+    if phase < 20 then begin
+      pSup1.RotateAround(p, 0.0, 0.0, -pi / 20.0);
+      inc(phase);
+    end else begin
+      inc(state);
+      phase := 0;
+    end;
+    end;
+  1: begin
+    if phase < 20 then begin
+      pSup1.Translate(Point3DFromCoords(0.0, -400.0 / 20, 0.0));
+      inc(phase);
+    end else begin
+      state := 0;
+      phase := 0;
+    end;
+    end;
+  end;
 end;
 
 (* TTestAxis *)
