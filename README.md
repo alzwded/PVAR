@@ -72,8 +72,10 @@ TODO
 * CoreUtils
     - ~~câteva exemple pentru a vedea ce cod rămâne comun~~
     - test new classes
+    - implement RotateAround/Rotate for all useful classes
     - finalizat designul
 * GfxUtils
+    - export nodes of polygons as pointers as well (useful for TSkin)
     - ~~test sprite, sphere rendering / scaling~~ actually, I don't think I'll use those
     - use constants/singletons where aplicable
     - improve performance of InOrderLinePolygon
