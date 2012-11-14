@@ -82,6 +82,31 @@ type
     procedure OnClock(Sender: TObject);
   end;
 
+  AGrabber = class(ACompound)
+    constructor Grabber(interval: cardinal);
+    destructor Destroy; override;
+    procedure InputSource(src: PGrabber);
+    (* implementation of IWorldEntity *)
+    procedure Render(engine: PJakRandrEngine); override;
+    procedure Start; override;
+    procedure Stop; override;
+    (* overrides for AGrabber *)
+    procedure Loop; override;
+  public
+    (* iterates over m_inputs and calls TryGive on each one until one yields
+       after that it adds it to m_inanimateObjects *)
+    function TryGrab(bbox: PBoundingBox; var e: IWorldEntity): boolean;
+  protected
+    (* caller calls aSuccess := aObject.TryGive(GetBoundingBox(), aItem)
+       removes item from list without erasing it and returns it in e *)
+    function TryGive(bbox: PBoundingBox; var e: IWorldEntity): boolean;
+  private
+    m_inanimateObjects: TListOfWorldEntities;
+    m_inputs: TListOfGrabbers;
+  protected
+    property InanimateObjects: TListOfWorldEntities read m_inanimateObjects write m_inanimateObjects;
+  end;
+
   (* flexible skin *)
   TSkin = class(AWorldEntity)
     constructor Skin;
