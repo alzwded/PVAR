@@ -25,6 +25,7 @@ type
     procedure Rotate(rx, ry, rz: real); virtual;
     procedure RotateAround(c: TPoint3D; rx, ry, rz: real); virtual;
     (* Collidable *)
+    function GetBoundingBox: PBoundingBox; virtual;
   end;
 
   TListOfWorldEntities = specialize TFPGObjectList<IWorldEntity>;
@@ -160,6 +161,7 @@ procedure IWorldEntity.MoveTo(p: TPoint3D); begin end;
 procedure IWorldEntity.Translate(dp: TPoint3D); begin end;
 procedure IWorldEntity.Rotate(rx, ry, rz: real); begin end;
 procedure IWorldEntity.RotateAround(c: TPoint3D; rx, ry, rz: real); begin end;
+function IWorldEntity.GetBoundingBox: PBoundingBox; begin GetBoundingBox := Nil; end;
 
 (* TSupport *)
 
@@ -391,6 +393,35 @@ begin
   inherited Render(engine);
   for i := 0 to m_inanimateObjects.Count - 1 do
     m_inanimateObjects[i].Render(engine);
+end;
+
+function AGrabber.TryGrab(bbox: PBoundingBox; var e: IWorldEntity): boolean;
+var
+  i: integer;
+begin
+  for i := 0 to m_inputs.Count - 1 do
+    if m_inputs[i]^.TryGive(bbox, e) then begin
+      TryGrab := true;
+      exit;
+    end;
+
+  TryGrab := false;
+end;
+
+function AGrabber.TryGive(bbox: PBoundingBox; var e: IWorldEntity): boolean;
+var
+  i: integer;
+begin
+  (* check bbox against each m_inanimateObjects
+        one could stop if we know after the first obejct that none are gonna
+        be collided with *)
+  for i := 0 to m_inanimateObjects.Count - 1 do
+    if BoundingBoxesIntersect(m_inanimateObjects[i].GetBoundingBox, bbox) then begin
+      // carefully remove object from list (huzzah for extract!)
+      e := m_inanimateObjects.Extract(m_inanimateObjects[i]);
+    end;
+
+  TryGive := false;
 end;
 
 (* AWorldEntity *)
