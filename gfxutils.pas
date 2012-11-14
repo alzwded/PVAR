@@ -50,8 +50,9 @@ const
 
   (* control lighting
      sum of these should be <= 1 *)
-  AMBIENT_PERCENTAGE = 0.2;
-  LIGHT_PERCENTAGE = 0.8;
+  AMBIENT_PERCENTAGE = 0.4;
+  LIGHT_PERCENTAGE = 0.45;
+  SQRT_PERCENTAGE = 0.15;
 
 type
   TPoint3D = record
@@ -1223,7 +1224,7 @@ var
   clAmount: real;
 begin
   normal := NormalForPlane(poli);
-  cameraNormal := Point3DFromCoords(1, 1, 1);
+  cameraNormal := Point3DFromCoords(0.5, 1, 0.7);
   NormalizeVector(cameraNormal);
 
   r := poli.FillColour mod 256;
@@ -1235,7 +1236,8 @@ begin
   else if varAmount > 1 then varAmount := 1;
 
   (* decay by square root of angle *)
-  varAmount := sqrt(AMBIENT_PERCENTAGE + LIGHT_PERCENTAGE * varAmount);
+  //varAmount := sqrt(AMBIENT_PERCENTAGE + LIGHT_PERCENTAGE * varAmount);
+  varAmount := AMBIENT_PERCENTAGE + LIGHT_PERCENTAGE * varAmount + SQRT_PERCENTAGE * sqrt(varAmount);
 
   clAmount := r / 256;
   clAmount := clAmount * varAmount;
