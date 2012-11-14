@@ -160,13 +160,13 @@ begin
 
   // build the limiting polygons at either edges
   frontPlane := TPolygon.Triangle(
-                GetRotatedPoint(m_support.Nodes[0]^),
-                GetRotatedPoint(m_support.Nodes[1]^),
-                GetRotatedPoint(m_support.Nodes[2]^));
-  backPlane := TPolygon.Triangle(
                 GetRotatedPoint(m_support.Nodes[3]^),
                 GetRotatedPoint(m_support.Nodes[4]^),
                 GetRotatedPoint(m_support.Nodes[5]^));
+  backPlane := TPolygon.Triangle(
+                GetRotatedPoint(m_support.Nodes[0]^),
+                GetRotatedPoint(m_support.Nodes[1]^),
+                GetRotatedPoint(m_support.Nodes[2]^));
 
   // rotate plates by a smidgun on the correct vector
   for i := 0 to m_platesEnd do begin
@@ -232,8 +232,8 @@ var
   rc, rd: TPoint3D;
 begin
   // get a normal vector along the frame
-  rc := GetRotatedPoint(m_support.Nodes[3]^);
-  rd := GetRotatedPoint(m_support.Nodes[0]^);
+  rc := GetRotatedPoint(m_support.Nodes[0]^);
+  rd := GetRotatedPoint(m_support.Nodes[3]^);
   ret := Point3DFromCoords(rd.x - rc.x, rd.y - rc.y, rd.z - rc.z);
   NormalizeVector(ret);
 
