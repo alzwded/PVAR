@@ -159,7 +159,7 @@
         <PackageName Value="LCL"/>
       </Item1>
     </RequiredPackages>
-    <Units Count="10">
+    <Units Count="11">
       <Unit0>
         <Filename Value="JakOmlette.lpr"/>
         <IsPartOfProject Value="True"/>
@@ -189,11 +189,10 @@
         <Filename Value="gfxutils.pas"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="GfxUtils"/>
-        <IsVisibleTab Value="True"/>
         <EditorIndex Value="1"/>
         <WindowIndex Value="0"/>
-        <TopLine Value="41"/>
-        <CursorPos X="25" Y="55"/>
+        <TopLine Value="175"/>
+        <CursorPos X="13" Y="182"/>
         <UsageCount Value="216"/>
         <Loaded Value="True"/>
       </Unit2>
@@ -201,10 +200,11 @@
         <Filename Value="coreutils.pas"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="CoreUtils"/>
+        <IsVisibleTab Value="True"/>
         <EditorIndex Value="2"/>
         <WindowIndex Value="0"/>
-        <TopLine Value="25"/>
-        <CursorPos X="69" Y="39"/>
+        <TopLine Value="558"/>
+        <CursorPos X="10" Y="567"/>
         <UsageCount Value="214"/>
         <Loaded Value="True"/>
       </Unit3>
@@ -214,31 +214,31 @@
         <WindowIndex Value="0"/>
         <TopLine Value="665"/>
         <CursorPos X="73" Y="682"/>
-        <UsageCount Value="15"/>
+        <UsageCount Value="14"/>
       </Unit4>
       <Unit5>
         <Filename Value="/usr/lib/lazarus/lcl/interfaces/gtk2/gtk2winapi.inc"/>
         <WindowIndex Value="0"/>
         <TopLine Value="1677"/>
         <CursorPos X="7" Y="1688"/>
-        <UsageCount Value="171"/>
+        <UsageCount Value="170"/>
       </Unit5>
       <Unit6>
         <Filename Value="/usr/lib/lazarus/lcl/include/canvas.inc"/>
         <WindowIndex Value="0"/>
         <TopLine Value="807"/>
         <CursorPos X="1" Y="818"/>
-        <UsageCount Value="171"/>
+        <UsageCount Value="170"/>
       </Unit6>
       <Unit7>
         <Filename Value="testutils.pas"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="TestUtils"/>
-        <EditorIndex Value="3"/>
+        <EditorIndex Value="4"/>
         <WindowIndex Value="0"/>
         <TopLine Value="132"/>
         <CursorPos X="72" Y="145"/>
-        <UsageCount Value="152"/>
+        <UsageCount Value="157"/>
         <Loaded Value="True"/>
       </Unit7>
       <Unit8>
@@ -247,136 +247,146 @@
         <WindowIndex Value="0"/>
         <TopLine Value="147"/>
         <CursorPos X="1" Y="157"/>
-        <UsageCount Value="3"/>
+        <UsageCount Value="2"/>
       </Unit8>
       <Unit9>
         <Filename Value="C:/lazarus/lcl/interfaces/win32/win32callback.inc"/>
         <WindowIndex Value="0"/>
         <TopLine Value="2731"/>
         <CursorPos X="1" Y="2745"/>
-        <UsageCount Value="3"/>
+        <UsageCount Value="2"/>
       </Unit9>
+      <Unit10>
+        <Filename Value="C:/lazarus/fpc/2.6.0/source/rtl/objpas/fgl.pp"/>
+        <UnitName Value="fgl"/>
+        <EditorIndex Value="3"/>
+        <WindowIndex Value="0"/>
+        <TopLine Value="105"/>
+        <CursorPos X="11" Y="124"/>
+        <UsageCount Value="10"/>
+        <Loaded Value="True"/>
+      </Unit10>
     </Units>
     <JumpHistory Count="30" HistoryIndex="29">
       <Position1>
-        <Filename Value="gfxutils.pas"/>
-        <Caret Line="1710" Column="1" TopLine="1700"/>
+        <Filename Value="coreutils.pas"/>
+        <Caret Line="429" Column="5" TopLine="417"/>
       </Position1>
       <Position2>
-        <Filename Value="gfxutils.pas"/>
-        <Caret Line="1711" Column="1" TopLine="1700"/>
+        <Filename Value="coreutils.pas"/>
+        <Caret Line="1" Column="1" TopLine="1"/>
       </Position2>
       <Position3>
-        <Filename Value="gfxutils.pas"/>
-        <Caret Line="1712" Column="1" TopLine="1700"/>
+        <Filename Value="coreutils.pas"/>
+        <Caret Line="126" Column="36" TopLine="110"/>
       </Position3>
       <Position4>
-        <Filename Value="gfxutils.pas"/>
-        <Caret Line="1713" Column="1" TopLine="1700"/>
+        <Filename Value="coreutils.pas"/>
+        <Caret Line="258" Column="20" TopLine="239"/>
       </Position4>
       <Position5>
-        <Filename Value="gfxutils.pas"/>
-        <Caret Line="1716" Column="1" TopLine="1700"/>
+        <Filename Value="coreutils.pas"/>
+        <Caret Line="376" Column="16" TopLine="367"/>
       </Position5>
       <Position6>
-        <Filename Value="gfxutils.pas"/>
-        <Caret Line="1711" Column="19" TopLine="1703"/>
+        <Filename Value="testutils.pas"/>
+        <Caret Line="159" Column="1" TopLine="150"/>
       </Position6>
       <Position7>
         <Filename Value="gfxutils.pas"/>
-        <Caret Line="1719" Column="1" TopLine="1703"/>
+        <Caret Line="1705" Column="11" TopLine="1700"/>
       </Position7>
       <Position8>
         <Filename Value="gfxutils.pas"/>
-        <Caret Line="1721" Column="1" TopLine="1705"/>
+        <Caret Line="1" Column="1" TopLine="1"/>
       </Position8>
       <Position9>
         <Filename Value="gfxutils.pas"/>
-        <Caret Line="1724" Column="1" TopLine="1715"/>
+        <Caret Line="1239" Column="1" TopLine="1223"/>
       </Position9>
       <Position10>
         <Filename Value="gfxutils.pas"/>
-        <Caret Line="1725" Column="1" TopLine="1715"/>
+        <Caret Line="169" Column="69" TopLine="157"/>
       </Position10>
       <Position11>
         <Filename Value="gfxutils.pas"/>
-        <Caret Line="1727" Column="1" TopLine="1715"/>
+        <Caret Line="1227" Column="40" TopLine="1213"/>
       </Position11>
       <Position12>
-        <Filename Value="gfxutils.pas"/>
-        <Caret Line="1730" Column="1" TopLine="1715"/>
+        <Filename Value="coreutils.pas"/>
+        <Caret Line="94" Column="62" TopLine="75"/>
       </Position12>
       <Position13>
-        <Filename Value="gfxutils.pas"/>
-        <Caret Line="1731" Column="1" TopLine="1715"/>
+        <Filename Value="coreutils.pas"/>
+        <Caret Line="96" Column="55" TopLine="77"/>
       </Position13>
       <Position14>
-        <Filename Value="gfxutils.pas"/>
-        <Caret Line="1733" Column="1" TopLine="1717"/>
+        <Filename Value="coreutils.pas"/>
+        <Caret Line="76" Column="24" TopLine="65"/>
       </Position14>
       <Position15>
-        <Filename Value="gfxutils.pas"/>
-        <Caret Line="1735" Column="1" TopLine="1719"/>
+        <Filename Value="coreutils.pas"/>
+        <Caret Line="323" Column="53" TopLine="307"/>
       </Position15>
       <Position16>
         <Filename Value="coreutils.pas"/>
-        <Caret Line="202" Column="1" TopLine="192"/>
+        <Caret Line="85" Column="20" TopLine="75"/>
       </Position16>
       <Position17>
         <Filename Value="coreutils.pas"/>
-        <Caret Line="206" Column="30" TopLine="192"/>
+        <Caret Line="87" Column="50" TopLine="77"/>
       </Position17>
       <Position18>
         <Filename Value="coreutils.pas"/>
-        <Caret Line="204" Column="1" TopLine="192"/>
+        <Caret Line="109" Column="15" TopLine="99"/>
       </Position18>
       <Position19>
         <Filename Value="coreutils.pas"/>
-        <Caret Line="205" Column="1" TopLine="192"/>
+        <Caret Line="87" Column="5" TopLine="78"/>
       </Position19>
       <Position20>
         <Filename Value="coreutils.pas"/>
-        <Caret Line="207" Column="1" TopLine="192"/>
+        <Caret Line="86" Column="1" TopLine="83"/>
       </Position20>
       <Position21>
         <Filename Value="coreutils.pas"/>
-        <Caret Line="202" Column="39" TopLine="192"/>
+        <Caret Line="16" Column="32" TopLine="11"/>
       </Position21>
       <Position22>
         <Filename Value="coreutils.pas"/>
-        <Caret Line="429" Column="5" TopLine="417"/>
+        <Caret Line="91" Column="46" TopLine="81"/>
       </Position22>
       <Position23>
         <Filename Value="coreutils.pas"/>
-        <Caret Line="1" Column="1" TopLine="1"/>
+        <Caret Line="90" Column="53" TopLine="80"/>
       </Position23>
       <Position24>
         <Filename Value="coreutils.pas"/>
-        <Caret Line="126" Column="36" TopLine="110"/>
+        <Caret Line="91" Column="51" TopLine="83"/>
       </Position24>
       <Position25>
         <Filename Value="coreutils.pas"/>
-        <Caret Line="258" Column="20" TopLine="239"/>
+        <Caret Line="95" Column="20" TopLine="85"/>
       </Position25>
       <Position26>
         <Filename Value="coreutils.pas"/>
-        <Caret Line="376" Column="16" TopLine="367"/>
+        <Caret Line="345" Column="26" TopLine="342"/>
       </Position26>
       <Position27>
-        <Filename Value="testutils.pas"/>
-        <Caret Line="159" Column="1" TopLine="150"/>
+        <Filename Value="coreutils.pas"/>
+        <Caret Line="151" Column="64" TopLine="139"/>
       </Position27>
       <Position28>
-        <Filename Value="gfxutils.pas"/>
-        <Caret Line="1705" Column="11" TopLine="1700"/>
+        <Filename Value="coreutils.pas"/>
+        <Caret Line="567" Column="10" TopLine="548"/>
       </Position28>
       <Position29>
-        <Filename Value="gfxutils.pas"/>
-        <Caret Line="1" Column="1" TopLine="1"/>
+        <Filename Value="coreutils.pas"/>
+        <Caret Line="585" Column="29" TopLine="566"/>
       </Position29>
       <Position30>
-        <Filename Value="gfxutils.pas"/>
-        <Caret Line="1239" Column="1" TopLine="1223"/>
+        <Filename Value="coreutils.pas"/>
+        <Caret Line="27" Column="21" TopLine="10"/>
       </Position30>
     </JumpHistory>
   </ProjectOptions>

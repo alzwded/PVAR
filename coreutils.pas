@@ -10,6 +10,11 @@ uses
   Classes, SysUtils, GfxUtils, ExtCtrls, Graphics, fgl;
 
 type
+  TBoundingBox = record
+    p1,p2: TPoint3D;
+  end;
+  PBoundingBox = ^TBoundingBox;
+
   IWorldEntity = class(TObject)
     procedure Render(engine: PJakRandrEngine); virtual; abstract;
     procedure Start; virtual; abstract;
@@ -19,6 +24,7 @@ type
     procedure Translate(dp: TPoint3D); virtual;
     procedure Rotate(rx, ry, rz: real); virtual;
     procedure RotateAround(c: TPoint3D; rx, ry, rz: real); virtual;
+    (* Collidable *)
   end;
 
   TListOfWorldEntities = specialize TFPGObjectList<IWorldEntity>;
@@ -82,6 +88,9 @@ type
     procedure OnClock(Sender: TObject);
   end;
 
+  PGrabber = ^AGrabber;
+  TListOfGrabbers = specialize TFPGList<PGrabber>;
+
   AGrabber = class(ACompound)
     constructor Grabber(interval: cardinal);
     destructor Destroy; override;
@@ -140,6 +149,8 @@ type
     m_clock: TTimer;
     procedure OnClock(Sender: TObject);
   end;
+
+function BoundingBoxesIntersect(b1, b2: PBoundingBox): boolean;
 
 implementation
 
@@ -306,12 +317,80 @@ begin
   for i := 0 to m_entities.Count - 1 do
     if (m_entities[i] is TSentientEntity)
        and not (m_entities[i] as TSentientEntity).m_clock.Enabled then
-      (m_entities[i] as TSentientEntity).Loop;
+      (m_entities[i] as TSentientEntity).Loop
+    else if (m_entities[i] is ACompound)
+       and not (m_entities[i] as ACompound).m_clock.Enabled then
+      (m_entities[i] as ACompound).Loop
 end;
 
 procedure ACompound.OnClock(Sender: TObject);
 begin
   Loop;
+end;
+
+(* AGrabber *)
+
+constructor AGrabber.Grabber(interval: cardinal);
+begin
+  inherited Compound(interval);
+  m_inputs := TListOfGrabbers.Create;
+  m_inanimateObjects := TListOfWorldEntities.Create;
+end;
+
+destructor AGrabber.Destroy;
+begin
+  m_inputs.Clear;
+  m_inputs.Free;
+  m_inanimateObjects.Clear;
+  m_inanimateObjects.Free;
+  inherited Destroy;
+end;
+
+procedure AGrabber.InputSource(src: PGrabber);
+begin
+  m_inputs.Add(src);
+end;
+
+procedure AGrabber.Loop;
+var
+  i: integer;
+begin
+  inherited Loop;
+  for i := 0 to m_inanimateObjects.Count - 1 do begin
+    if (m_inanimateObjects[i] is TSentientEntity)
+        and not (m_inanimateObjects[i] as TSentientEntity).m_clock.Enabled then
+      (m_inanimateObjects[i] as TSentientEntity).Loop
+    else if (m_inanimateObjects[i] is ACompound)
+        and not (m_inanimateObjects[i] as ACompound).m_clock.Enabled then
+      (m_inanimateObjects[i] as ACompound).Loop
+  end;
+end;
+
+procedure AGrabber.Start;
+var
+  i: integer;
+begin
+  inherited Start;
+  for i := 0 to m_inanimateObjects.Count - 1 do
+    m_inanimateObjects[i].Start;
+end;
+
+procedure AGrabber.Stop;
+var
+  i: integer;
+begin
+  inherited Stop;
+  for i := 0 to m_inanimateObjects.Count - 1 do
+    m_inanimateObjects[i].Stop;
+end;
+
+procedure AGrabber.Render(engine: PJakRandrEngine);
+var
+  i: integer;
+begin
+  inherited Render(engine);
+  for i := 0 to m_inanimateObjects.Count - 1 do
+    m_inanimateObjects[i].Render(engine);
 end;
 
 (* AWorldEntity *)
@@ -488,6 +567,31 @@ procedure TSentientEntity.Loop; begin end;
 procedure TSentientEntity.OnClock(Sender: TObject);
 begin
   Loop;
+end;
+
+function BoundingBoxesIntersect(b1, b2: PBoundingBox): boolean;
+begin
+  if (b1 = Nil) or (b2 = Nil) then begin
+    BoundingBoxesIntersect := false;
+    exit;
+  end;
+
+  if ((b1^.p1.x <= b2^.p1.x)
+  and (b1^.p2.x > b2^.p1.x)
+  and (b1^.p1.y <= b2^.p1.y)
+  and (b1^.p2.y > b2^.p1.y)
+  and (b1^.p1.z <= b2^.p1.z)
+  and (b1^.p2.z > b2^.p1.z))
+
+  or ((b1^.p1.x <= b2^.p2.x)
+  and (b1^.p2.x > b2^.p2.x)
+  and (b1^.p1.y <= b2^.p2.y)
+  and (b1^.p2.y > b2^.p2.y)
+  and (b1^.p1.z <= b2^.p2.z)
+  and (b1^.p2.z > b2^.p2.z)) then
+    BoundingBoxesIntersect := true
+  else
+    BoundingBoxesIntersect := false;
 end;
 
 end.
