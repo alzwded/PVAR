@@ -12,11 +12,9 @@ type
   PSupport = ^TSupport;
 
   TArm = class(ACompound)
-    constructor Create(p: TPoint3D; interval: integer);
     procedure Init; override;
     procedure Loop; override;
   private
-    m_c: TRealPoint3D;
     pSup1, pSup2: TSupport;
     state, phase: integer;
   end;
@@ -63,12 +61,6 @@ implementation
 (* test entities *)
 
 (* TArm *)
-
-constructor TArm.Create(p: TPoint3D; interval: integer);
-begin
-  m_c := RealPoint3DFromPoint(p);
-  inherited Compound(interval);
-end;
 
 procedure TArm.Init;
 var

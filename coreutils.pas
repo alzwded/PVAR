@@ -72,7 +72,7 @@ type
   end;
 
   ACompound = class(IWorldEntity)
-    constructor Compound(interval: cardinal);
+    constructor Compound(centre: TPoint3D; interval: cardinal);
     destructor Destroy; override;
     procedure Init; virtual;
     procedure AddEntity(e: IWorldEntity);
@@ -81,8 +81,17 @@ type
     procedure Render(engine: PJakRandrEngine); override;
     procedure Start; override;
     procedure Stop; override;
+    (* implementation of IMovable *)
+    procedure MoveTo(p: TPoint3D); override;
+    procedure Translate(dp: TPoint3D); override;
+    procedure Rotate(rx, ry, rz: real); override;
+    procedure RotateAround(c: TPoint3D; rx, ry, rz: real); override;
   protected
     m_entities: TListOfWorldEntities;
+    m_c: TRealPoint3D;
+
+    property Centre: TRealPoint3D read m_c;
+    property Entities: TListOfWorldEntities read m_entities write m_entities;
   private
     m_clock: TTimer;
 
@@ -93,7 +102,7 @@ type
   TListOfGrabbers = specialize TFPGList<PGrabber>;
 
   AGrabber = class(ACompound)
-    constructor Grabber(interval: cardinal);
+    constructor Grabber(c: TPoint3D; interval: cardinal);
     destructor Destroy; override;
     procedure InputSource(src: PGrabber);
     (* implementation of IWorldEntity *)
@@ -255,7 +264,7 @@ end;
 
 (* ACompound *)
 
-constructor ACompound.Compound(interval: cardinal);
+constructor ACompound.Compound(centre: TPoint3D; interval: cardinal);
 begin
   m_clock := TTimer.Create(Nil);
   m_clock.Interval := interval;
@@ -266,6 +275,8 @@ begin
   m_clock.OnTimer := @OnClock;
 
   m_entities := TListOfWorldEntities.Create;
+
+  m_c := RealPoint3DFromPoint(centre);
 
   Init;
 end;
@@ -325,6 +336,60 @@ begin
       (m_entities[i] as ACompound).Loop
 end;
 
+procedure ACompound.Translate(dp: TPoint3D);
+var
+  i: integer;
+begin
+  TranslateVector(m_c.p, dp);
+  TranslateVector(m_c.rotationCentre, dp);
+  for i := 0 to m_entities.Count - 1 do
+    m_entities[i].Translate(dp);
+end;
+
+procedure ACompound.MoveTo(p: TPoint3D);
+var
+  i: integer;
+  reverse: TPoint3D;
+  rp: TPoint3D;
+begin
+  rp := GetRotatedPoint(m_c);
+  reverse := Point3DFromCoords(-rp.x, -rp.y, -rp.z);
+  for i := 0 to m_entities.Count - 1 do begin
+    m_entities[i].Translate(reverse);
+    m_entities[i].Translate(p);
+  end;
+  TranslateVector(m_c.rotationCentre, reverse);
+  TranslateVector(m_c.rotationCentre, p);
+  m_c.p := p;
+end;
+
+procedure ACompound.Rotate(rx, ry, rz: real);
+var
+  i: integer;
+  rp: TPoint3D;
+begin
+  rp := GetRotatedPoint(m_c);
+  for i := 0 to m_entities.Count - 1 do
+    m_entities[i].RotateAround(rp, rx, ry, rz);
+end;
+
+procedure ACompound.RotateAround(c: TPoint3D; rx, ry, rz: real);
+var
+  i: integer;
+  dv, p: TPoint3D;
+begin
+  dv := GetRotatedPoint(m_c);
+  ApplyRotationToPoint(m_c, RealPoint3DFromPoint(c), rx, ry, rz);
+
+  p := GetRotatedPoint(m_c);
+  dv.x := -dv.x + p.x;
+  dv.y := -dv.y + p.y;
+  dv.z := -dv.z + p.z;
+
+  for i := 0 to m_entities.Count - 1 do
+    m_entities[i].Translate(dv);
+end;
+
 procedure ACompound.OnClock(Sender: TObject);
 begin
   Loop;
@@ -332,9 +397,9 @@ end;
 
 (* AGrabber *)
 
-constructor AGrabber.Grabber(interval: cardinal);
+constructor AGrabber.Grabber(c: TPoint3D; interval: cardinal);
 begin
-  inherited Compound(interval);
+  inherited Compound(c, interval);
   m_inputs := TListOfGrabbers.Create;
   m_inanimateObjects := TListOfWorldEntities.Create;
 end;
