@@ -9,18 +9,31 @@ uses
 
 const
   CONVEYOR_SPEED = 5;
+  PLATE_LENGTH = 50; (* DO NOT CHANGE YET
+                        the square root constant needs to also be adapted
+                        and cached, TODO *)
 
 type
   TTestConveyor = class(AGrabber)
+    constructor Conveyor(c: TPoint3D; interval: cardinal; nbPlates: integer = 9; width: integer = 120);
     procedure Init; override;
     procedure Loop; override;
     function GetTranslationVectorPerFrame: TPoint3D;
   private
     m_platesEnd: integer;
     m_support: TSupport;
+    m_nbPlates: integer;
+    m_width: integer;
   end;
 
 implementation
+
+constructor TTestConveyor.Conveyor(c: TPoint3D; interval: cardinal; nbPlates: integer = 9; width: integer = 120);
+begin
+  m_nbPlates := nbPlates;
+  m_width := width;
+  inherited Grabber(c, interval);
+end;
 
 procedure TTestConveyor.Init;
 var
@@ -32,27 +45,27 @@ var
   offset: integer;
 begin
   m_support := TSupport.Support(Centre.p);
-  m_support.AddNode(Point3DFromCoords(Centre.p.x - 60, Centre.p.y - 25, Centre.p.z));
-  m_support.AddNode(Point3DFromCoords(Centre.p.x - 60, Centre.p.y + 25, Centre.p.z));
-  m_support.AddNode(Point3DFromCoords(Centre.p.x + 60, Centre.p.y - 25, Centre.p.z));
-  m_support.AddNode(Point3DFromCoords(Centre.p.x - 60, Centre.p.y - 25, Centre.p.z + 450));
-  m_support.AddNode(Point3DFromCoords(Centre.p.x - 60, Centre.p.y + 25, Centre.p.z + 450));
-  m_support.AddNode(Point3DFromCoords(Centre.p.x + 60, Centre.p.y - 25, Centre.p.z + 450));
+  m_support.AddNode(Point3DFromCoords(Centre.p.x - m_width div 2, Centre.p.y - 25, Centre.p.z));
+  m_support.AddNode(Point3DFromCoords(Centre.p.x - m_width div 2, Centre.p.y + 25, Centre.p.z));
+  m_support.AddNode(Point3DFromCoords(Centre.p.x + m_width div 2, Centre.p.y - 25, Centre.p.z));
+  m_support.AddNode(Point3DFromCoords(Centre.p.x - m_width div 2, Centre.p.y - 25, Centre.p.z + m_nbPlates * PLATE_LENGTH));
+  m_support.AddNode(Point3DFromCoords(Centre.p.x - m_width div 2, Centre.p.y + 25, Centre.p.z + m_nbPlates * PLATE_LENGTH));
+  m_support.AddNode(Point3DFromCoords(Centre.p.x + m_width div 2, Centre.p.y - 25, Centre.p.z + m_nbPlates * PLATE_LENGTH));
   m_support.AddNode(Point3DFromCoords(Centre.p.x, Centre.p.y, Centre.p.z));
-  m_support.AddNode(Point3DFromCoords(Centre.p.x, Centre.p.y, Centre.p.z + 450));
+  m_support.AddNode(Point3DFromCoords(Centre.p.x, Centre.p.y, Centre.p.z + m_nbPlates * PLATE_LENGTH));
   m_support.AddNode(Point3DFromCoords(Centre.p.x + 50, Centre.p.y, Centre.p.z));
 
   skin := TSkin.Skin;
 
   // base x10, top side
-  for i := 0 to 9 do begin
-    p := Point3DFromCoords(Centre.p.x, Centre.p.y + 35.355339, Centre.p.z + 50 * i);
+  for i := 0 to m_nbPlates do begin
+    p := Point3DFromCoords(Centre.p.x, Centre.p.y + 35.355339, Centre.p.z + PLATE_LENGTH * i);
 
     sup := TSupport.Support(p);
     // 70.710678 = 50*sqrt(2)
     // 35.355339 = ^ / 2
-    sup.AddNode(Point3DFromCoords(p.x - 60, p.y, p.z));
-    sup.AddNode(Point3DFromCoords(p.x + 60, p.y, p.z));
+    sup.AddNode(Point3DFromCoords(p.x - m_width div 2, p.y, p.z));
+    sup.AddNode(Point3DFromCoords(p.x + m_width div 2, p.y, p.z));
     Entities.Add(sup);
 
     if i > 0 then
@@ -65,11 +78,11 @@ begin
   end;
   offset := Entities.Count;
   // front two blips
-  p := Point3DFromCoords(Centre.p.x, Centre.p.y - 35.355339, Centre.p.z + 450);
+  p := Point3DFromCoords(Centre.p.x, Centre.p.y - 35.355339, Centre.p.z + m_nbPlates * PLATE_LENGTH);
   RotateNode(p, GetRotatedPoint(m_support.Nodes[7]^), -pi / 2, 0, 0);
   sup := TSupport.Support(p);
-  sup.AddNode(Point3DFromCoords(p.x - 60, p.y, p.z));
-  sup.AddNode(Point3DFromCoords(p.x + 60, p.y, p.z));
+  sup.AddNode(Point3DFromCoords(p.x - m_width div 2, p.y, p.z));
+  sup.AddNode(Point3DFromCoords(p.x + m_width div 2, p.y, p.z));
   Entities.Add(sup);
   skin.BindQuad((Entities[offset - 1] as TSupport).Nodes[0],
         sup.Nodes[0],
@@ -79,15 +92,15 @@ begin
         clSilver);
   offset := Entities.Count;
   // base x10, bottom side
-  for i := 9 downto 0 do begin
-    p := Point3DFromCoords(Centre.p.x, Centre.p.y - 35.355339, Centre.p.z + 50 * (i));
+  for i := m_nbPlates downto 0 do begin
+    p := Point3DFromCoords(Centre.p.x, Centre.p.y - 35.355339, Centre.p.z + PLATE_LENGTH * (i));
 
     sup := TSupport.Support(p);
-    sup.AddNode(Point3DFromCoords(p.x - 60, p.y, p.z));
-    sup.AddNode(Point3DFromCoords(p.x + 60, p.y, p.z));
+    sup.AddNode(Point3DFromCoords(p.x - m_width div 2, p.y, p.z));
+    sup.AddNode(Point3DFromCoords(p.x + m_width div 2, p.y, p.z));
     Entities.Add(sup);
 
-    if i = 9 then
+    if i = m_nbPlates then
       skin.BindQuad((Entities[offset - 1] as TSupport).Nodes[0],
                 sup.Nodes[0],
                 sup.Nodes[1],
@@ -95,10 +108,10 @@ begin
                 clGray,
                 clSilver)
     else
-      skin.BindQuad((Entities[offset + (9 - i) - 1] as TSupport).Nodes[0],
+      skin.BindQuad((Entities[offset + (m_nbPlates - i) - 1] as TSupport).Nodes[0],
                 sup.Nodes[0],
                 sup.Nodes[1],
-                (Entities[offset + (9 - i) - 1] as TSupport).Nodes[1],
+                (Entities[offset + (m_nbPlates - i) - 1] as TSupport).Nodes[1],
                 clGray,
                 clSilver);
   end;
@@ -108,8 +121,8 @@ begin
   p := Point3DFromCoords(Centre.p.x, Centre.p.y - 35.355339, Centre.p.z);
   RotateNode(p, GetRotatedPoint(m_support.Nodes[6]^), pi / 2, 0, 0);
   sup := TSupport.Support(p);
-  sup.AddNode(Point3DFromCoords(p.x - 60, p.y, p.z));
-  sup.AddNode(Point3DFromCoords(p.x + 60, p.y, p.z));
+  sup.AddNode(Point3DFromCoords(p.x - m_width div 2, p.y, p.z));
+  sup.AddNode(Point3DFromCoords(p.x + m_width div 2, p.y, p.z));
   Entities.Add(sup);
   skin.BindQuad((Entities[offset - 1] as TSupport).Nodes[0],
         sup.Nodes[0],
@@ -157,7 +170,7 @@ begin
   reverseV := Point3DFromCoords(-v.x, -v.y, -v.z);
 
   // get angular speed
-  angle := (pi / 2) * (CONVEYOR_SPEED / 50);
+  angle := (pi / 2) * (CONVEYOR_SPEED / PLATE_LENGTH);
   // attempt _some_ normalization
   if abs(angle) < 0.00000001 then angle := 0.0
   else if abs(angle - pi) < 0.00000001 then angle := pi;

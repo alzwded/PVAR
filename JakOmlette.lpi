@@ -175,10 +175,11 @@
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
         <UnitName Value="JakRandr"/>
+        <IsVisibleTab Value="True"/>
         <EditorIndex Value="0"/>
         <WindowIndex Value="0"/>
-        <TopLine Value="8"/>
-        <CursorPos X="1" Y="10"/>
+        <TopLine Value="85"/>
+        <CursorPos X="68" Y="92"/>
         <UsageCount Value="216"/>
         <Loaded Value="True"/>
         <LoadedDesigner Value="True"/>
@@ -189,8 +190,8 @@
         <UnitName Value="GfxUtils"/>
         <EditorIndex Value="2"/>
         <WindowIndex Value="0"/>
-        <TopLine Value="387"/>
-        <CursorPos X="1" Y="397"/>
+        <TopLine Value="1"/>
+        <CursorPos X="71" Y="11"/>
         <UsageCount Value="216"/>
         <Loaded Value="True"/>
       </Unit2>
@@ -200,8 +201,8 @@
         <UnitName Value="CoreUtils"/>
         <EditorIndex Value="3"/>
         <WindowIndex Value="0"/>
-        <TopLine Value="295"/>
-        <CursorPos X="24" Y="307"/>
+        <TopLine Value="359"/>
+        <CursorPos X="71" Y="370"/>
         <UsageCount Value="214"/>
         <Loaded Value="True"/>
       </Unit3>
@@ -237,19 +238,18 @@
         <WindowIndex Value="0"/>
         <TopLine Value="507"/>
         <CursorPos X="27" Y="526"/>
-        <UsageCount Value="83"/>
+        <UsageCount Value="84"/>
         <Loaded Value="True"/>
       </Unit7>
       <Unit8>
         <Filename Value="testconveyor.pas"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="TestConveyor"/>
-        <IsVisibleTab Value="True"/>
         <EditorIndex Value="6"/>
         <WindowIndex Value="0"/>
-        <TopLine Value="1"/>
-        <CursorPos X="21" Y="11"/>
-        <UsageCount Value="165"/>
+        <TopLine Value="179"/>
+        <CursorPos X="69" Y="189"/>
+        <UsageCount Value="167"/>
         <Loaded Value="True"/>
       </Unit8>
       <Unit9>
@@ -259,130 +259,130 @@
         <WindowIndex Value="0"/>
         <TopLine Value="251"/>
         <CursorPos X="3" Y="260"/>
-        <UsageCount Value="81"/>
+        <UsageCount Value="82"/>
         <Loaded Value="True"/>
       </Unit9>
     </Units>
     <JumpHistory Count="30" HistoryIndex="29">
       <Position1>
         <Filename Value="testconveyor.pas"/>
-        <Caret Line="185" Column="70" TopLine="194"/>
+        <Caret Line="184" Column="16" TopLine="173"/>
       </Position1>
       <Position2>
         <Filename Value="testconveyor.pas"/>
-        <Caret Line="190" Column="27" TopLine="186"/>
+        <Caret Line="34" Column="1" TopLine="24"/>
       </Position2>
       <Position3>
         <Filename Value="testconveyor.pas"/>
-        <Caret Line="174" Column="28" TopLine="170"/>
+        <Caret Line="186" Column="10" TopLine="173"/>
       </Position3>
       <Position4>
         <Filename Value="testconveyor.pas"/>
-        <Caret Line="87" Column="71" TopLine="77"/>
+        <Caret Line="34" Column="1" TopLine="24"/>
       </Position4>
       <Position5>
         <Filename Value="testconveyor.pas"/>
-        <Caret Line="34" Column="1" TopLine="24"/>
+        <Caret Line="182" Column="1" TopLine="173"/>
       </Position5>
       <Position6>
-        <Filename Value="gfxutils.pas"/>
-        <Caret Line="1500" Column="15" TopLine="1495"/>
+        <Filename Value="testconveyor.pas"/>
+        <Caret Line="197" Column="21" TopLine="191"/>
       </Position6>
       <Position7>
         <Filename Value="testconveyor.pas"/>
         <Caret Line="34" Column="1" TopLine="24"/>
       </Position7>
       <Position8>
-        <Filename Value="gfxutils.pas"/>
-        <Caret Line="1504" Column="1" TopLine="1495"/>
+        <Filename Value="testconveyor.pas"/>
+        <Caret Line="182" Column="1" TopLine="173"/>
       </Position8>
       <Position9>
-        <Filename Value="gfxutils.pas"/>
-        <Caret Line="1453" Column="1" TopLine="1444"/>
+        <Filename Value="testconveyor.pas"/>
+        <Caret Line="184" Column="1" TopLine="173"/>
       </Position9>
       <Position10>
-        <Filename Value="gfxutils.pas"/>
-        <Caret Line="397" Column="1" TopLine="387"/>
+        <Filename Value="testconveyor.pas"/>
+        <Caret Line="202" Column="1" TopLine="193"/>
       </Position10>
       <Position11>
-        <Filename Value="coreutils.pas"/>
-        <Caret Line="526" Column="1" TopLine="516"/>
+        <Filename Value="testconveyor.pas"/>
+        <Caret Line="204" Column="1" TopLine="193"/>
       </Position11>
       <Position12>
-        <Filename Value="coreutils.pas"/>
-        <Caret Line="305" Column="1" TopLine="295"/>
+        <Filename Value="testconveyor.pas"/>
+        <Caret Line="220" Column="1" TopLine="211"/>
       </Position12>
       <Position13>
-        <Filename Value="coreutils.pas"/>
-        <Caret Line="461" Column="1" TopLine="451"/>
+        <Filename Value="testconveyor.pas"/>
+        <Caret Line="222" Column="43" TopLine="211"/>
       </Position13>
       <Position14>
         <Filename Value="testconveyor.pas"/>
-        <Caret Line="184" Column="16" TopLine="173"/>
+        <Caret Line="106" Column="70" TopLine="96"/>
       </Position14>
       <Position15>
         <Filename Value="testconveyor.pas"/>
-        <Caret Line="34" Column="1" TopLine="24"/>
+        <Caret Line="35" Column="83" TopLine="25"/>
       </Position15>
       <Position16>
-        <Filename Value="testconveyor.pas"/>
-        <Caret Line="186" Column="10" TopLine="173"/>
+        <Filename Value="jakrandr.pas"/>
+        <Caret Line="89" Column="54" TopLine="81"/>
       </Position16>
       <Position17>
         <Filename Value="testconveyor.pas"/>
-        <Caret Line="34" Column="1" TopLine="24"/>
+        <Caret Line="149" Column="31" TopLine="145"/>
       </Position17>
       <Position18>
         <Filename Value="testconveyor.pas"/>
-        <Caret Line="182" Column="1" TopLine="173"/>
+        <Caret Line="52" Column="101" TopLine="47"/>
       </Position18>
       <Position19>
         <Filename Value="testconveyor.pas"/>
-        <Caret Line="197" Column="21" TopLine="191"/>
+        <Caret Line="60" Column="1" TopLine="45"/>
       </Position19>
       <Position20>
         <Filename Value="testconveyor.pas"/>
-        <Caret Line="34" Column="1" TopLine="24"/>
+        <Caret Line="224" Column="37" TopLine="213"/>
       </Position20>
       <Position21>
-        <Filename Value="testconveyor.pas"/>
-        <Caret Line="182" Column="1" TopLine="173"/>
+        <Filename Value="jakrandr.pas"/>
+        <Caret Line="92" Column="26" TopLine="85"/>
       </Position21>
       <Position22>
         <Filename Value="testconveyor.pas"/>
-        <Caret Line="184" Column="1" TopLine="173"/>
+        <Caret Line="45" Column="71" TopLine="36"/>
       </Position22>
       <Position23>
         <Filename Value="testconveyor.pas"/>
-        <Caret Line="202" Column="1" TopLine="193"/>
+        <Caret Line="42" Column="40" TopLine="36"/>
       </Position23>
       <Position24>
         <Filename Value="testconveyor.pas"/>
-        <Caret Line="204" Column="1" TopLine="193"/>
+        <Caret Line="31" Column="112" TopLine="20"/>
       </Position24>
       <Position25>
         <Filename Value="testconveyor.pas"/>
-        <Caret Line="220" Column="1" TopLine="211"/>
+        <Caret Line="46" Column="76" TopLine="37"/>
       </Position25>
       <Position26>
         <Filename Value="testconveyor.pas"/>
-        <Caret Line="222" Column="43" TopLine="211"/>
+        <Caret Line="30" Column="1" TopLine="29"/>
       </Position26>
       <Position27>
-        <Filename Value="testconveyor.pas"/>
-        <Caret Line="106" Column="70" TopLine="96"/>
+        <Filename Value="jakrandr.pas"/>
+        <Caret Line="95" Column="72" TopLine="83"/>
       </Position27>
       <Position28>
         <Filename Value="testconveyor.pas"/>
-        <Caret Line="35" Column="83" TopLine="25"/>
+        <Caret Line="231" Column="64" TopLine="216"/>
       </Position28>
       <Position29>
         <Filename Value="jakrandr.pas"/>
-        <Caret Line="89" Column="54" TopLine="81"/>
+        <Caret Line="96" Column="71" TopLine="85"/>
       </Position29>
       <Position30>
-        <Filename Value="testconveyor.pas"/>
-        <Caret Line="149" Column="31" TopLine="145"/>
+        <Filename Value="gfxutils.pas"/>
+        <Caret Line="1498" Column="17" TopLine="1495"/>
       </Position30>
     </JumpHistory>
   </ProjectOptions>
@@ -421,22 +421,6 @@
     </Other>
   </CompilerOptions>
   <Debugging>
-    <BreakPoints Count="2">
-      <Item1>
-        <Kind Value="bpkSource"/>
-        <WatchScope Value="wpsLocal"/>
-        <WatchKind Value="wpkWrite"/>
-        <Source Value="testconveyor.pas"/>
-        <Line Value="34"/>
-      </Item1>
-      <Item2>
-        <Kind Value="bpkSource"/>
-        <WatchScope Value="wpsLocal"/>
-        <WatchKind Value="wpkWrite"/>
-        <Source Value="testconveyor.pas"/>
-        <Line Value="181"/>
-      </Item2>
-    </BreakPoints>
     <Watches Count="2">
       <Item1>
         <Expression Value="p1^"/>

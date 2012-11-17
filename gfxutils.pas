@@ -5,7 +5,7 @@ unit GfxUtils;
 (* enable short-circuiting boolean evaluation (DO NOT DISABLE THIS) *)
 {$B-}
 
-{$DEFINE CHECK_PLANARITY}
+{_$DEFINE CHECK_PLANARITY}
 (*EFINE DEBUG_ADD_ENTITY*)
 (*$DEFINE AGGRESSIVE_CLIPPING*)
 

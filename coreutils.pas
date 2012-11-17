@@ -369,8 +369,10 @@ var
   rp: TPoint3D;
 begin
   rp := GetRotatedPoint(m_c);
-  for i := 0 to m_entities.Count - 1 do
+  for i := 0 to m_entities.Count - 1 do begin
     m_entities[i].RotateAround(rp, rx, ry, rz);
+    m_entities[i].Rotate(rx, ry, rz);
+  end;
 end;
 
 procedure ACompound.RotateAround(c: TPoint3D; rx, ry, rz: real);

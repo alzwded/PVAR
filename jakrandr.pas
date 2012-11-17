@@ -89,7 +89,8 @@ begin
   e := TArm.Compound(Point3DFromCoords(-300.0, 0.0, 0.0), 20);
   m_worldEntities.Add(e);
 
-  e := TTestConveyor.Grabber(Point3DFromCoords(0.0, -700, 1000), 20);
+  e := TTestConveyor.Conveyor(Point3DFromCoords(0.0, -700, 1000), 20, 30, 400);
+  e.Rotate(0, pi / 4, 0);
   m_worldEntities.Add(e);
 
   m_cameraManip := cmNone;
