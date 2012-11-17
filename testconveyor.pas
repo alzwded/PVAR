@@ -8,7 +8,7 @@ uses
   Classes, SysUtils, CoreUtils, GfxUtils, Graphics;
 
 const
-  CONVEYOR_SPEED = 10;
+  CONVEYOR_SPEED = 5;
 
 type
   TTestConveyor = class(AGrabber)
@@ -35,23 +35,24 @@ begin
   m_support.AddNode(Point3DFromCoords(Centre.p.x - 60, Centre.p.y - 25, Centre.p.z));
   m_support.AddNode(Point3DFromCoords(Centre.p.x - 60, Centre.p.y + 25, Centre.p.z));
   m_support.AddNode(Point3DFromCoords(Centre.p.x + 60, Centre.p.y - 25, Centre.p.z));
-  m_support.AddNode(Point3DFromCoords(Centre.p.x - 60, Centre.p.y - 25, Centre.p.z + 500));
-  m_support.AddNode(Point3DFromCoords(Centre.p.x - 60, Centre.p.y + 25, Centre.p.z + 500));
-  m_support.AddNode(Point3DFromCoords(Centre.p.x + 60, Centre.p.y - 25, Centre.p.z + 500));
+  m_support.AddNode(Point3DFromCoords(Centre.p.x - 60, Centre.p.y - 25, Centre.p.z + 450));
+  m_support.AddNode(Point3DFromCoords(Centre.p.x - 60, Centre.p.y + 25, Centre.p.z + 450));
+  m_support.AddNode(Point3DFromCoords(Centre.p.x + 60, Centre.p.y - 25, Centre.p.z + 450));
   m_support.AddNode(Point3DFromCoords(Centre.p.x, Centre.p.y, Centre.p.z));
-  m_support.AddNode(Point3DFromCoords(Centre.p.x, Centre.p.y, Centre.p.z + 500));
+  m_support.AddNode(Point3DFromCoords(Centre.p.x, Centre.p.y, Centre.p.z + 450));
+  m_support.AddNode(Point3DFromCoords(Centre.p.x + 50, Centre.p.y, Centre.p.z));
 
   skin := TSkin.Skin;
 
   // base x10, top side
   for i := 0 to 9 do begin
-    p := Point3DFromCoords(Centre.p.x, Centre.p.y, Centre.p.z + 50 * i);
+    p := Point3DFromCoords(Centre.p.x, Centre.p.y + 35.355339, Centre.p.z + 50 * i);
 
     sup := TSupport.Support(p);
     // 70.710678 = 50*sqrt(2)
     // 35.355339 = ^ / 2
-    sup.AddNode(Point3DFromCoords(p.x - 60, p.y + 35.355339, p.z));
-    sup.AddNode(Point3DFromCoords(p.x + 60, p.y + 35.355339, p.z));
+    sup.AddNode(Point3DFromCoords(p.x - 60, p.y, p.z));
+    sup.AddNode(Point3DFromCoords(p.x + 60, p.y, p.z));
     Entities.Add(sup);
 
     if i > 0 then
@@ -64,60 +65,62 @@ begin
   end;
   offset := Entities.Count;
   // front two blips
-  p := Point3DFromCoords(Centre.p.x, Centre.p.y, Centre.p.z + 500);
+  p := Point3DFromCoords(Centre.p.x, Centre.p.y - 35.355339, Centre.p.z + 450);
   RotateNode(p, GetRotatedPoint(m_support.Nodes[7]^), -pi / 2, 0, 0);
   sup := TSupport.Support(p);
   sup.AddNode(Point3DFromCoords(p.x - 60, p.y, p.z));
   sup.AddNode(Point3DFromCoords(p.x + 60, p.y, p.z));
+  Entities.Add(sup);
   skin.BindQuad((Entities[offset - 1] as TSupport).Nodes[0],
-        (Entities[offset - 1] as TSupport).Nodes[1],
-        sup.Nodes[1],
         sup.Nodes[0],
+        sup.Nodes[1],
+        (Entities[offset - 1] as TSupport).Nodes[1],
         clGray,
         clSilver);
   offset := Entities.Count;
   // base x10, bottom side
   for i := 9 downto 0 do begin
-    p := Point3DFromCoords(Centre.p.x, Centre.p.y, Centre.p.z + 50 * i);
+    p := Point3DFromCoords(Centre.p.x, Centre.p.y - 35.355339, Centre.p.z + 50 * (i));
 
     sup := TSupport.Support(p);
-    sup.AddNode(Point3DFromCoords(p.x - 60, p.y - 35.355339, p.z));
-    sup.AddNode(Point3DFromCoords(p.x + 60, p.y - 35.355339, p.z));
+    sup.AddNode(Point3DFromCoords(p.x - 60, p.y, p.z));
+    sup.AddNode(Point3DFromCoords(p.x + 60, p.y, p.z));
     Entities.Add(sup);
 
-    if i = 0 then
+    if i = 9 then
       skin.BindQuad((Entities[offset - 1] as TSupport).Nodes[0],
-                (Entities[offset - 1] as TSupport).Nodes[1],
-                sup.Nodes[1],
                 sup.Nodes[0],
+                sup.Nodes[1],
+                (Entities[offset - 1] as TSupport).Nodes[1],
                 clGray,
                 clSilver)
     else
       skin.BindQuad((Entities[offset + (9 - i) - 1] as TSupport).Nodes[0],
-                (Entities[offset + (9 - i) - 1] as TSupport).Nodes[1],
-                sup.Nodes[1],
                 sup.Nodes[0],
+                sup.Nodes[1],
+                (Entities[offset + (9 - i) - 1] as TSupport).Nodes[1],
                 clGray,
                 clSilver);
   end;
   offset := Entities.Count;
   // back two blips
   //N.B. last line if Entities[0]
-  p := Point3DFromCoords(Centre.p.x, Centre.p.y, Centre.p.z);
+  p := Point3DFromCoords(Centre.p.x, Centre.p.y - 35.355339, Centre.p.z);
   RotateNode(p, GetRotatedPoint(m_support.Nodes[6]^), pi / 2, 0, 0);
   sup := TSupport.Support(p);
   sup.AddNode(Point3DFromCoords(p.x - 60, p.y, p.z));
   sup.AddNode(Point3DFromCoords(p.x + 60, p.y, p.z));
+  Entities.Add(sup);
   skin.BindQuad((Entities[offset - 1] as TSupport).Nodes[0],
-        (Entities[offset - 1] as TSupport).Nodes[1],
-        sup.Nodes[1],
         sup.Nodes[0],
+        sup.Nodes[1],
+        (Entities[offset - 1] as TSupport).Nodes[1],
         clGray,
         clSilver);
   skin.BindQuad(sup.Nodes[0],
-        sup.Nodes[1],
-        (Entities[0] as TSupport).Nodes[1],
         (Entities[0] as TSupport).Nodes[0],
+        (Entities[0] as TSupport).Nodes[1],
+        sup.Nodes[1],
         clGray,
         clSilver);
   // done with plates
@@ -141,19 +144,20 @@ end;
 *)
 procedure TTestConveyor.Loop;
 var
-  v: TPoint3D;
-  side: TPlanarity;
+  v, reverseV: TPoint3D;
+  side, horizSide: TPlanarity;
   angle, rx, ry, rz: real;
   OB, v_i: TPoint3D;
   x, y, z: real;
-  frontPlane, backPlane: TPolygon;
+  frontPlane, backPlane, horizPlane: TPolygon;
   i: integer;
 begin
   // get the correct vector
   v := GetTranslationVectorPerFrame;
+  reverseV := Point3DFromCoords(-v.x, -v.y, -v.z);
 
   // get angular speed
-  angle := pi * (CONVEYOR_SPEED / 50);
+  angle := (pi / 2) * (CONVEYOR_SPEED / 50);
   // attempt _some_ normalization
   if abs(angle) < 0.00000001 then angle := 0.0
   else if abs(angle - pi) < 0.00000001 then angle := pi;
@@ -167,14 +171,21 @@ begin
                 GetRotatedPoint(m_support.Nodes[0]^),
                 GetRotatedPoint(m_support.Nodes[1]^),
                 GetRotatedPoint(m_support.Nodes[2]^));
+  horizPlane := TPolygon.Triangle(
+                GetRotatedPoint(m_support.Nodes[6]^),
+                GetRotatedPoint(m_support.Nodes[7]^),
+                GetRotatedPoint(m_support.Nodes[8]^));
 
   // rotate plates by a smidgun on the correct vector
   for i := 0 to m_platesEnd do begin
     side := SideOfPlane(
         frontPlane,
         GetRotatedPoint((Entities[i] as TSupport).Location));
+    horizSide := SideOfPlane(
+        horizPlane,
+        GetRotatedPoint((Entities[i] as TSupport).Location));
 
-    if (side = plOn) or (side = plBehind) then begin
+    if (side = plBehind) then begin
       OB := GetRotatedPoint((Entities[i] as TSupport).Nodes[1]^);
       SubstractVector(OB, GetRotatedPoint((Entities[i] as TSupport).Location));
       NormalizeVector(OB);
@@ -186,7 +197,7 @@ begin
       v_i := Point3DFromCoords(0, 0, 1);
       rz := DotProduct(OB, v_i) * angle;
 
-      Entities[i].RotateAround(GetRotatedPoint(m_support.Nodes[6]^), rx, ry, rz);
+      Entities[i].RotateAround(GetRotatedPoint(m_support.Nodes[7]^), rx, ry, rz);
 
       continue;
     end else begin
@@ -194,7 +205,7 @@ begin
         backPlane,
         GetRotatedPoint((Entities[i] as TSupport).Location));
 
-      if (side = plOn) or (side = plFront) then begin
+      if (side = plFront) then begin
         OB := GetRotatedPoint((Entities[i] as TSupport).Nodes[1]^);
         SubstractVector(OB, GetRotatedPoint((Entities[i] as TSupport).Location));
         NormalizeVector(OB);
@@ -206,20 +217,28 @@ begin
         v_i := Point3DFromCoords(0, 0, 1);
         rz := DotProduct(OB, v_i) * angle;
 
-        Entities[i].RotateAround(GetRotatedPoint(m_support.Nodes[7]^), rx, ry, rz);
+        Entities[i].RotateAround(GetRotatedPoint(m_support.Nodes[6]^), rx, ry, rz);
 
         continue;
+      end else begin
+          side := SideOfPlane(horizPlane, GetRotatedPoint((Entities[i] as TSupport).Location));
+
+          if side = plFront then
+            Entities[i].Translate(v)
+          else
+            Entities[i].Translate(reverseV);
       end;
-    end; (* else *)
-    Entities[i].Translate(v);
+    end;
   end;
 
 
   frontPlane.Free;
   backPlane.Free;
+  horizPlane.Free;
 
   // move the entities on the conveyor by a smidgun on the correct vector
-  for i := 0 to InanimateObjects.Count do
+  if InanimateObjects.Count > 0 then
+  for i := 0 to InanimateObjects.Count - 1 do
     InanimateObjects[i].Translate(v);
 
   // if at correct phase, ask m_inputs for some input

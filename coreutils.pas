@@ -423,6 +423,7 @@ var
   i: integer;
 begin
   inherited Loop;
+  if m_inanimateObjects.Count <= 0 then exit;
   for i := 0 to m_inanimateObjects.Count - 1 do begin
     if (m_inanimateObjects[i] is TSentientEntity)
         and not (m_inanimateObjects[i] as TSentientEntity).m_clock.Enabled then
@@ -438,6 +439,7 @@ var
   i: integer;
 begin
   inherited Start;
+  if m_inanimateObjects.Count <= 0 then exit;
   for i := 0 to m_inanimateObjects.Count - 1 do
     m_inanimateObjects[i].Start;
 end;
@@ -447,6 +449,7 @@ var
   i: integer;
 begin
   inherited Stop;
+  if m_inanimateObjects.Count <= 0 then exit;
   for i := 0 to m_inanimateObjects.Count - 1 do
     m_inanimateObjects[i].Stop;
 end;
@@ -456,6 +459,7 @@ var
   i: integer;
 begin
   inherited Render(engine);
+  if m_inanimateObjects.Count <= 0 then exit;
   for i := 0 to m_inanimateObjects.Count - 1 do
     m_inanimateObjects[i].Render(engine);
 end;

@@ -17,7 +17,7 @@ interface
 
 uses
   Classes, SysUtils, FileUtil, Forms, Controls, Graphics, Dialogs, ExtCtrls,
-  GfxUtils, CoreUtils, LCLType, TestUtils;
+  GfxUtils, CoreUtils, LCLType, TestUtils, TestConveyor;
 
 type
 
@@ -87,6 +87,9 @@ begin
   m_worldEntities.Add(e);
 
   e := TArm.Compound(Point3DFromCoords(-300.0, 0.0, 0.0), 20);
+  m_worldEntities.Add(e);
+
+  e := TTestConveyor.Grabber(Point3DFromCoords(0.0, -700, 1000), 20);
   m_worldEntities.Add(e);
 
   m_cameraManip := cmNone;
