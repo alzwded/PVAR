@@ -170,6 +170,7 @@ var
   ox, oy, oz: TPoint3D;
   frontPlane, backPlane, horizPlane: TPolygon;
   i: integer;
+  q0, q1, q2, q3: real;
 begin
   // get the correct vector
   v := GetTranslationVectorPerFrame;
@@ -199,6 +200,15 @@ begin
   oy := Point3DFromCoords(0, 1, 0);
   oz := Point3DFromCoords(0, 0, 1);
 
+  OB := GetRotatedPoint(m_support.Nodes[8]^);
+  SubstractVector(OB, GetRotatedPoint(m_c));
+  NormalizeVector(OB);
+
+  q0 := cos(angle / 2);
+  q1 := sin(angle / 2) * OB.x;
+  q2 := sin(angle / 2) * OB.y;
+  q3 := sin(angle / 2) * OB.z;
+
   // rotate plates by a smidgun on the correct vector
   for i := 0 to m_platesEnd do begin
     side := SideOfPlane(
@@ -209,13 +219,9 @@ begin
         GetRotatedPoint((Entities[i] as TSupport).Location));
 
     if (side = plBehind) then begin
-      OB := GetRotatedPoint((Entities[i] as TSupport).Nodes[1]^);
-      SubstractVector(OB, GetRotatedPoint((Entities[i] as TSupport).Location));
-      NormalizeVector(OB);
-
-      rx := DotProduct(OB, ox) * angle;
-      ry := DotProduct(OB, oy) * angle;
-      rz := DotProduct(OB, oz) * angle;
+      rx := arctan2(2 * (q0 * q1 + q2 * q3), 1 - 2 * (sqr(q1) + sqr(q2)));
+      ry := arcsin(2 * (q0 * q2 - q3 * q1));
+      rz := arctan2(2 * (q0 * q3 + q1 * q2), 1 - 2 * (sqr(q2) + sqr(q3)));
 
       Entities[i].RotateAround(GetRotatedPoint(m_support.Nodes[7]^), rx, ry, rz);
 
@@ -226,13 +232,9 @@ begin
         GetRotatedPoint((Entities[i] as TSupport).Location));
 
       if (side = plFront) then begin
-        OB := GetRotatedPoint((Entities[i] as TSupport).Nodes[1]^);
-        SubstractVector(OB, GetRotatedPoint((Entities[i] as TSupport).Location));
-        NormalizeVector(OB);
-
-        rx := DotProduct(OB, ox) * angle;
-        ry := DotProduct(OB, oy) * angle;
-        rz := DotProduct(OB, oz) * angle;
+        rx := arctan2(2 * (q0 * q1 + q2 * q3), 1 - 2 * (sqr(q1) + sqr(q2)));
+        ry := arcsin(2 * (q0 * q2 - q3 * q1));
+        rz := arctan2(2 * (q0 * q3 + q1 * q2), 1 - 2 * (sqr(q2) + sqr(q3)));
 
         Entities[i].RotateAround(GetRotatedPoint(m_support.Nodes[6]^), rx, ry, rz);
 

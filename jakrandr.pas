@@ -90,7 +90,8 @@ begin
   m_worldEntities.Add(e);
 
   e := TTestConveyor.Conveyor(Point3DFromCoords(0.0, -700, 1000), 200, 30, 400);
-  e.Rotate(pi / 12, pi / 12, 0);
+  e.Rotate(0, 0, pi / 4);
+  //e.Rotate(pi / 12, pi / 12, 0);
   (*e := TTestConveyor.Conveyor(Point3DFromCoords(0.0, -700, 1000), 500, 30, 400);
   e.Rotate(0, pi / 4, 0);*)
 
