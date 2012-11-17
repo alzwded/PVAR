@@ -150,6 +150,8 @@ var
   r: real;
   i, j, k: real;
   dv: TPoint3D;
+  ox, oy, oz: TPoint3D;
+  o: TPoint3D;
 begin
   if m_cameraManip = cmNone then exit;
 
@@ -161,61 +163,47 @@ begin
   m_lastClicked.X := X;
   m_lastClicked.Y := y;
 
+  o := Point3DFromCoords(0, 0, 0);
+  ox := Point3DFromCoords(1.0, 0.0, 0.0);
+  RotateNode(ox, o, -m_disp.RX, -m_disp.RY, -m_disp.RZ);
+  oy := Point3DFromCoords(0.0, 1.0, 0.0);
+  RotateNode(oy, o, -m_disp.RX, -m_disp.RY, -m_disp.RZ);
+  oz := Point3DFromCoords(0.0, 0.0, 1.0);
+  RotateNode(oz, o, -m_disp.RX, -m_disp.RY, -m_disp.RZ);
+
   case m_cameraManip of
   cmPanUV: begin
     i := dx * 4000.0 / DisplaySurface.Canvas.Width;
     j := -dy * 3000.0 / DisplaySurface.Canvas.Height; (* y is flipped *)
 
-    dv := Point3DFromCoords(i, j, 0.0);
-    RotateNode(
-        dv,
-        Point3DFromCoords(0.0, 0.0, 0.0),
-        m_disp.RX,
-        m_disp.RY,
-        m_disp.RZ);
+    dv := Point3DFromCoords(1, 0, 0);
+    incr(m_disp.O.x, DotProduct(dv, ox) * i);
+    incr(m_disp.O.y, DotProduct(dv, oy) * i);
+    incr(m_disp.O.z, DotProduct(dv, oz) * i);
 
-    incr(m_disp.O.x, dv.x);
-    incr(m_disp.O.y, dv.y);
-    incr(m_disp.O.z, dv.z);
+    dv := Point3DFromCoords(0, 1, 0);
+    incr(m_disp.O.x, DotProduct(dv, ox) * j);
+    incr(m_disp.O.y, DotProduct(dv, oy) * j);
+    incr(m_disp.O.z, DotProduct(dv, oz) * j);
     end;
   cmPanH: begin
     k := -dy * 3000.0 / DisplaySurface.Canvas.Height; (* y is still flipped *)
-    dv := Point3DFromCoords(0.0, 0.0, k);
-    RotateNode(
-        dv,
-        Point3DFromCoords(0.0, 0.0, 0.0),
-        m_disp.RX,
-        m_disp.RY,
-        m_disp.RZ);
 
-    incr(m_disp.O.x, dv.x);
-    incr(m_disp.O.y, dv.y);
-    incr(m_disp.O.z, dv.z);
+    dv := Point3DFromCoords(0, 0, 1);
+    incr(m_disp.O.x, DotProduct(dv, ox) * k);
+    incr(m_disp.O.y, DotProduct(dv, oy) * k);
+    incr(m_disp.O.z, DotProduct(dv, oz) * k);
     end;
   cmRot: begin
     r := dx * 2.0 * pi / DisplaySurface.Canvas.Width;
     m_disp.RY := m_disp.RY + r;
-    (* normalize angles *)
-    while m_disp.RY > 2.0 * pi do
-      m_disp.RY := m_disp.RY - 2.0 * pi;
-    while m_disp.RY < 0 do
-      m_disp.RY := m_disp.RY + 2.0 * pi;
+
     r := dy * 2.0 * pi / DisplaySurface.Canvas.Height;
     m_disp.RX := m_disp.RX + r;
-    (* normalize angles *)
-    while m_disp.RX > 2.0 * pi do
-      m_disp.RX := m_disp.RX - 2.0 * pi;
-    while m_disp.RX < 0 do
-      m_disp.RX := m_disp.RX + 2.0 * pi;
     end;
   cmRotZ: begin
     r := -dx * 2.0 * pi / DisplaySurface.Canvas.Width;
     m_disp.RZ := m_disp.RZ + r;
-    (* normalize angles *)
-    while m_disp.RZ > 2.0 * pi do
-      m_disp.RZ := m_disp.RZ - 2.0 * pi;
-    while m_disp.RZ < 0 do
-      m_disp.RZ := m_disp.RZ + 2.0 * pi;
     end;
   cmZoom: begin
     r := -dy * 5000.0 / DisplaySurface.Canvas.Height;
@@ -226,6 +214,20 @@ begin
       m_disp.D := MAX_CAMERA_DISTANCE;
     end;
   end;
+
+  (* normalize angles *)
+  while m_disp.RY > 2.0 * pi do
+    m_disp.RY := m_disp.RY - 2.0 * pi;
+  while m_disp.RY < 0 do
+    m_disp.RY := m_disp.RY + 2.0 * pi;
+  while m_disp.RX > 2.0 * pi do
+    m_disp.RX := m_disp.RX - 2.0 * pi;
+  while m_disp.RX < 0 do
+    m_disp.RX := m_disp.RX + 2.0 * pi;
+  while m_disp.RZ > 2.0 * pi do
+    m_disp.RZ := m_disp.RZ - 2.0 * pi;
+  while m_disp.RZ < 0 do
+    m_disp.RZ := m_disp.RZ + 2.0 * pi;
 end;
 
 procedure TJakRandr.DisplaySurfaceMouseUp(Sender: TObject;
