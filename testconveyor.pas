@@ -5,7 +5,7 @@ unit TestConveyor;
 interface
 
 uses
-  Classes, SysUtils, CoreUtils, GfxUtils, Graphics;
+  Classes, SysUtils, CoreUtils, GfxUtils, Graphics, Math;
 
 const
   CONVEYOR_SPEED = 5;
@@ -43,7 +43,11 @@ var
   p: TPoint3D;
   i: integer;
   offset: integer;
+  angle: real;
 begin
+  //angle := (pi / 2) * (PLATE_LENGTH / (CONVEYOR_SPEED / PLATE_LENGTH));
+  angle := pi / 2;
+
   m_support := TSupport.Support(Centre.p);
   m_support.AddNode(Point3DFromCoords(Centre.p.x - m_width div 2, Centre.p.y - 25, Centre.p.z));
   m_support.AddNode(Point3DFromCoords(Centre.p.x - m_width div 2, Centre.p.y + 25, Centre.p.z));
@@ -79,7 +83,8 @@ begin
   offset := Entities.Count;
   // front two blips
   p := Point3DFromCoords(Centre.p.x, Centre.p.y - 35.355339, Centre.p.z + m_nbPlates * PLATE_LENGTH);
-  RotateNode(p, GetRotatedPoint(m_support.Nodes[7]^), -pi / 2, 0, 0);
+  //RotateNode(p, GetRotatedPoint(m_support.Nodes[7]^), -pi / 2, 0, 0);
+  RotateNode(p, GetRotatedPoint(m_support.Nodes[7]^), -angle, 0, 0);
   sup := TSupport.Support(p);
   sup.AddNode(Point3DFromCoords(p.x - m_width div 2, p.y, p.z));
   sup.AddNode(Point3DFromCoords(p.x + m_width div 2, p.y, p.z));
@@ -119,7 +124,7 @@ begin
   // back two blips
   //N.B. last line if Entities[0]
   p := Point3DFromCoords(Centre.p.x, Centre.p.y - 35.355339, Centre.p.z);
-  RotateNode(p, GetRotatedPoint(m_support.Nodes[6]^), pi / 2, 0, 0);
+  RotateNode(p, GetRotatedPoint(m_support.Nodes[6]^), angle, 0, 0);
   sup := TSupport.Support(p);
   sup.AddNode(Point3DFromCoords(p.x - m_width div 2, p.y, p.z));
   sup.AddNode(Point3DFromCoords(p.x + m_width div 2, p.y, p.z));
@@ -162,6 +167,7 @@ var
   angle, rx, ry, rz: real;
   OB, v_i: TPoint3D;
   x, y, z: real;
+  ox, oy, oz: TPoint3D;
   frontPlane, backPlane, horizPlane: TPolygon;
   i: integer;
 begin
@@ -189,6 +195,10 @@ begin
                 GetRotatedPoint(m_support.Nodes[7]^),
                 GetRotatedPoint(m_support.Nodes[8]^));
 
+  ox := Point3DFromCoords(1, 0, 0);
+  oy := Point3DFromCoords(0, 1, 0);
+  oz := Point3DFromCoords(0, 0, 1);
+
   // rotate plates by a smidgun on the correct vector
   for i := 0 to m_platesEnd do begin
     side := SideOfPlane(
@@ -203,12 +213,9 @@ begin
       SubstractVector(OB, GetRotatedPoint((Entities[i] as TSupport).Location));
       NormalizeVector(OB);
 
-      v_i := Point3DFromCoords(1, 0, 0);
-      rx := DotProduct(OB, v_i) * angle;
-      v_i := Point3DFromCoords(0, 1, 0);
-      ry := DotProduct(OB, v_i) * angle;
-      v_i := Point3DFromCoords(0, 0, 1);
-      rz := DotProduct(OB, v_i) * angle;
+      rx := DotProduct(OB, ox) * angle;
+      ry := DotProduct(OB, oy) * angle;
+      rz := DotProduct(OB, oz) * angle;
 
       Entities[i].RotateAround(GetRotatedPoint(m_support.Nodes[7]^), rx, ry, rz);
 
@@ -223,12 +230,9 @@ begin
         SubstractVector(OB, GetRotatedPoint((Entities[i] as TSupport).Location));
         NormalizeVector(OB);
 
-        v_i := Point3DFromCoords(1, 0, 0);
-        rx := DotProduct(OB, v_i) * angle;
-        v_i := Point3DFromCoords(0, 1, 0);
-        ry := DotProduct(OB, v_i) * angle;
-        v_i := Point3DFromCoords(0, 0, 1);
-        rz := DotProduct(OB, v_i) * angle;
+        rx := DotProduct(OB, ox) * angle;
+        ry := DotProduct(OB, oy) * angle;
+        rz := DotProduct(OB, oz) * angle;
 
         Entities[i].RotateAround(GetRotatedPoint(m_support.Nodes[6]^), rx, ry, rz);
 

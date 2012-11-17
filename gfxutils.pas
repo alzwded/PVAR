@@ -5,9 +5,9 @@ unit GfxUtils;
 (* enable short-circuiting boolean evaluation (DO NOT DISABLE THIS) *)
 {$B-}
 
-{_$DEFINE CHECK_PLANARITY}
-(*EFINE DEBUG_ADD_ENTITY*)
-(*$DEFINE AGGRESSIVE_CLIPPING*)
+{$DEFINE CHECK_PLANARITY}
+{_$DEFINE DEBUG_ADD_ENTITY}
+{$DEFINE AGGRESSIVE_CLIPPING}
 
 (* utilities for creating, sorting and rendering 3d triangles, quadrangles,
    spheres and sprites to a canvas *)
