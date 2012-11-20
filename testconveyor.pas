@@ -164,13 +164,17 @@ procedure TTestConveyor.Loop;
 var
   v, reverseV: TPoint3D;
   side, horizSide: TPlanarity;
-  angle, rx, ry, rz: real;
+  angle, rx, ry, rz, angleBetweenVectors: real;
   OB, v_i: TPoint3D;
   x, y, z: real;
   ox, oy, oz: TPoint3D;
   frontPlane, backPlane, horizPlane: TPolygon;
   i: integer;
   q0, q1, q2, q3: real;
+  qq0, qq1, qq2, qq3: real;
+  dotx, doty, dotz: real;
+  vect, vectp: TPoint3D;
+  cosz, sinz: real;
 begin
   // get the correct vector
   v := GetTranslationVectorPerFrame;
@@ -198,16 +202,20 @@ begin
 
   ox := Point3DFromCoords(1, 0, 0);
   oy := Point3DFromCoords(0, 1, 0);
-  oz := Point3DFromCoords(0, 0, 1);
+  oz := Point3DFromCoords(0, 0, -1);
 
   OB := GetRotatedPoint(m_support.Nodes[8]^);
   SubstractVector(OB, GetRotatedPoint(m_c));
   NormalizeVector(OB);
 
-  q0 := cos(angle / 2);
-  q1 := sin(angle / 2) * OB.x;
-  q2 := sin(angle / 2) * OB.y;
-  q3 := sin(angle / 2) * OB.z;
+  (* find rotation around OZ *)
+  (*
+  OB.z := 0;
+  NormalizeVector(OB);
+  cosz := DotProduct(OB, oz);
+  sinz := ModulusOfVector(CrossProduct(OB, oz));*)
+  sinz := 1.0;
+  cosz := 0.0;
 
   // rotate plates by a smidgun on the correct vector
   for i := 0 to m_platesEnd do begin
@@ -219,11 +227,13 @@ begin
         GetRotatedPoint((Entities[i] as TSupport).Location));
 
     if (side = plBehind) then begin
-      rx := arctan2(2 * (q0 * q1 + q2 * q3), 1 - 2 * (sqr(q1) + sqr(q2)));
-      ry := arcsin(2 * (q0 * q2 - q3 * q1));
-      rz := arctan2(2 * (q0 * q3 + q1 * q2), 1 - 2 * (sqr(q2) + sqr(q3)));
-
-      Entities[i].RotateAround(GetRotatedPoint(m_support.Nodes[7]^), rx, ry, rz);
+      (* theta = 1, fi = 0 when rotZ = 0
+         theta = 0, fi = 1 when rotZ = 1 etc
+      *)
+      Entities[i].RotatePolar(
+              GetRotatedPoint(m_support.Nodes[7]^),
+              angle * sinz,
+              angle * cosZ);
 
       continue;
     end else begin
@@ -232,11 +242,10 @@ begin
         GetRotatedPoint((Entities[i] as TSupport).Location));
 
       if (side = plFront) then begin
-        rx := arctan2(2 * (q0 * q1 + q2 * q3), 1 - 2 * (sqr(q1) + sqr(q2)));
-        ry := arcsin(2 * (q0 * q2 - q3 * q1));
-        rz := arctan2(2 * (q0 * q3 + q1 * q2), 1 - 2 * (sqr(q2) + sqr(q3)));
-
-        Entities[i].RotateAround(GetRotatedPoint(m_support.Nodes[6]^), rx, ry, rz);
+        Entities[i].RotatePolar(
+                GetRotatedPoint(m_support.Nodes[6]^),
+                -angle * sinz,
+                -angle * cosz);
 
         continue;
       end else begin

@@ -329,9 +329,12 @@ function SideOfPlane(normal: TPoint3D; pointOnPlane, p: TPoint3D): TPlanarity;
 function NormalForPlane(plane: TPolygon): TPoint3D;
 function DotProduct(v1, v2: TPoint3D): real;
 function CrossProduct(v1, v2: TPoint3D): TPoint3D;
+function ModulusOfVector(v: TPoint3D): real;
 procedure NormalizeVector(var v: TPoint3D);
 function Distance(p1, p2: TPoint3D): real;
 procedure RotateNode(var node: TPoint3D; centre: TPoint3D; rx, ry, rz: real);
+procedure RotateNodePolar(var node: TPoint3D; centre: TPoint3D; dTheta, dPhi: real);
+procedure RotateNodePolarScale(var node: TPoint3D; centre: TPoint3D; scaleR, dTheta, dPhi: real);
 
 implementation
 
@@ -1974,6 +1977,94 @@ begin
   node.x := centre.x + translationVector.x;
   node.y := centre.y + translationVector.y;
   node.z := centre.z + translationVector.z;
+end;
+
+(*      Y
+        |               r = distance
+        |           theta = angle(OP, XZ)
+        |_____X       phi = angle(OP, OX) in XZ
+       /
+      /
+     Z
+
+     r = dist(P, O);
+     th = arccos(y / r);
+     fi = atan2(z, x);
+
+     x = r cos(th) cos(fi)
+     y = r sin(th)
+     z = r cos(th) sin(fi)
+*)
+procedure RotateNodePolar(var node: TPoint3D; centre: TPoint3D; dTheta, dPhi: real);
+var
+  r, th, fi: real;
+  debug: real;
+begin
+  (*r := Distance(node, centre);
+  if r = 0 then
+    Raise Exception.Create('Distance to O is 0, failed');
+    *)
+
+  SubstractVector(node, centre);
+
+  r := sqrt(ModulusOfVector(node));
+
+  th := arccos(node.y / r) + dTheta;
+  debug := radtodeg(th);
+  fi := arctan2(node.x, node.z) + dPhi;
+  debug := radtodeg(fi);
+
+  if th > 2 * pi then begin
+    th := 2 * pi - (th  - 2 * pi);
+    debug := radtodeg(th);
+    incr(fi, pi);
+    debug := radtodeg(fi);
+  end else if th < 0 then begin
+    th := abs(th);
+    debug := radtodeg(th);
+    incr(fi, pi);
+    debug := radtodeg(fi);
+  end;
+
+  node.z := r * sin(th) * cos(fi);
+  node.y := r * cos(th);
+  node.x := r * sin(th) * sin(fi);
+
+  TranslateVector(node, centre);
+end;
+
+function ModulusOfVector(v: TPoint3D): real;
+begin
+  ModulusOfVector := DotProduct(v, v);
+end;
+
+procedure RotateNodePolarScale(var node: TPoint3D; centre: TPoint3D; scaleR, dTheta, dPhi: real);
+var
+  r, th, fi: real;
+begin
+  if scaleR <= 0 then
+    Raise Exception.Create('scaleR cannot be negative or 0');
+
+  r := Distance(node, centre);
+  if r = 0 then
+    Raise Exception.Create('Distance to O is 0, failed');
+
+  SubstractVector(node, centre);
+
+  th := arccos(node.y / r) + dTheta;
+  fi := arctan2(node.z, node.x) + dPhi;
+  r := scaleR * r;
+
+  if th > 2 * pi then begin
+    th := 2 * pi - (th  - 2 * pi);
+    incr(fi, pi);
+  end;
+
+  node.x := r * cos(th) * cos(fi);
+  node.y := r * sin(th);
+  node.z := r * cos(th) * sin(fi);
+
+  TranslateVector(node, centre);
 end;
 
 function Centroid(p: TPolygon): TPoint3D;

@@ -24,6 +24,7 @@ type
     procedure Translate(dp: TPoint3D); virtual;
     procedure Rotate(rx, ry, rz: real); virtual;
     procedure RotateAround(c: TPoint3D; rx, ry, rz: real); virtual;
+    procedure RotatePolar(c: TPoint3D; theta, fi: real); virtual;
     (* Collidable *)
     function GetBoundingBox: PBoundingBox; virtual;
   end;
@@ -44,6 +45,7 @@ type
     procedure Translate(dp: TPoint3D); override;
     procedure Rotate(rx, ry, rz: real); override;
     procedure RotateAround(c: TPoint3D; rx, ry, rz: real); override;
+    procedure RotatePolar(c: TPoint3D; theta, fi: real); override;
   private
     m_nodes: array of TRealPoint3D;
     m_c: TRealPoint3D;
@@ -171,6 +173,7 @@ procedure IWorldEntity.Translate(dp: TPoint3D); begin end;
 procedure IWorldEntity.Rotate(rx, ry, rz: real); begin end;
 procedure IWorldEntity.RotateAround(c: TPoint3D; rx, ry, rz: real); begin end;
 function IWorldEntity.GetBoundingBox: PBoundingBox; begin GetBoundingBox := Nil; end;
+procedure IWorldEntity.RotatePolar(c: TPoint3D; theta, fi: real); begin end;
 
 (* TSupport *)
 
@@ -232,7 +235,7 @@ procedure TSupport.Rotate(rx, ry, rz: real);
 var
   i: integer;
 begin
-  for i := 0 to m_n - 1do
+  for i := 0 to m_n - 1 do
     ApplyRotationToPoint(m_nodes[i], m_c, rx, ry, rz);
 end;
 
@@ -245,6 +248,29 @@ begin
   ApplyRotationToPoint(m_c, RealPoint3DFromPoint(c), rx, ry, rz);
 
   p := GetRotatedPoint(m_c);
+  dv.x := -dv.x + p.x;
+  dv.y := -dv.y + p.y;
+  dv.z := -dv.z + p.z;
+
+  for i := 0 to m_n - 1 do begin
+    TranslateVector(m_nodes[i].p, dv);
+    TranslateVector(m_nodes[i].rotationCentre, dv);
+  end;
+end;
+
+procedure TSupport.RotatePolar(c: TPoint3D; theta, fi: real);
+var
+  i: integer;
+  dv, p: TPoint3D;
+begin
+  (* losing information... *)
+  m_c := RealPoint3DFromPoint(GetRotatedPoint(m_c));
+
+  dv := m_c.p;
+
+  RotateNodePolar(m_c.p, c, theta, fi);
+
+  p := m_c.p;
   dv.x := -dv.x + p.x;
   dv.y := -dv.y + p.y;
   dv.z := -dv.z + p.z;
