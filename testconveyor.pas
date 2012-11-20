@@ -247,6 +247,12 @@ begin
         GetRotatedPoint((Entities[i] as TSupport).Location));
 
       crAngle := -angle;
+      (* FIXME
+        wrong corner-case test.
+        should be SideOfPlane(p-parrallel-to-OY, E[i].Location) based
+        use the point-normal form of SideOfPlane
+        idem back-side
+      *)
       if GetRotatedPoint((Entities[i] as TSupport).Location).z > GetRotatedPoint(m_support.Nodes[6]^).z then
         crAngle := -crAngle;
 
