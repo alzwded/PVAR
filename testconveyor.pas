@@ -175,6 +175,7 @@ var
   dotx, doty, dotz: real;
   vect, vectp: TPoint3D;
   cosz, sinz: real;
+  crAngle: real;
 begin
   // get the correct vector
   v := GetTranslationVectorPerFrame;
@@ -230,10 +231,14 @@ begin
       (* theta = 1, fi = 0 when rotZ = 0
          theta = 0, fi = 1 when rotZ = 1 etc
       *)
+      crAngle := angle;
+      if GetRotatedPoint((Entities[i] as TSupport).Location).z < GetRotatedPoint(m_support.Nodes[7]^).z then
+        crAngle := -crAngle;
+
       Entities[i].RotatePolar(
               GetRotatedPoint(m_support.Nodes[7]^),
-              angle * sinz,
-              angle * cosZ);
+              crAngle * sinz,
+              crAngle * cosZ);
 
       continue;
     end else begin
@@ -241,11 +246,15 @@ begin
         backPlane,
         GetRotatedPoint((Entities[i] as TSupport).Location));
 
+      crAngle := -angle;
+      if GetRotatedPoint((Entities[i] as TSupport).Location).z > GetRotatedPoint(m_support.Nodes[6]^).z then
+        crAngle := -crAngle;
+
       if (side = plFront) then begin
         Entities[i].RotatePolar(
                 GetRotatedPoint(m_support.Nodes[6]^),
-                -angle * sinz,
-                -angle * cosz);
+                crAngle * sinz,
+                crAngle * cosz);
 
         continue;
       end else begin
