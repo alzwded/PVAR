@@ -89,8 +89,8 @@ begin
   e := TArm.Compound(Point3DFromCoords(-300.0, 0.0, 0.0), 20);
   m_worldEntities.Add(e);
 
-  //e := TTestConveyor.Conveyor(Point3DFromCoords(0.0, -700, 1000), 20, 30, 400);
-  //e.Rotate(0, -pi / 4, pi / 3);
+  e := TTestConveyor.Conveyor(Point3DFromCoords(0.0, -700, 1000), 20, 30, 400);
+  e.Rotate(pi / 6, pi / 4, 0(*pi / 3*));
   //e.Rotate(pi / 12, pi / 12, 0);
   (*e := TTestConveyor.Conveyor(Point3DFromCoords(0.0, -700, 1000), 500, 30, 400);
   e.Rotate(0, pi / 4, 0);*)
@@ -98,10 +98,10 @@ begin
   (* works rotated by X *) (* also, works rotated by 90deg around any axis *)
   (*e := TTestConveyor.Conveyor(Point3DFromCoords(0.0, -700, 1000), 20, 30, 400);
   e.Rotate(pi / 4, 0, 0);*)
-  //m_worldEntities.Add(e);
+  m_worldEntities.Add(e);
 
 
-  e := TTestConveyor.Conveyor(Point3DFromCoords(-500.0, -700, 1000), 200, 20, 200);
+  e := TTestConveyor.Conveyor(Point3DFromCoords(-500.0, -700, 1000), 20, 20, 200);
   e.Rotate(pi / 12, 0(*pi / 2*), 0);
   m_worldEntities.Add(e);
 
