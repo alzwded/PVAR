@@ -90,8 +90,9 @@ begin
   m_worldEntities.Add(e);
 
   e := TTestConveyor.Conveyor(Point3DFromCoords(0.0, -700, 1000), 20, 30, 400);
-  e.Rotate(pi / 6, pi / 4, 0(*pi / 3*));
-  //e.Rotate(pi / 12, pi / 12, 0);
+  (*e.Rotate(0, 0, pi/3); // fails*)
+  //e.Rotate(pi / 6, pi / 4, 0(*pi / 3*));
+  e.Rotate(pi / 12, pi / 6, 0);
   (*e := TTestConveyor.Conveyor(Point3DFromCoords(0.0, -700, 1000), 500, 30, 400);
   e.Rotate(0, pi / 4, 0);*)
 
@@ -102,7 +103,7 @@ begin
 
 
   e := TTestConveyor.Conveyor(Point3DFromCoords(-500.0, -700, 1000), 20, 20, 200);
-  e.Rotate(pi / 12, pi / 2, 0);
+  e.Rotate(pi / 3, pi / 2, 0);
   m_worldEntities.Add(e);
 
   m_cameraManip := cmNone;

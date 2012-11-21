@@ -37,7 +37,6 @@ end;
 
 procedure TTestConveyor.Init;
 var
-  e: IWorldEntity;
   sup: TSupport;
   skin: TSkin;
   p: TPoint3D;
@@ -151,31 +150,18 @@ begin
   Entities.Add(m_support);
 end;
 
-(* rotate arbitrarily as if rotating only on X
-        Let segment (A,B) exist
-        Let G be the centroid
-        1. Translate vetor such that G == O
-        2. Let v be (O,B)
-        3. r_i = (v_i . v) * angle
-           where r_i is rotation around Ox,Oy,Oz
-           v_i are vectors OX,OY,OZ
-*)
 procedure TTestConveyor.Loop;
 var
   v, reverseV: TPoint3D;
-  side, horizSide: TPlanarity;
-  angle, rx, ry, rz, angleBetweenVectors: real;
-  OB, v_i: TPoint3D;
-  x, y, z: real;
-  ox, oy, oz: TPoint3D;
+  side: TPlanarity;
+  angle: real;
+  OB: TPoint3D;
   frontPlane, backPlane, horizPlane: TPolygon;
   i: integer;
-  q0, q1, q2, q3: real;
-  qq0, qq1, qq2, qq3: real;
-  dotx, doty, dotz: real;
-  vect, vectp: TPoint3D;
+  vect: TPoint3D;
   cosz, sinz: real;
   crAngle: real;
+  arbitraryValue: real;
 begin
   // get the correct vector
   v := GetTranslationVectorPerFrame;
@@ -201,15 +187,16 @@ begin
                 GetRotatedPoint(m_support.Nodes[7]^),
                 GetRotatedPoint(m_support.Nodes[8]^));
 
-  ox := Point3DFromCoords(1, 0, 0);
-  oy := Point3DFromCoords(0, 1, 0);
-  oz := Point3DFromCoords(0, 0, -1);
-
+  (* find rotation around OZ *)
+  (* TODO
   OB := GetRotatedPoint(m_support.Nodes[8]^);
   SubstractVector(OB, GetRotatedPoint(m_c));
   NormalizeVector(OB);
 
-  (* find rotation around OZ *)
+  arbitraryValue := OB.y;
+  cosz := arbitraryValue;
+  sinz := sin(arccos(cosz));
+  *)
   (* TODO
   OB.z := 0;
   NormalizeVector(OB);
@@ -229,9 +216,6 @@ begin
     side := SideOfPlane(
         frontPlane,
         GetRotatedPoint((Entities[i] as TSupport).Location));
-    horizSide := SideOfPlane(
-        horizPlane,
-        GetRotatedPoint((Entities[i] as TSupport).Location));
 
     if (side = plBehind) then begin
       (* theta = 1, fi = 0 when rotZ = 0
@@ -243,13 +227,11 @@ begin
               GetRotatedPoint((Entities[i] as TSupport).Location))
               = plFront then
         crAngle := -crAngle;
-      (*if GetRotatedPoint((Entities[i] as TSupport).Location).z < GetRotatedPoint(m_support.Nodes[7]^).z then
-        crAngle := -crAngle;*)
 
       Entities[i].RotatePolar(
               GetRotatedPoint(m_support.Nodes[7]^),
               crAngle * sinz,
-              crAngle * cosZ);
+              angle * cosZ);
 
       continue;
     end else begin
@@ -269,14 +251,12 @@ begin
               GetRotatedPoint((Entities[i] as TSupport).Location))
               = plBehind then
         crAngle := -crAngle;
-      (*if GetRotatedPoint((Entities[i] as TSupport).Location).z > GetRotatedPoint(m_support.Nodes[6]^).z then
-        crAngle := -crAngle;*)
 
       if (side = plFront) then begin
         Entities[i].RotatePolar(
                 GetRotatedPoint(m_support.Nodes[6]^),
                 crAngle * sinz,
-                crAngle * cosz);
+                angle * cosz);
 
         continue;
       end else begin
