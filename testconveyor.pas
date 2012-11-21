@@ -210,13 +210,19 @@ begin
   NormalizeVector(OB);
 
   (* find rotation around OZ *)
-  (*
+  (* TODO
   OB.z := 0;
   NormalizeVector(OB);
   cosz := DotProduct(OB, oz);
-  sinz := ModulusOfVector(CrossProduct(OB, oz));*)
+  sinz := ModulusOfVector(CrossProduct(OB, oz)); *)
   sinz := 1.0;
   cosz := 0.0;
+
+  (* define the vector for the theta=90* case *)
+  vect := GetRotatedPoint(m_support.Nodes[6]^);
+  SubstractVector(vect, GetRotatedPoint(m_support.Nodes[7]^));
+  vect := Point3DFromCoords(vect.x, 0.0, vect.z);
+  NormalizeVector(vect);
 
   // rotate plates by a smidgun on the correct vector
   for i := 0 to m_platesEnd do begin
@@ -232,8 +238,13 @@ begin
          theta = 0, fi = 1 when rotZ = 1 etc
       *)
       crAngle := angle;
-      if GetRotatedPoint((Entities[i] as TSupport).Location).z < GetRotatedPoint(m_support.Nodes[7]^).z then
+      if SideOfPlane(vect,
+              GetRotatedPoint(m_support.Nodes[7]^),
+              GetRotatedPoint((Entities[i] as TSupport).Location))
+              = plFront then
         crAngle := -crAngle;
+      (*if GetRotatedPoint((Entities[i] as TSupport).Location).z < GetRotatedPoint(m_support.Nodes[7]^).z then
+        crAngle := -crAngle;*)
 
       Entities[i].RotatePolar(
               GetRotatedPoint(m_support.Nodes[7]^),
@@ -253,8 +264,13 @@ begin
         use the point-normal form of SideOfPlane
         idem back-side
       *)
-      if GetRotatedPoint((Entities[i] as TSupport).Location).z > GetRotatedPoint(m_support.Nodes[6]^).z then
+      if SideOfPlane(vect,
+              GetRotatedPoint(m_support.Nodes[6]^),
+              GetRotatedPoint((Entities[i] as TSupport).Location))
+              = plBehind then
         crAngle := -crAngle;
+      (*if GetRotatedPoint((Entities[i] as TSupport).Location).z > GetRotatedPoint(m_support.Nodes[6]^).z then
+        crAngle := -crAngle;*)
 
       if (side = plFront) then begin
         Entities[i].RotatePolar(
