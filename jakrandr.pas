@@ -40,6 +40,7 @@ type
       Shift: TShiftState; X, Y: Integer);
     procedure DisplaySurfaceResize(Sender: TObject);
     procedure FormActivate(Sender: TObject);
+    procedure FormClose(Sender: TObject; var CloseAction: TCloseAction);
     procedure FormCreate(Sender: TObject);
     procedure FormDeactivate(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
@@ -89,10 +90,10 @@ begin
   e := TArm.Compound(Point3DFromCoords(-300.0, 0.0, 0.0), 20);
   m_worldEntities.Add(e);
 
-  e := TTestConveyor.Conveyor(Point3DFromCoords(0.0, -700, 1000), 20, 30, 400);
+  e := TTestConveyor.Conveyor(Point3DFromCoords(0.0, 0, 1000), 20, 30, 400);
   (*e.Rotate(0, 0, pi/3); // fails*)
   //e.Rotate(pi / 6, pi / 4, 0(*pi / 3*));
-  e.Rotate(pi / 12, pi / 6, 0);
+  e.Rotate(pi / 12, -pi / 6, 0);
   (*e := TTestConveyor.Conveyor(Point3DFromCoords(0.0, -700, 1000), 500, 30, 400);
   e.Rotate(0, pi / 4, 0);*)
 
@@ -121,6 +122,11 @@ end;
 procedure TJakRandr.FormActivate(Sender: TObject);
 begin
   RenderClock.Enabled := true;
+end;
+
+procedure TJakRandr.FormClose(Sender: TObject; var CloseAction: TCloseAction);
+begin
+  RenderClock.Enabled := false;
 end;
 
 procedure TJakRandr.DisplaySurfaceClick(Sender: TObject);
@@ -271,10 +277,32 @@ end;
 
 procedure TJakRandr.FormKeyUp(Sender: TObject; var Key: Word; Shift: TShiftState
   );
+var
+  i: integer;
 begin
   case Key of
   VK_SPACE: ToggleMotion;
   VK_RETURN: CentreCamera;
+  VK_ESCAPE: begin
+    RenderClock.Enabled:=false;
+    for i := 0 to m_worldEntities.Count - 1 do
+      m_worldEntities[i].Stop;
+    Self.Close;
+    end;
+  VK_F1: begin
+    MessageDlg('JakRandr',
+        'Proiect realizat de Vlad Meșco. ©2012'#13#10 +
+        #13#10 +
+        'Engine de animații 3D scris de la zero.'#13#10 +
+        #13#10 +
+        'Esc - exit'#13#10 +
+        'Space - toggle animatnion'#13#10 +
+        'Enter - recenter camera'#13#10 +
+        'Mouse - manipulate camera',
+        mtInformation,
+        [mbOK],
+        0);
+    end;
   end;
 end;
 

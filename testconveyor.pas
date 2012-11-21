@@ -24,6 +24,9 @@ type
     m_support: TSupport;
     m_nbPlates: integer;
     m_width: integer;
+    m_grabbingBox: TBoundingBox;
+  public
+    function GrabbingBox: PBoundingBox;
   end;
 
 implementation
@@ -162,6 +165,7 @@ var
   cosz, sinz: real;
   crAngle: real;
   arbitraryValue: real;
+  e: IWorldEntity;
 begin
   // get the correct vector
   v := GetTranslationVectorPerFrame;
@@ -240,12 +244,6 @@ begin
         GetRotatedPoint((Entities[i] as TSupport).Location));
 
       crAngle := -angle;
-      (* FIXME
-        wrong corner-case test.
-        should be SideOfPlane(p-parrallel-to-OY, E[i].Location) based
-        use the point-normal form of SideOfPlane
-        idem back-side
-      *)
       if SideOfPlane(vect,
               GetRotatedPoint(m_support.Nodes[6]^),
               GetRotatedPoint((Entities[i] as TSupport).Location))
@@ -281,7 +279,8 @@ begin
     InanimateObjects[i].Translate(v);
 
   // if at correct phase, ask m_inputs for some input
-  //TODO
+  if TryGrab(GrabbingBox, e) then
+    InanimateObjects.Add(e);
 end;
 
 function TTestConveyor.GetTranslationVectorPerFrame: TPoint3D;
@@ -301,6 +300,17 @@ begin
   ret.z := ret.z * CONVEYOR_SPEED;
 
   GetTranslationVectorPerFrame := ret;
+end;
+
+function TTestConveyor.GrabbingBox: PBoundingBox;
+var
+  c: TPoint3D;
+begin
+  c := GetRotatedPoint(m_c);
+  m_grabbingBox.p1 := Point3DFromCoords(c.x - m_width / 2, c.y - PLATE_LENGTH / 2, c.z - PLATE_LENGTH / 2);
+  m_grabbingBox.p2 := Point3DFromCoords(c.x + m_width / 2, c.y + PLATE_LENGTH / 2, c.z + PLATE_LENGTH / 2);
+
+  GrabbingBox := @m_grabbingBox;
 end;
 
 end.

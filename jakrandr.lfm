@@ -4,10 +4,11 @@ object JakRandr: TJakRandr
   Top = 82
   Width = 640
   Anchors = [akTop, akLeft, akRight, akBottom]
-  Caption = 'JakRandr'
+  Caption = 'JakRandr - F1 for help'
   ClientHeight = 480
   ClientWidth = 640
   OnActivate = FormActivate
+  OnClose = FormClose
   OnCreate = FormCreate
   OnDeactivate = FormDeactivate
   OnDestroy = FormDestroy
