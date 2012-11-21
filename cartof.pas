@@ -65,9 +65,9 @@ begin
   // top
   e := TPolygon.Quad(
         Point3DFromCoords(c.x - 50, c.y + 100, c.z - 50),
-        Point3DFromCoords(c.x + 50, c.y + 100, c.z - 50),
+        Point3DFromCoords(c.x - 50, c.y + 100, c.z + 50),
         Point3DFromCoords(c.x + 50, c.y + 100, c.z + 50),
-        Point3DFromCoords(c.x - 50, c.y + 100, c.z + 50));
+        Point3DFromCoords(c.x + 50, c.y + 100, c.z - 50));
   Geometry.Add(e);
 end;
 

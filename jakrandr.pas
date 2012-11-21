@@ -17,7 +17,7 @@ interface
 
 uses
   Classes, SysUtils, FileUtil, Forms, Controls, Graphics, Dialogs, ExtCtrls,
-  GfxUtils, CoreUtils, LCLType, TestUtils, TestConveyor;
+  GfxUtils, CoreUtils, LCLType, TestUtils, TestConveyor, Cartof;
 
 type
 
@@ -112,6 +112,9 @@ begin
   m_move := true;
 
   Self.DoubleBuffered := true;
+
+  e := TCartof.Part(Point3DFromCoords(0, 500, 0));
+  m_worldEntities.Add(e);
 end;
 
 procedure TJakRandr.FormDeactivate(Sender: TObject);
