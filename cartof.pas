@@ -10,6 +10,9 @@ uses
 type
   TCartof = class(TPart)
     procedure InitMesh; override;
+    function GetBoundingBox: PBoundingBox; override;
+  private
+    m_bbox: TBoundingBox;
   end;
 
 implementation
@@ -66,6 +69,18 @@ begin
         Point3DFromCoords(c.x + 50, c.y + 100, c.z + 50),
         Point3DFromCoords(c.x - 50, c.y + 100, c.z + 50));
   Geometry.Add(e);
+end;
+
+function TCartof.GetBoundingBox: PBoundingBox;
+var
+  c: TPoint3D;
+begin
+  c := GetRotatedPoint(m_c);
+
+  m_bbox.p1 := Point3DFromCoords(c.x - 50, c.y, c.z - 50);
+  m_bbox.p2 := Point3DFromCoords(c.x + 50, c.y + 100, c.z + 50);
+
+  GetBoundingBox := @m_bbox;
 end;
 
 end.
