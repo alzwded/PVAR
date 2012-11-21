@@ -21,7 +21,7 @@
         <CompilerOptions>
           <Version Value="11"/>
           <Target>
-            <Filename Value="JakOmlette-win32"/>
+            <Filename Value="bin/JakOmlette-win32"/>
           </Target>
           <SearchPaths>
             <IncludeFiles Value="$(ProjOutDir)"/>
@@ -60,7 +60,7 @@
         <CompilerOptions>
           <Version Value="11"/>
           <Target>
-            <Filename Value="JakOmlette-i686"/>
+            <Filename Value="bin/JakOmlette-i686"/>
           </Target>
           <SearchPaths>
             <IncludeFiles Value="$(ProjOutDir)"/>
@@ -99,7 +99,7 @@
         <CompilerOptions>
           <Version Value="11"/>
           <Target>
-            <Filename Value="JakOmlette-win32"/>
+            <Filename Value="bin/JakOmlette-win32-debug"/>
           </Target>
           <SearchPaths>
             <IncludeFiles Value="$(ProjOutDir)"/>
@@ -180,8 +180,8 @@
         <IsVisibleTab Value="True"/>
         <EditorIndex Value="0"/>
         <WindowIndex Value="0"/>
-        <TopLine Value="141"/>
-        <CursorPos X="25" Y="144"/>
+        <TopLine Value="126"/>
+        <CursorPos X="76" Y="134"/>
         <UsageCount Value="216"/>
         <Loaded Value="True"/>
         <LoadedDesigner Value="True"/>
@@ -283,7 +283,7 @@
         <Loaded Value="True"/>
       </Unit11>
     </Units>
-    <JumpHistory Count="29" HistoryIndex="28">
+    <JumpHistory Count="30" HistoryIndex="29">
       <Position1>
         <Filename Value="cartof.pas"/>
         <Caret Line="85" Column="40" TopLine="66"/>
@@ -400,12 +400,16 @@
         <Filename Value="jakrandr.pas"/>
         <Caret Line="294" Column="75" TopLine="281"/>
       </Position29>
+      <Position30>
+        <Filename Value="jakrandr.pas"/>
+        <Caret Line="157" Column="76" TopLine="147"/>
+      </Position30>
     </JumpHistory>
   </ProjectOptions>
   <CompilerOptions>
     <Version Value="11"/>
     <Target>
-      <Filename Value="JakOmlette"/>
+      <Filename Value="bin/JakOmlette"/>
     </Target>
     <SearchPaths>
       <IncludeFiles Value="$(ProjOutDir)"/>
