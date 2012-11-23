@@ -50,9 +50,9 @@ const
 
   (* control lighting
      sum of these should be <= 1 *)
-  AMBIENT_PERCENTAGE = 0.4;
-  LIGHT_PERCENTAGE = 0.45;
-  SQRT_PERCENTAGE = 0.15;
+  AMBIENT_PERCENTAGE = 0.2;
+  LIGHT_PERCENTAGE = 0.6;
+  SQRT_PERCENTAGE = 0.2;
 
 type
   TPoint3D = record
@@ -1235,6 +1235,7 @@ begin
   b := (poli.FillColour shr 16) mod 256;
 
   varAmount := DotProduct(normal, cameraNormal);
+  varAmount := (varAmount + 1) / 2;
   if varAmount < 0 then varAmount := 0
   else if varAmount > 1 then varAmount := 1;
 
