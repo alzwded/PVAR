@@ -633,9 +633,12 @@ var
   points: array of TPoint;
   i: integer;
   normal, p: TPoint3D;
+  pointOnScreen: boolean;
   (*$IFNDEF AGGRESSIVE_CLIPPING*)
   thereExistsAtLeastOnePointInFrontOfClipPlane: boolean;
   (*$ENDIF*)
+label
+  return;
 begin
   normal := Point3DFromCoords(
         O.x - GetViewportLocation.x,
@@ -648,13 +651,16 @@ begin
   thereExistsAtLeastOnePointInFrontOfClipPlane := false;
   (*$ENDIF*)
 
+  pointOnScreen := false;
+
   for i := 0 to poli.NbNodes - 1 do begin
     (* if poli.Nodes[i] behind clipping plane, return *)
     p := GetRotatedPoint(poli.Nodes[i]);
+
     (*$IFDEF AGGRESSIVE_CLIPPING*)
     if SideOfPlane(normal, GetViewportLocation, p) <> plFront then begin
       SetLength(points, 0);
-      exit;
+      goto return;
     end;
     (*$ELSE*)
     if (not thereExistsAtLeastOnePointInFrontOfClipPlane)
@@ -663,11 +669,22 @@ begin
     (*$ENDIF*)
 
     points[i] := Project(p);
+
+    if not pointOnScreen
+        and (points[i].x >= 0) and (points[i].x <= m_canvas.Width)
+        and (points[i].y >= 0) and (points[i].y <= m_canvas.Height)
+    then
+      pointOnScreen := true;
   end;
+
+  (* filling a polygon takes a lot of time, so return if there
+     are no points on screen *)
+  if not pointOnScreen then
+    goto return;
 
   (*$IFNDEF AGGRESSIVE_CLIPPING*)
   if not thereExistsAtLeastOnePointInFrontOfClipPlane then
-    exit;
+    goto return;
   (*$ENDIF*)
 
   Shade(poli);
@@ -680,6 +697,7 @@ begin
     m_canvas.Polyline(points, 0, poli.NbNodes);
   m_canvas.Polygon(points, False, 0, poli.NbNodes);
 
+  return:
   SetLength(points, 0);
 end;
 
