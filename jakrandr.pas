@@ -17,7 +17,12 @@ interface
 
 uses
   Classes, SysUtils, FileUtil, Forms, Controls, Graphics, Dialogs, ExtCtrls,
-  GfxUtils, CoreUtils, LCLType, TestUtils, TestConveyor, Cartof;
+  GfxUtils, CoreUtils, LCLType, TestUtils, TestConveyor, Cartof, Windows, Math;
+
+const
+  DEFAULT_CAPTION = 'JakRandr - F1 for help';
+  DYNAMIC_FRAMERATE_LOW = 0.6;
+  DYNAMIC_FRAMERATE_HIGH = 1.05;
 
 type
 
@@ -320,11 +325,27 @@ end;
 procedure TJakRandr.RenderClockTimer(Sender: TObject);
 var
   i: integer;
+  t0, t: DWORD;
 begin
+  t0 := GetTickCount;
   m_disp.BeginScene;
   for i := 0 to m_worldEntities.Count - 1 do
     m_worldEntities.Items[i].Render(@m_disp);
   m_disp.CommitScene;
+  t := GetTickCount;
+
+  if t > t0 then
+    t := t - t0
+  else
+    t := t + (MAXDWORD - t0);
+
+  if (t > DYNAMIC_FRAMERATE_HIGH * RenderClock.Interval) and (t < 150) then begin
+    RenderClock.Interval := t;
+    Self.Caption := DEFAULT_CAPTION + ' ~ ' + IntToStr(floor(1000.0 / t)) + 'fps';
+  end else if (t < DYNAMIC_FRAMERATE_LOW * RenderClock.Interval) then begin
+    RenderClock.Interval := t;
+    Self.Caption := DEFAULT_CAPTION + ' ~ ' + IntToStr(floor(1000.0 / t)) + 'fps';
+  end;
 end;
 
 procedure TJakRandr.ToggleMotion;

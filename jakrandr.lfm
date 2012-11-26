@@ -32,7 +32,7 @@ object JakRandr: TJakRandr
     OnResize = DisplaySurfaceResize
   end
   object RenderClock: TTimer
-    Interval = 35
+    Interval = 33
     OnTimer = RenderClockTimer
     left = 124
     top = 94
