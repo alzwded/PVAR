@@ -395,7 +395,6 @@ var
   i: integer;
   candidate: IEntity3D;
 begin
-  // FIXME problem is here
   candidate := entity.GetFacingCamera(
         m_visu.O,
         m_visu.m_rx,
@@ -408,6 +407,12 @@ begin
     candidate.Free;
     exit;
   end;
+
+  (* TODO
+     do the following on a separate thread with mutex, should end up
+         projecting a polygon and sorting a polygon at the same time
+         thus improving speed greatly
+  *)
 
   (*$IFDEF DEBUG_ADD_ENTITY*)
   writeln('Begin sorting new entity');

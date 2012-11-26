@@ -339,7 +339,11 @@ begin
   else
     t := t + (MAXDWORD - t0);
 
-  if (t > DYNAMIC_FRAMERATE_HIGH * RenderClock.Interval) and (t < 150) then begin
+  // limmit framerate
+  if t > 150 then t := 150;
+  if t < 10 then t := 10;
+
+  if (t > DYNAMIC_FRAMERATE_HIGH * RenderClock.Interval) then begin
     RenderClock.Interval := t;
     Self.Caption := DEFAULT_CAPTION + ' ~ ' + IntToStr(floor(1000.0 / t)) + 'fps';
   end else if (t < DYNAMIC_FRAMERATE_LOW * RenderClock.Interval) then begin
