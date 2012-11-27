@@ -424,6 +424,7 @@ implementation
 constructor TJakRandrEngine.Create(canvas: TCanvas; bgColor: TColor);
 begin
   m_entities := TEntity3DList.Create;
+  m_entities2d := TEntity2DList.Create;
   m_canvas := canvas;
   m_buffer := TBitmap.Create;
   m_visu := TJakRandrProjector.Create(m_buffer.Canvas, bgColor);
@@ -436,6 +437,7 @@ begin
   m_visu.Free;
   ClearEntities;
   m_entities.Free;
+  m_entities2d.Free;
   m_buffer.Free;
 end;
 
@@ -446,6 +448,7 @@ begin
     m_entities[i].Free;*)
 
   m_entities.Clear;
+  m_entities2d.Clear;
 end;
 
 procedure TJakRandrEngine.BeginScene;
@@ -470,6 +473,8 @@ begin
   for i := 0 to m_entities.Count - 1 do begin
     m_visu.Draw(m_entities.Items[i])
   end;
+  (*for i := 0 to m_entities2d.Count - 1 do
+    m_visu.Draw(m_entities2d[i]); *)
   m_canvas.Draw(0, 0, m_buffer);
 end;
 
