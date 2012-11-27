@@ -56,11 +56,12 @@ const
   SQRT_PERCENTAGE = 0.2;
 
   (* threading *)
-  MAX_WORKERS = 2;
-  WAIT_TIMEOUT = 10;
+  MAX_WORKERS = 1;
+  WAIT_TIMEOUT = 30;
 
 type
   TEntity2DType = (
+    etUnknown,
     etTria,
     etQuad,
     etLine
@@ -90,7 +91,8 @@ type
     function Points: ArrayOfTPoints;
   end;
 
-  TEntity2DList = specialize TFPGObjectList<TEntity2D>;
+  //TEntity2DList = specialize TFPGObjectList<TEntity2D>;
+  TEntity2DList = array of TEntity2D;
 
   TPoint3D = record
     x, y, z: real;
@@ -116,6 +118,7 @@ type
     master: PJakRandrEngine;
     e: PRTLEvent;
     cs1, cs2: TRTLCriticalSection;
+    cnt: integer;
   end;
 
   PJakThreadCtx = ^TJakThreadCtx;
@@ -127,12 +130,13 @@ type
 
   TJakWorker = class(TThread)
     constructor AddEntity(ctx: PJakThreadCtx; e: IEntity3D);
-    constructor DrawEntity(ctx: PJakThreadCtx; e: IEntity3D);
-    procedure Execute;
+    constructor DrawEntity(ctx: PJakThreadCtx; e: IEntity3D; i: integer);
+    procedure Execute; override;
     destructor Destroy; override;
   private
     m_ctx: PJakThreadCtx;
     m_e: IEntity3D;
+    m_i: integer;
     m_which: TJakWorkerBehaviour;
 
     procedure ExecAddEntity;
@@ -256,12 +260,12 @@ type
     constructor Create(canvas: TCanvas; bgColor: TColor);
 
     (* draw 3d entities *)
-    procedure Draw(entity: IEntity3D);
+    function Render(entity: IEntity3D): TEntity2D;
   private
-    procedure DrawPolygon(poli: TPolygon);
-    procedure DrawSphere(sphere: TSphere);
-    procedure DrawSprite(sprite: TSprite);
-    procedure DrawLine(line: TLine);
+    function RenderPolygon(poli: TPolygon): TEntity2D;
+    procedure RenderSphere(sphere: TSphere);
+    procedure RenderSprite(sprite: TSprite);
+    function RenderLine(line: TLine): TEntity2D;
 
     procedure Draw(entity: TEntity2D);
 
@@ -355,7 +359,7 @@ type
     m_buffer: TBitmap;
     m_canvas: TCanvas;
     m_entities: TEntity3DList;
-    m_2dEntities: TEntity2DList;
+    m_entities2d: TEntity2DList;
 
     procedure ClearEntities;
   public
@@ -365,7 +369,6 @@ type
     property RZ: real read m_visu.m_rz write m_visu.m_rz;
     property D: real read m_visu.m_focalDistance write m_visu.m_focalDistance;
   private (* threading *)
-    m_workerCnt: integer;
     m_threadContext: TJakThreadCtx;
 
     procedure ThrowParty;
@@ -424,12 +427,10 @@ implementation
 constructor TJakRandrEngine.Create(canvas: TCanvas; bgColor: TColor);
 begin
   m_entities := TEntity3DList.Create;
-  m_entities2d := TEntity2DList.Create;
+
   m_canvas := canvas;
   m_buffer := TBitmap.Create;
   m_visu := TJakRandrProjector.Create(m_buffer.Canvas, bgColor);
-
-  m_workerCnt := 0;
 end;
 
 destructor TJakRandrEngine.Destroy;
@@ -437,18 +438,19 @@ begin
   m_visu.Free;
   ClearEntities;
   m_entities.Free;
-  m_entities2d.Free;
+  SetLength(m_entities2d, 0);
   m_buffer.Free;
 end;
 
 procedure TJakRandrEngine.ClearEntities;
+var
+  i: integer;
 begin
-  (* in theory TFGLObjectList autofrees objects *)
-  (*for i := 0 to m_entities.Count - 1 do
-    m_entities[i].Free;*)
-
+  for i := 0 to m_entities.Count - 1 do
+    if m_entities2d[i] <> Nil then
+      m_entities2d[i].Free;
+  //SetLength(m_entities2d, 0);
   m_entities.Clear;
-  m_entities2d.Clear;
 end;
 
 procedure TJakRandrEngine.BeginScene;
@@ -458,23 +460,38 @@ begin
   m_buffer.Canvas.Pen.Width := 1;
   ClearEntities;
   m_visu.Clear;
+
+  ThrowParty; // begin with addEntity
 end;
 
 procedure TJakRandrEngine.AbortScene;
 begin
   ClearEntities;
   m_visu.Clear;
+
+  AfterParty; // end with addEntity
 end;
 
 procedure TJakRandrEngine.CommitScene;
 var
   i: integer;
 begin
+  AfterParty; // end with addEntity
+  (*
   for i := 0 to m_entities.Count - 1 do begin
-    m_visu.Draw(m_entities.Items[i])
+    m_visu.Render(m_entities.Items[i])
+  end;*)
+  SetLength(m_entities2d, m_entities.Count);
+  ThrowParty;
+  for i := 0 to m_entities.Count - 1 do begin
+    m_entities2d[i] := Nil;
+    Hire(TJakWorker.DrawEntity(@m_threadContext, m_entities[i], i));
   end;
-  (*for i := 0 to m_entities2d.Count - 1 do
-    m_visu.Draw(m_entities2d[i]); *)
+  AfterParty;
+
+  for i := 0 to m_entities.Count - 1 do
+    m_visu.Draw(m_entities2d[i]);
+
   m_canvas.Draw(0, 0, m_buffer);
 end;
 
@@ -483,109 +500,61 @@ var
   i: integer;
   candidate: IEntity3D;
 begin
-  candidate := entity.GetFacingCamera(
-        m_visu.O,
-        m_visu.m_rx,
-        m_visu.m_ry,
-        m_visu.m_rz);
-
-  if (candidate is TPolygon) and
-          (SideOfPlane(candidate as TPolygon, m_visu.GetViewportLocation)
-                  = plBehind) then begin
-    candidate.Free;
-    exit;
-  end;
-
-  (* TODO
-     do the following on a separate thread with mutex, should end up
-         projecting a polygon and sorting a polygon at the same time
-         thus improving speed greatly
-  *)
-  (*
-        stuff to use:
-                TThread
-                EnterCriticalSection
-                LeaveCriticalSection
-  *)
-  (*
-        actually, it's something like this:
-
-        def Thread.Execute(IEntity3D e, JakRandrProjector context):
-                e = Project(e)
-                EnterCriticalSection(mutex)
-                context.Sort(e)
-                LeaveCriticalSection(mutex)
-  *)
-
-  (*$IFDEF DEBUG_ADD_ENTITY*)
-  writeln('Begin sorting new entity');
-  candidate.Dump;
-  (*$ENDIF*)
-  //for i := 0 to m_entities.Count - 1 do begin
-  i := m_entities.Count;
-  while (i > 0)
-        and (m_visu.InOrder(candidate, m_entities.Items[i - 1]))
-  do begin
-    (*$IFDEF DEBUG_ADD_ENTITY*)
-    writeln('  comparing with:');
-    write('  '); m_entities.Items[i - 1].Dump;
-    (*$ENDIF*)
-    dec(i);
-  end;
-
-  (*$IFDEF DEBUG_ADD_ENTITY*)
-  writeln(i, ' ', m_entities.Count);
-  (*$ENDIF*)
-  if i = m_entities.Count then begin
-    (*$IFDEF DEBUG_ADD_ENTITY*)
-    writeln('  inserting at end');
-    (*$ENDIF*)
-    m_entities.Add(candidate);
-    exit;
-  end;
-  (*$IFDEF DEBUG_ADD_ENTITY*)
-  writeln('  inserting at ', i);
-  (*$ENDIF*)
-  m_entities.Insert(i, candidate);
+  Hire(TJakWorker.AddEntity(@m_threadContext, entity));
 end;
 
 procedure TJakRandrEngine.ThrowParty;
 begin
-  m_workerCnt := 0;
   InitCriticalSection(m_threadContext.cs1);
   InitCriticalSection(m_threadContext.cs2);
   m_threadContext.e := RTLEventCreate;
   m_threadContext.master := @Self;
+  m_threadContext.cnt := 0;
 end;
 
 procedure TJakRandrEngine.AfterParty;
 begin
+  while m_threadContext.cnt > 0 do ContemplateLife;
   DoneCriticalSection(m_threadContext.cs1);
   DoneCriticalSection(m_threadContext.cs2);
   RTLeventdestroy(m_threadContext.e);
   m_threadContext.master := Nil;
+  m_threadContext.cnt := 0;
 end;
 
 procedure TJakRandrEngine.Hire(w: TJakWorker);
 begin
-  while m_workerCnt >= MAX_WORKERS do
+  while m_threadContext.cnt >= MAX_WORKERS do
     ContemplateLife;
-  inc(m_workerCnt);
+  EnterCriticalSection(m_threadContext.cs2);
+  try
+    inc(m_threadContext.cnt);
+  finally
+    LeaveCriticalSection(m_threadContext.cs2);
+  end;
   w.Start;
+  //w.Resume;
 end;
 
 procedure TJakRandrEngine.ContemplateLife;
 begin
-  if m_workerCnt <= 0 then exit;
+  EnterCriticalsection(m_threadContext.cs2);
+  try
+    if m_threadContext.cnt <= 0 then exit;
+  finally
+    LeaveCriticalsection(m_threadContext.cs2);
+  end;
+  //RTLeventWaitFor(m_threadContext.e);
   RTLeventWaitFor(m_threadContext.e, WAIT_TIMEOUT);
-  SummonGrimReaper;
+  RTLeventResetEvent(m_threadContext.e);
+  //SummonGrimReaper;
 end;
 
 procedure TJakRandrEngine.SummonGrimReaper;
 var
   i: integer;
 begin
-  dec(m_workerCnt);
+  dec(m_threadContext.cnt);
 end;
 
 (* TJakRandrProjector *)
@@ -706,6 +675,8 @@ procedure TJakRandrProjector.Draw(entity: TEntity2D);
 var
   pWidth: integer;
 begin
+  if entity = Nil then exit;
+
   case entity.EntityType of
   etLine: begin
     // store pen width
@@ -760,7 +731,7 @@ begin
   m_canvas.Line(OSP_p1, OSP_p2);
 end;
 
-procedure TJakRandrProjector.DrawLine(line: TLine);
+function TJakRandrProjector.RenderLine(line: TLine): TEntity2D;
 var
   p1, p2: TPoint;
   pWidth: integer;
@@ -790,8 +761,13 @@ begin
         (*$ENDIF*)
         (SideOfPlane(normal, GetViewportLocation, GetRotatedPoint(line.Nodes[1]))
                 <> plFront) then
+  begin
+    RenderLine := Nil;
     exit;
+  end;
 
+  RenderLine := TEntity2D.Line(p1, p2, line.ContourColour);
+(*
   // store pen width
   pWidth := m_canvas.Pen.Width;
 
@@ -802,18 +778,20 @@ begin
 
   // restore pen width
   m_canvas.Pen.Width := pWidth;
+  *)
 end;
 
-procedure TJakRandrProjector.Draw(entity: IEntity3D);
+function TJakRandrProjector.Render(entity: IEntity3D): TEntity2D;
 begin
-  if entity is TPolygon then DrawPolygon(entity as TPolygon)
-  else if entity is TSphere then DrawSphere(entity as TSphere)
-  else if entity is TSprite then DrawSprite(entity as TSprite)
-  else if entity is TLine then DrawLine(entity as TLine)
+  if entity is TPolygon then Render := RenderPolygon(entity as TPolygon)
+(*  else if entity is TSphere then RenderSphere(entity as TSphere)
+  else if entity is TSprite then RenderSprite(entity as TSprite)*)
+  else if entity is TLine then Render := RenderLine(entity as TLine)
   ;
+  Render := Nil;
 end;
 
-procedure TJakRandrProjector.DrawPolygon(poli: TPolygon);
+function TJakRandrProjector.RenderPolygon(poli: TPolygon): TEntity2D;
 var
   points: array of TPoint;
   i: integer;
@@ -845,6 +823,7 @@ begin
     (*$IFDEF AGGRESSIVE_CLIPPING*)
     if SideOfPlane(normal, GetViewportLocation, p) <> plFront then begin
       SetLength(points, 0);
+      RenderPolygon := Nil;
       goto return;
     end;
     (*$ELSE*)
@@ -864,16 +843,28 @@ begin
 
   (* filling a polygon takes a lot of time, so return if there
      are no points on screen *)
-  if not pointOnScreen then
+  if not pointOnScreen then begin
+    RenderPolygon := Nil;
     goto return;
+  end;
 
   (*$IFNDEF AGGRESSIVE_CLIPPING*)
-  if not thereExistsAtLeastOnePointInFrontOfClipPlane then
+  if not thereExistsAtLeastOnePointInFrontOfClipPlane then begin
+    RenderPolygon := Nil;
     goto return;
+  end;
   (*$ENDIF*)
 
   Shade(poli);
 
+  if poli.NbNodes = 3 then
+    RenderPolygon := TEntity2D.Triangle(points[0], points[1], points[2], poli.ContourColour, poli.FillColour)
+  else
+    RenderPolygon := TEntity2D.Quad(points[0], points[1], points[2], points[3], poli.ContourColour, poli.FillColour);
+
+  goto return;
+
+  (*
   m_canvas.Pen.color := poli.ContourColour;
   m_canvas.Brush.color := poli.FillColour;
   m_canvas.Brush.Style := bsSolid;
@@ -881,12 +872,13 @@ begin
   if poli.ContourColour <> clNone then
     m_canvas.Polyline(points, 0, poli.NbNodes);
   m_canvas.Polygon(points, False, 0, poli.NbNodes);
+  *)
 
   return:
   SetLength(points, 0);
 end;
 
-procedure TJakRandrProjector.DrawSphere(sphere: TSphere);
+procedure TJakRandrProjector.RenderSphere(sphere: TSphere);
 var
   p: TPoint;
   rx, ry: integer;
@@ -909,7 +901,7 @@ begin
   end;
 end;
 
-procedure TJakRandrProjector.DrawSprite(sprite: TSprite);
+procedure TJakRandrProjector.RenderSprite(sprite: TSprite);
 var
   p: TPoint;
   w, h: real;
@@ -2295,17 +2287,18 @@ begin
   m_ctx := ctx;
   m_e := e;
   m_which := jwAddEntity;
-  inherited Create(true);
-  FreeOnTerminate := true;
+  FreeOnTerminate := false;
+  inherited Create(True);
 end;
 
-constructor TJakWorker.DrawEntity(ctx: PJakThreadCtx; e: IEntity3D);
+constructor TJakWorker.DrawEntity(ctx: PJakThreadCtx; e: IEntity3D; i: integer);
 begin
   m_ctx := ctx;
   m_e := e;
+  m_i := i;
   m_which := jwDrawEntity;
-  inherited Create(true);
-  FreeOnTerminate := true;
+  FreeOnTerminate := false;
+  inherited Create(True);
 end;
 
 procedure TJakWorker.Execute;
@@ -2314,19 +2307,74 @@ begin
   jwAddEntity: ExecAddEntity;
   jwDrawEntity: ExecDrawEntity;
   end;
+
+  EnterCriticalSection(m_ctx^.cs2);
+  try
+    dec(m_ctx^.cnt);
+  finally
+    LeaveCriticalsection(m_ctx^.cs2);
+  end;
+
+  RTLeventSetEvent(m_ctx^.e);
 end;
 
 destructor TJakWorker.Destroy;
 begin
+  m_ctx := nil;
   inherited;
 end;
 
 procedure TJakWorker.ExecAddEntity;
+var
+  i: integer;
+  a: TJakRandrEngine;
+  ct: TJakThreadCtx;
+  l: TEntity3DList;
 begin
+  m_e := m_e.GetFacingCamera(
+        m_ctx^.master^.m_visu.O,
+        m_ctx^.master^.m_visu.m_rx,
+        m_ctx^.master^.m_visu.m_ry,
+        m_ctx^.master^.m_visu.m_rz);
+
+  if (m_e is TPolygon) and
+          (SideOfPlane(m_e as TPolygon,
+                      m_ctx^.master^.m_visu.GetViewportLocation)
+                  = plBehind) then begin
+    m_e.Free;
+    exit;
+  end;
+
+  EnterCriticalsection(m_ctx^.cs1);
+  try
+    ct := m_ctx^;
+    a := ct.master^;
+    l := a.m_entities;
+    i := l.Count;
+    i := m_ctx^.master^.m_entities.Count;
+    while (i > 0)
+          and (m_ctx^.master^.m_visu.InOrder(
+                m_e,
+                m_ctx^.master^.m_entities.Items[i - 1]))
+    do begin
+      dec(i);
+    end;
+
+    if i = m_ctx^.master^.m_entities.Count then begin
+      m_ctx^.master^.m_entities.Add(m_e);
+      exit;
+    end;
+    m_ctx^.master^.m_entities.Insert(i, m_e);
+  finally
+    LeaveCriticalsection(m_ctx^.cs1);
+  end;
 end;
 
 procedure TJakWorker.ExecDrawEntity;
 begin
+  m_ctx^.master^
+        .m_entities2d[m_i] := m_ctx^.master^
+                        .m_visu.Render(m_e);
 end;
 
 (* TEntity2D *)
@@ -2352,6 +2400,7 @@ begin
   m_points[0] := p1;
   m_points[1] := p2;
   m_points[2] := p3;
+  m_points[3] := p4;
 
   m_contourColour := contourColour;
   m_fillColour := fillColour;

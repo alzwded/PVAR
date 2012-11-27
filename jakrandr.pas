@@ -83,10 +83,17 @@ var
 begin
   m_disp := TJakRandrEngine.Create(DisplaySurface.Canvas, clBlack);
 
+  m_cameraManip := cmNone;
+
+  m_move := true;
+
+  Self.DoubleBuffered := true;
+
   m_worldEntities := TListOfWorldEntities.Create;
 
   e := TTestWE.Create(Point3DFromCoords(500.0, 0.0, 0.0), 1, 0);
   m_worldEntities.Add(e);
+  exit;
   e := TTestWE.Create(Point3DFromCoords(500.0, 0.0, 0.0), 0, 0);
   m_worldEntities.Add(e);
   e := TTestAxis.Create;
@@ -111,12 +118,6 @@ begin
   e := TTestConveyor.Conveyor(Point3DFromCoords(-500.0, -700, 1000), 20, 20, 200);
   e.Rotate(pi / 3, pi / 2, 0);
   m_worldEntities.Add(e);
-
-  m_cameraManip := cmNone;
-
-  m_move := true;
-
-  Self.DoubleBuffered := true;
 
   e := TCartof.Part(Point3DFromCoords(0, 500, 0));
   m_worldEntities.Add(e);
