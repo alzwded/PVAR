@@ -45,6 +45,7 @@ uses
   Classes, SysUtils, Graphics, fgl, Math;
 
 const
+  (* camera limits *)
   MIN_CAMERA_DISTANCE = 100.0;
   MAX_CAMERA_DISTANCE = 60000.0;
 
@@ -54,7 +55,43 @@ const
   LIGHT_PERCENTAGE = 0.6;
   SQRT_PERCENTAGE = 0.2;
 
+  (* threading *)
+  MAX_WORKERS = 2;
+  WAIT_TIMEOUT = 10;
+
 type
+  TEntity2DType = (
+    etTria,
+    etQuad,
+    etLine
+  );
+
+  ArrayOfTPoints = array of TPoint;
+
+  TEntity2D = class(TObject)
+    constructor Triangle(p1, p2, p3: TPoint; contourColour, fillColour: TColor);
+    constructor Quad(p1, p2, p3, p4: TPoint; contourColour, fillColour: TColor);
+    constructor Line(p1, p2: TPoint; itsColour: TColor);
+    destructor Destroy; override;
+  private
+    m_type: TEntity2DType;
+    m_points: array of TPoint;
+    m_contourColour: TColor;
+    m_fillColour: TColor;
+
+    function GetPoint(i: integer): TPoint;
+  public
+    property EntityType: TEntity2DType read m_type;
+    property Point[i: integer]: TPoint read GetPoint;
+    property ContourColour: TColor read m_contourColour;
+    property FillColour: TColor read m_fillColour;
+
+  private
+    function Points: ArrayOfTPoints;
+  end;
+
+  TEntity2DList = specialize TFPGObjectList<TEntity2D>;
+
   TPoint3D = record
     x, y, z: real;
   end;
@@ -71,6 +108,38 @@ type
     procedure Dump; virtual; abstract;
     function GetFacingCamera(O: TPoint3D; rx, ry, rz: real): IEntity3D; virtual; abstract;
   end;
+
+  TJakRandrEngine = class;
+  PJakRandrEngine = ^TJakRandrEngine;
+
+  TJakThreadCtx = record
+    master: PJakRandrEngine;
+    e: PRTLEvent;
+    cs1, cs2: TRTLCriticalSection;
+  end;
+
+  PJakThreadCtx = ^TJakThreadCtx;
+
+  TJakWorkerBehaviour = (
+    jwAddEntity,
+    jwDrawEntity
+  );
+
+  TJakWorker = class(TThread)
+    constructor AddEntity(ctx: PJakThreadCtx; e: IEntity3D);
+    constructor DrawEntity(ctx: PJakThreadCtx; e: IEntity3D);
+    procedure Execute;
+    destructor Destroy; override;
+  private
+    m_ctx: PJakThreadCtx;
+    m_e: IEntity3D;
+    m_which: TJakWorkerBehaviour;
+
+    procedure ExecAddEntity;
+    procedure ExecDrawEntity;
+  end;
+
+  TListOfWorkers = specialize TFPGObjectList<TJakWorker>;
 
   PRealPoint3D = ^TRealPoint3D;
 
@@ -194,6 +263,8 @@ type
     procedure DrawSprite(sprite: TSprite);
     procedure DrawLine(line: TLine);
 
+    procedure Draw(entity: TEntity2D);
+
   public
     (* draw 2d entities *)
     procedure DrawPoint(p: TPoint3D; color: TColor);
@@ -284,6 +355,7 @@ type
     m_buffer: TBitmap;
     m_canvas: TCanvas;
     m_entities: TEntity3DList;
+    m_2dEntities: TEntity2DList;
 
     procedure ClearEntities;
   public
@@ -292,9 +364,18 @@ type
     property RY: real read m_visu.m_ry write m_visu.m_ry;
     property RZ: real read m_visu.m_rz write m_visu.m_rz;
     property D: real read m_visu.m_focalDistance write m_visu.m_focalDistance;
+  private (* threading *)
+    m_workerCnt: integer;
+    m_threadContext: TJakThreadCtx;
+
+    procedure ThrowParty;
+    procedure AfterParty;
+    procedure Hire(w: TJakWorker);
+    procedure ContemplateLife;
+    procedure SummonGrimReaper;
   end;
 
-  PJakRandrEngine = ^TJakRandrEngine;
+  //PJakRandrEngine = ^TJakRandrEngine;
 
 procedure TranslateVector(var p: TPoint3D; dp: TPoint3D);
 procedure SubstractVector(var p: TPoint3D; dp: TPoint3D);
@@ -346,6 +427,8 @@ begin
   m_canvas := canvas;
   m_buffer := TBitmap.Create;
   m_visu := TJakRandrProjector.Create(m_buffer.Canvas, bgColor);
+
+  m_workerCnt := 0;
 end;
 
 destructor TJakRandrEngine.Destroy;
@@ -461,6 +544,45 @@ begin
   m_entities.Insert(i, candidate);
 end;
 
+procedure TJakRandrEngine.ThrowParty;
+begin
+  m_workerCnt := 0;
+  InitCriticalSection(m_threadContext.cs1);
+  InitCriticalSection(m_threadContext.cs2);
+  m_threadContext.e := RTLEventCreate;
+  m_threadContext.master := @Self;
+end;
+
+procedure TJakRandrEngine.AfterParty;
+begin
+  DoneCriticalSection(m_threadContext.cs1);
+  DoneCriticalSection(m_threadContext.cs2);
+  RTLeventdestroy(m_threadContext.e);
+  m_threadContext.master := Nil;
+end;
+
+procedure TJakRandrEngine.Hire(w: TJakWorker);
+begin
+  while m_workerCnt >= MAX_WORKERS do
+    ContemplateLife;
+  inc(m_workerCnt);
+  w.Start;
+end;
+
+procedure TJakRandrEngine.ContemplateLife;
+begin
+  if m_workerCnt <= 0 then exit;
+  RTLeventWaitFor(m_threadContext.e, WAIT_TIMEOUT);
+  SummonGrimReaper;
+end;
+
+procedure TJakRandrEngine.SummonGrimReaper;
+var
+  i: integer;
+begin
+  dec(m_workerCnt);
+end;
+
 (* TJakRandrProjector *)
 
 constructor TJakRandrProjector.Create(canvas: TCanvas; bgColor: TColor);
@@ -573,6 +695,44 @@ begin
 
   (* return *)
   Project := ret;
+end;
+
+procedure TJakRandrProjector.Draw(entity: TEntity2D);
+var
+  pWidth: integer;
+begin
+  case entity.EntityType of
+  etLine: begin
+    // store pen width
+    pWidth := m_canvas.Pen.Width;
+
+    // draw
+    m_canvas.Pen.Width := 2;
+    m_canvas.Pen.Color := entity.m_contourColour;
+    m_canvas.Line(entity.Point[0], entity.Point[1]);
+
+    // restore pen width
+    m_canvas.Pen.Width := pWidth;
+    end;
+  etTria: begin
+    m_canvas.Pen.color := entity.ContourColour;
+    m_canvas.Brush.color := entity.FillColour;
+    m_canvas.Brush.Style := bsSolid;
+
+    if entity.ContourColour <> clNone then
+      m_canvas.Polyline(entity.Points, 0, 3);
+    m_canvas.Polygon(entity.Points, False, 0, 3);
+    end;
+  etQuad: begin
+    m_canvas.Pen.color := entity.ContourColour;
+    m_canvas.Brush.color := entity.FillColour;
+    m_canvas.Brush.Style := bsSolid;
+
+    if entity.ContourColour <> clNone then
+      m_canvas.Polyline(entity.Points, 0, 4);
+    m_canvas.Polygon(entity.Points, False, 0, 4);
+    end;
+  end;
 end;
 
 procedure TJakRandrProjector.DrawPoint(p: TPoint3D; color: TColor);
@@ -2121,6 +2281,109 @@ begin
   ret.y := ret.y / p.NbNodes;
   ret.z := ret.z / p.NbNodes;
   Centroid := ret;
+end;
+
+(* TJakWorker *)
+
+constructor TJakWorker.AddEntity(ctx: PJakThreadCtx; e: IEntity3D);
+begin
+  m_ctx := ctx;
+  m_e := e;
+  m_which := jwAddEntity;
+  inherited Create(true);
+  FreeOnTerminate := true;
+end;
+
+constructor TJakWorker.DrawEntity(ctx: PJakThreadCtx; e: IEntity3D);
+begin
+  m_ctx := ctx;
+  m_e := e;
+  m_which := jwDrawEntity;
+  inherited Create(true);
+  FreeOnTerminate := true;
+end;
+
+procedure TJakWorker.Execute;
+begin
+  case m_which of
+  jwAddEntity: ExecAddEntity;
+  jwDrawEntity: ExecDrawEntity;
+  end;
+end;
+
+destructor TJakWorker.Destroy;
+begin
+  inherited;
+end;
+
+procedure TJakWorker.ExecAddEntity;
+begin
+end;
+
+procedure TJakWorker.ExecDrawEntity;
+begin
+end;
+
+(* TEntity2D *)
+
+constructor TEntity2D.Triangle(p1, p2, p3: TPoint; contourColour, fillColour: TColor);
+begin
+  m_type := etTria;
+
+  SetLength(m_points, 3);
+  m_points[0] := p1;
+  m_points[1] := p2;
+  m_points[2] := p3;
+
+  m_contourColour := contourColour;
+  m_fillColour := fillColour;
+end;
+
+constructor TEntity2D.Quad(p1, p2, p3, p4: TPoint; contourColour, fillColour: TColor);
+begin
+  m_type := etQuad;
+
+  SetLength(m_points, 4);
+  m_points[0] := p1;
+  m_points[1] := p2;
+  m_points[2] := p3;
+
+  m_contourColour := contourColour;
+  m_fillColour := fillColour;
+end;
+
+constructor TEntity2D.Line(p1, p2: TPoint; itsColour: TColor);
+begin
+  m_type := etLine;
+
+  SetLength(m_points, 2);
+  m_points[0] := p1;
+  m_points[1] := p2;
+
+  m_contourColour := itsColour;
+end;
+
+destructor TEntity2D.Destroy;
+begin
+  SetLength(m_points, 0);
+end;
+
+function TEntity2D.GetPoint(i: integer): TPoint;
+begin
+  if i < 0 then
+    Raise Exception.Create('Out of range!');
+  case m_type of
+  etLine: if i > 1 then Raise Exception.Create('Out of range!');
+  etTria: if i > 2 then Raise Exception.Create('Out of range!');
+  etQuad: if i > 3 then Raise Exception.Create('Out of range!');
+  end;
+
+  GetPoint := m_points[i];
+end;
+
+function TEntity2D.Points: ArrayOfTPoints;
+begin
+  Points := m_points;
 end;
 
 end.

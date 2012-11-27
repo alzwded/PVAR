@@ -5,6 +5,7 @@ program JakOmlette;
 uses
   {$IFDEF UNIX}{$IFDEF UseCThreads}
   cthreads,
+  cmem,
   {$ENDIF}{$ENDIF}
   Interfaces, // this includes the LCL widgetset
   Forms, JakRandr, GfxUtils, CoreUtils, TestUtils, TestConveyor, Cartof,
