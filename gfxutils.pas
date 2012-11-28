@@ -56,8 +56,8 @@ const
   SQRT_PERCENTAGE = 0.2;
 
   (* threading *)
-  MAX_WORKERS = 1;
-  WAIT_TIMEOUT = 30;
+  MAX_WORKERS = 2;
+  WAIT_TIMEOUT = 10;
 
 type
   TEntity2DType = (
@@ -114,11 +114,15 @@ type
   TJakRandrEngine = class;
   PJakRandrEngine = ^TJakRandrEngine;
 
+  TJakWorker = class;
+  TListOfWorkers = specialize TFPGObjectList<TJakWorker>;
+
   TJakThreadCtx = record
-    master: PJakRandrEngine;
+    master: TJakRandrEngine;
     e: PRTLEvent;
-    cs1, cs2: TRTLCriticalSection;
+    cs1, cs2, cs3: TRTLCriticalSection;
     cnt: integer;
+    workers: TListOfWorkers;
   end;
 
   PJakThreadCtx = ^TJakThreadCtx;
@@ -133,17 +137,22 @@ type
     constructor DrawEntity(ctx: PJakThreadCtx; e: IEntity3D; i: integer);
     procedure Execute; override;
     destructor Destroy; override;
+    procedure InitAddEntity(e: IEntity3D);
+    procedure InitDrawEntity(e: IEntity3D; i: integer);
+    function IsDone: Boolean;
   private
     m_ctx: PJakThreadCtx;
     m_e: IEntity3D;
     m_i: integer;
     m_which: TJakWorkerBehaviour;
+    m_isDone: Boolean;
+    m_wait: PRTLEvent;
+    m_waitLock: TRTLCriticalSection;
 
     procedure ExecAddEntity;
     procedure ExecDrawEntity;
+    procedure ImDone;
   end;
-
-  TListOfWorkers = specialize TFPGObjectList<TJakWorker>;
 
   PRealPoint3D = ^TRealPoint3D;
 
@@ -373,7 +382,7 @@ type
 
     procedure ThrowParty;
     procedure AfterParty;
-    procedure Hire(w: TJakWorker);
+    procedure Hire(whatFor: TJakWorkerBehaviour; entity: IEntity3D; idx: integer);
     procedure ContemplateLife;
     procedure SummonGrimReaper;
   end;
@@ -431,6 +440,8 @@ begin
   m_canvas := canvas;
   m_buffer := TBitmap.Create;
   m_visu := TJakRandrProjector.Create(m_buffer.Canvas, bgColor);
+
+  ThrowParty;
 end;
 
 destructor TJakRandrEngine.Destroy;
@@ -440,6 +451,8 @@ begin
   m_entities.Free;
   SetLength(m_entities2d, 0);
   m_buffer.Free;
+
+  AfterParty;
 end;
 
 procedure TJakRandrEngine.ClearEntities;
@@ -461,7 +474,7 @@ begin
   ClearEntities;
   m_visu.Clear;
 
-  ThrowParty; // begin with addEntity
+  //ThrowParty; // begin with addEntity
 end;
 
 procedure TJakRandrEngine.AbortScene;
@@ -469,25 +482,30 @@ begin
   ClearEntities;
   m_visu.Clear;
 
-  AfterParty; // end with addEntity
+  //AfterParty; // end with addEntity
 end;
 
 procedure TJakRandrEngine.CommitScene;
 var
   i: integer;
 begin
-  AfterParty; // end with addEntity
+  //AfterParty; // end with addEntity
   (*
   for i := 0 to m_entities.Count - 1 do begin
     m_visu.Render(m_entities.Items[i])
   end;*)
   SetLength(m_entities2d, m_entities.Count);
-  ThrowParty;
+  //ThrowParty;
   for i := 0 to m_entities.Count - 1 do begin
+    EnterCriticalsection(m_threadContext.cs1);
     m_entities2d[i] := Nil;
-    Hire(TJakWorker.DrawEntity(@m_threadContext, m_entities[i], i));
+    LeaveCriticalsection(m_threadContext.cs1);
+    Hire(jwDrawEntity, m_entities[i], i);
   end;
-  AfterParty;
+  //AfterParty;
+
+  while m_threadContext.cnt > 0 do
+    ContemplateLife;
 
   for i := 0 to m_entities.Count - 1 do
     m_visu.Draw(m_entities2d[i]);
@@ -500,16 +518,20 @@ var
   i: integer;
   candidate: IEntity3D;
 begin
-  Hire(TJakWorker.AddEntity(@m_threadContext, entity));
+  //Hire(TJakWorker.AddEntity(@m_threadContext, entity));
+  Hire(jwAddEntity, entity, 0);
 end;
 
 procedure TJakRandrEngine.ThrowParty;
 begin
   InitCriticalSection(m_threadContext.cs1);
   InitCriticalSection(m_threadContext.cs2);
+  InitCriticalSection(m_threadContext.cs3);
   m_threadContext.e := RTLEventCreate;
-  m_threadContext.master := @Self;
+  m_threadContext.master := Self;
   m_threadContext.cnt := 0;
+
+  m_threadContext.workers := TListOfWorkers.Create(false);
 end;
 
 procedure TJakRandrEngine.AfterParty;
@@ -517,23 +539,64 @@ begin
   while m_threadContext.cnt > 0 do ContemplateLife;
   DoneCriticalSection(m_threadContext.cs1);
   DoneCriticalSection(m_threadContext.cs2);
+  DoneCriticalSection(m_threadContext.cs3);
   RTLeventdestroy(m_threadContext.e);
   m_threadContext.master := Nil;
-  m_threadContext.cnt := 0;
+
+  m_threadContext.workers.Clear;
+  m_threadContext.workers.Free;
 end;
 
-procedure TJakRandrEngine.Hire(w: TJakWorker);
+//procedure TJakRandrEngine.Hire(w: TJakWorker);
+procedure TJakRandrEngine.Hire(whatFor: TJakWorkerBehaviour;
+        entity: IEntity3D;
+        idx: integer);
+var
+  w: TJakWorker;
+  i: integer;
 begin
   while m_threadContext.cnt >= MAX_WORKERS do
     ContemplateLife;
   EnterCriticalSection(m_threadContext.cs2);
   try
     inc(m_threadContext.cnt);
+    if m_threadContext.workers.Count < MAX_WORKERS then begin
+      case whatFor of
+      jwAddEntity: begin
+        w := TJakWorker.AddEntity(
+                @m_threadContext,
+                entity);
+        m_threadContext.workers.Add(w);
+        end;
+      jwDrawEntity: begin
+        w := TJakWorker.DrawEntity(
+                @m_threadContext,
+                entity,
+                idx);
+        m_threadContext.workers.Add(w);
+        end;
+      end;
+
+      w.Start;
+    end else begin
+      for i := 0 to m_threadContext.workers.Count - 1 do begin
+        w := m_threadContext.workers[i];
+        if m_threadContext.workers[i].IsDone then begin
+          case whatFor of
+          jwAddEntity: w.InitAddEntity(entity);
+          jwDrawEntity: w.InitDrawEntity(entity, idx);
+          end;
+        end;
+      end;
+
+      // resume
+      EnterCriticalSection(w.m_waitLock);
+      RTLeventSetEvent(w.m_wait);
+      LeaveCriticalSection(w.m_waitLock);
+    end;
   finally
     LeaveCriticalSection(m_threadContext.cs2);
   end;
-  w.Start;
-  //w.Resume;
 end;
 
 procedure TJakRandrEngine.ContemplateLife;
@@ -544,9 +607,14 @@ begin
   finally
     LeaveCriticalsection(m_threadContext.cs2);
   end;
-  //RTLeventWaitFor(m_threadContext.e);
-  RTLeventWaitFor(m_threadContext.e, WAIT_TIMEOUT);
-  RTLeventResetEvent(m_threadContext.e);
+  RTLeventWaitFor(m_threadContext.e);
+  //RTLeventWaitFor(m_threadContext.e, WAIT_TIMEOUT);
+  EnterCriticalsection(m_threadContext.cs3);
+  try
+    RTLeventResetEvent(m_threadContext.e);
+  finally
+    LeaveCriticalsection(m_threadContext.cs3);
+  end;
   //SummonGrimReaper;
 end;
 
@@ -787,8 +855,7 @@ begin
 (*  else if entity is TSphere then RenderSphere(entity as TSphere)
   else if entity is TSprite then RenderSprite(entity as TSprite)*)
   else if entity is TLine then Render := RenderLine(entity as TLine)
-  ;
-  Render := Nil;
+  else Render := Nil;
 end;
 
 function TJakRandrProjector.RenderPolygon(poli: TPolygon): TEntity2D;
@@ -2282,12 +2349,25 @@ end;
 
 (* TJakWorker *)
 
+function TJakWorker.IsDone: boolean;
+begin
+  IsDone := m_isDone;
+end;
+
+procedure TJakWorker.ImDone;
+begin
+  m_isDone := true;
+end;
+
 constructor TJakWorker.AddEntity(ctx: PJakThreadCtx; e: IEntity3D);
 begin
   m_ctx := ctx;
   m_e := e;
   m_which := jwAddEntity;
-  FreeOnTerminate := false;
+  m_isDone := false;
+  m_wait := RTLEventCreate;
+  InitCriticalSection(m_waitLock);
+  FreeOnTerminate := False;
   inherited Create(True);
 end;
 
@@ -2297,30 +2377,66 @@ begin
   m_e := e;
   m_i := i;
   m_which := jwDrawEntity;
-  FreeOnTerminate := false;
+  m_isDone := false;
+  m_wait := RTLEventCreate;
+  InitCriticalSection(m_waitLock);
+  FreeOnTerminate := False;
   inherited Create(True);
+end;
+
+procedure TJakWorker.InitAddEntity(e: IEntity3D);
+begin
+  m_e := e;
+  m_which := jwAddEntity;
+  m_isDone := false;
+end;
+
+procedure TJakWorker.InitDrawEntity(e: IEntity3D; i: integer);
+begin
+  m_e := e;
+  m_i := i;
+  m_which := jwDrawEntity;
+  m_isDone := false;
 end;
 
 procedure TJakWorker.Execute;
 begin
-  case m_which of
-  jwAddEntity: ExecAddEntity;
-  jwDrawEntity: ExecDrawEntity;
-  end;
+  while not Terminated do begin
+    case m_which of
+    jwAddEntity: ExecAddEntity;
+    jwDrawEntity: ExecDrawEntity;
+    end;
 
-  EnterCriticalSection(m_ctx^.cs2);
-  try
-    dec(m_ctx^.cnt);
-  finally
-    LeaveCriticalsection(m_ctx^.cs2);
-  end;
+    EnterCriticalSection(m_ctx^.cs2);
+    try
+      dec(m_ctx^.cnt);
+    finally
+      LeaveCriticalsection(m_ctx^.cs2);
+    end;
 
-  RTLeventSetEvent(m_ctx^.e);
+    ImDone;
+
+    EnterCriticalSection(m_waitLock);
+
+    EnterCriticalSection(m_ctx^.cs3);
+    try
+      RTLeventSetEvent(m_ctx^.e);
+    finally
+      LeaveCriticalSection(m_ctx^.cs3);
+    end;
+    LeaveCriticalSection(m_waitLock);
+
+    RTLEventWaitFor(m_wait);
+
+    RTLeventResetEvent(m_wait);
+  end;
 end;
 
 destructor TJakWorker.Destroy;
 begin
   m_ctx := nil;
+  RTLeventdestroy(m_wait);
+  DoneCriticalSection(m_waitLock);
   inherited;
 end;
 
@@ -2332,14 +2448,14 @@ var
   l: TEntity3DList;
 begin
   m_e := m_e.GetFacingCamera(
-        m_ctx^.master^.m_visu.O,
-        m_ctx^.master^.m_visu.m_rx,
-        m_ctx^.master^.m_visu.m_ry,
-        m_ctx^.master^.m_visu.m_rz);
+        m_ctx^.master.m_visu.O,
+        m_ctx^.master.m_visu.m_rx,
+        m_ctx^.master.m_visu.m_ry,
+        m_ctx^.master.m_visu.m_rz);
 
   if (m_e is TPolygon) and
           (SideOfPlane(m_e as TPolygon,
-                      m_ctx^.master^.m_visu.GetViewportLocation)
+                      m_ctx^.master.m_visu.GetViewportLocation)
                   = plBehind) then begin
     m_e.Free;
     exit;
@@ -2347,34 +2463,37 @@ begin
 
   EnterCriticalsection(m_ctx^.cs1);
   try
-    ct := m_ctx^;
-    a := ct.master^;
-    l := a.m_entities;
-    i := l.Count;
-    i := m_ctx^.master^.m_entities.Count;
+    i := m_ctx^.master.m_entities.Count;
     while (i > 0)
-          and (m_ctx^.master^.m_visu.InOrder(
+          and (m_ctx^.master.m_visu.InOrder(
                 m_e,
-                m_ctx^.master^.m_entities.Items[i - 1]))
+                m_ctx^.master.m_entities.Items[i - 1]))
     do begin
       dec(i);
     end;
 
-    if i = m_ctx^.master^.m_entities.Count then begin
-      m_ctx^.master^.m_entities.Add(m_e);
+    if i = m_ctx^.master.m_entities.Count then begin
+      m_ctx^.master.m_entities.Add(m_e);
       exit;
     end;
-    m_ctx^.master^.m_entities.Insert(i, m_e);
+    m_ctx^.master.m_entities.Insert(i, m_e);
   finally
     LeaveCriticalsection(m_ctx^.cs1);
   end;
 end;
 
 procedure TJakWorker.ExecDrawEntity;
+var
+  rez: TEntity2D;
 begin
-  m_ctx^.master^
-        .m_entities2d[m_i] := m_ctx^.master^
-                        .m_visu.Render(m_e);
+  rez := m_ctx^.master.m_visu.Render(m_e);
+
+  EnterCriticalsection(m_ctx^.cs1);
+  try
+    m_ctx^.master.m_entities2d[m_i] := rez;
+  finally
+    LeaveCriticalsection(m_ctx^.cs1);
+  end;
 end;
 
 (* TEntity2D *)

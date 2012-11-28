@@ -93,7 +93,6 @@ begin
 
   e := TTestWE.Create(Point3DFromCoords(500.0, 0.0, 0.0), 1, 0);
   m_worldEntities.Add(e);
-  exit;
   e := TTestWE.Create(Point3DFromCoords(500.0, 0.0, 0.0), 0, 0);
   m_worldEntities.Add(e);
   e := TTestAxis.Create;
