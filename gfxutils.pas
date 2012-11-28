@@ -56,7 +56,7 @@ const
   SQRT_PERCENTAGE = 0.2;
 
   (* threading *)
-  MAX_WORKERS = 2;
+  MAX_WORKERS = 1;
   WAIT_TIMEOUT = 10;
 
 type
@@ -489,17 +489,14 @@ procedure TJakRandrEngine.CommitScene;
 var
   i: integer;
 begin
+  while m_threadContext.cnt > 0 do
+    ContemplateLife;
+
   //AfterParty; // end with addEntity
-  (*
-  for i := 0 to m_entities.Count - 1 do begin
-    m_visu.Render(m_entities.Items[i])
-  end;*)
   SetLength(m_entities2d, m_entities.Count);
   //ThrowParty;
   for i := 0 to m_entities.Count - 1 do begin
-    EnterCriticalsection(m_threadContext.cs1);
     m_entities2d[i] := Nil;
-    LeaveCriticalsection(m_threadContext.cs1);
     Hire(jwDrawEntity, m_entities[i], i);
   end;
   //AfterParty;
@@ -527,6 +524,7 @@ begin
   InitCriticalSection(m_threadContext.cs1);
   InitCriticalSection(m_threadContext.cs2);
   InitCriticalSection(m_threadContext.cs3);
+  EnterCriticalsection(m_threadContext.cs3);
   m_threadContext.e := RTLEventCreate;
   m_threadContext.master := Self;
   m_threadContext.cnt := 0;
@@ -539,6 +537,7 @@ begin
   while m_threadContext.cnt > 0 do ContemplateLife;
   DoneCriticalSection(m_threadContext.cs1);
   DoneCriticalSection(m_threadContext.cs2);
+  LeaveCriticalsection(m_threadContext.cs3);
   DoneCriticalSection(m_threadContext.cs3);
   RTLeventdestroy(m_threadContext.e);
   m_threadContext.master := Nil;
@@ -557,9 +556,8 @@ var
 begin
   while m_threadContext.cnt >= MAX_WORKERS do
     ContemplateLife;
-  EnterCriticalSection(m_threadContext.cs2);
-  try
-    inc(m_threadContext.cnt);
+  inc(m_threadContext.cnt);
+
     if m_threadContext.workers.Count < MAX_WORKERS then begin
       case whatFor of
       jwAddEntity: begin
@@ -580,8 +578,8 @@ begin
       w.Start;
     end else begin
       for i := 0 to m_threadContext.workers.Count - 1 do begin
-        w := m_threadContext.workers[i];
         if m_threadContext.workers[i].IsDone then begin
+          w := m_threadContext.workers[i];
           case whatFor of
           jwAddEntity: w.InitAddEntity(entity);
           jwDrawEntity: w.InitDrawEntity(entity, idx);
@@ -589,40 +587,43 @@ begin
         end;
       end;
 
+      if w = Nil then
+        Raise Exception.Create('fail');
+
       // resume
-      EnterCriticalSection(w.m_waitLock);
       RTLeventSetEvent(w.m_wait);
-      LeaveCriticalSection(w.m_waitLock);
     end;
-  finally
-    LeaveCriticalSection(m_threadContext.cs2);
-  end;
 end;
 
 procedure TJakRandrEngine.ContemplateLife;
 begin
-  EnterCriticalsection(m_threadContext.cs2);
+  SummonGrimReaper;
+  LeaveCriticalsection(m_threadContext.cs3);
   try
+    if m_threadContext.cnt < 0 then m_threadContext.cnt := 0;
     if m_threadContext.cnt <= 0 then exit;
   finally
-    LeaveCriticalsection(m_threadContext.cs2);
   end;
   RTLeventWaitFor(m_threadContext.e);
   //RTLeventWaitFor(m_threadContext.e, WAIT_TIMEOUT);
   EnterCriticalsection(m_threadContext.cs3);
-  try
-    RTLeventResetEvent(m_threadContext.e);
-  finally
-    LeaveCriticalsection(m_threadContext.cs3);
-  end;
-  //SummonGrimReaper;
+
+  RTLeventResetEvent(m_threadContext.e);
+  SummonGrimReaper;
 end;
 
 procedure TJakRandrEngine.SummonGrimReaper;
 var
   i: integer;
+  cnt: integer;
 begin
-  dec(m_threadContext.cnt);
+  EnterCriticalsection(m_threadContext.cs2);
+  cnt := 0;
+  for i := 0 to m_threadContext.workers.Count - 1 do
+    if not m_threadContext.workers[i].IsDone then
+      inc(cnt);
+  m_threadContext.cnt := cnt;
+  LeaveCriticalsection(m_threadContext.cs2);
 end;
 
 (* TJakRandrProjector *)
@@ -2367,6 +2368,7 @@ begin
   m_isDone := false;
   m_wait := RTLEventCreate;
   InitCriticalSection(m_waitLock);
+  Priority:=tpLower;
   FreeOnTerminate := False;
   inherited Create(True);
 end;
@@ -2380,6 +2382,7 @@ begin
   m_isDone := false;
   m_wait := RTLEventCreate;
   InitCriticalSection(m_waitLock);
+  Priority:=tpLower;
   FreeOnTerminate := False;
   inherited Create(True);
 end;
@@ -2407,27 +2410,16 @@ begin
     jwDrawEntity: ExecDrawEntity;
     end;
 
-    EnterCriticalSection(m_ctx^.cs2);
+    EnterCriticalsection(m_ctx^.cs3);
     try
       dec(m_ctx^.cnt);
-    finally
-      LeaveCriticalsection(m_ctx^.cs2);
-    end;
-
-    ImDone;
-
-    EnterCriticalSection(m_waitLock);
-
-    EnterCriticalSection(m_ctx^.cs3);
-    try
+      ImDone;
       RTLeventSetEvent(m_ctx^.e);
     finally
-      LeaveCriticalSection(m_ctx^.cs3);
+      LeaveCriticalsection(m_ctx^.cs3);
     end;
-    LeaveCriticalSection(m_waitLock);
 
     RTLEventWaitFor(m_wait);
-
     RTLeventResetEvent(m_wait);
   end;
 end;
@@ -2488,11 +2480,9 @@ var
 begin
   rez := m_ctx^.master.m_visu.Render(m_e);
 
-  EnterCriticalsection(m_ctx^.cs1);
   try
     m_ctx^.master.m_entities2d[m_i] := rez;
   finally
-    LeaveCriticalsection(m_ctx^.cs1);
   end;
 end;
 
