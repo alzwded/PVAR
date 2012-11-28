@@ -37,8 +37,8 @@ end;
 
 procedure TProvider.Loop;
 begin
-  if m_pc = 0 then begin
-    Entities[0].MoveTo(GetRotatedPoint(Centre));
+  if (InanimateObjects.Count > 0) and (m_pc = 0) then begin
+    InanimateObjects[0].MoveTo(GetRotatedPoint(Centre));
   end;
 
   m_pc := (m_pc + 1) mod m_provideOnFrame;

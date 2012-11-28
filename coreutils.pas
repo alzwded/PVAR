@@ -100,7 +100,8 @@ type
     procedure OnClock(Sender: TObject);
   end;
 
-  PGrabber = ^AGrabber;
+  AGrabber = class;
+  PGrabber = AGrabber;
   TListOfGrabbers = specialize TFPGList<PGrabber>;
 
   AGrabber = class(ACompound)
@@ -497,7 +498,7 @@ var
   i: integer;
 begin
   for i := 0 to m_inputs.Count - 1 do
-    if m_inputs[i]^.TryGive(bbox, e) then begin
+    if m_inputs[i].TryGive(bbox, e) then begin
       TryGrab := true;
       exit;
     end;
@@ -619,8 +620,8 @@ begin
   incr(m_c.rotationCentre.y, p.y - Location.p.y);
   incr(m_c.rotationCentre.z, p.z - Location.p.z);
   m_c.p.x := p.x;
-  m_c.p.y := p.x;
-  m_c.p.z := p.x;
+  m_c.p.y := p.y;
+  m_c.p.z := p.z;
 end;
 
 procedure TPart.Translate(dp: TPoint3D);
@@ -711,12 +712,16 @@ begin
   and (b1^.p1.z <= b2^.p1.z)
   and (b1^.p2.z > b2^.p1.z))
 
-  or ((b1^.p1.x <= b2^.p2.x)
-  and (b1^.p2.x > b2^.p2.x)
-  and (b1^.p1.y <= b2^.p2.y)
-  and (b1^.p2.y > b2^.p2.y)
-  and (b1^.p1.z <= b2^.p2.z)
-  and (b1^.p2.z > b2^.p2.z)) then
+  or ((b1^.p1.x > b2^.p2.x)
+  and (b1^.p2.x <= b2^.p2.x)
+  and (b1^.p1.y > b2^.p2.y)
+  and (b1^.p2.y <= b2^.p2.y)
+  and (b1^.p1.z > b2^.p2.z)
+  and (b1^.p2.z <= b2^.p2.z))
+
+  (* TODO this test is broken *)
+
+  then
     BoundingBoxesIntersect := true
   else
     BoundingBoxesIntersect := false;

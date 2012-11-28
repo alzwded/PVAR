@@ -17,7 +17,8 @@ interface
 
 uses
   Classes, SysUtils, FileUtil, Forms, Controls, Graphics, Dialogs, ExtCtrls,
-  GfxUtils, CoreUtils, LCLType, TestUtils, TestConveyor, Cartof, Windows, Math;
+  GfxUtils, CoreUtils, LCLType, TestUtils, TestConveyor, Cartof, Windows, Math,
+  Provider;
 
 const
   DEFAULT_CAPTION = 'JakRandr - F1 for help';
@@ -79,9 +80,15 @@ implementation
 
 procedure TJakRandr.FormCreate(Sender: TObject);
 var
-  e: IWorldEntity;
+  e, conveyor: IWorldEntity;
 begin
   m_disp := TJakRandrEngine.Create(DisplaySurface.Canvas, clBlack);
+
+  m_cameraManip := cmNone;
+
+  m_move := true;
+
+  Self.DoubleBuffered := true;
 
   m_worldEntities := TListOfWorldEntities.Create;
 
@@ -96,6 +103,7 @@ begin
   m_worldEntities.Add(e);
 
   e := TTestConveyor.Conveyor(Point3DFromCoords(0.0, 0, 1000), 20, 30, 400);
+  conveyor := e;
   (*e.Rotate(0, 0, pi/3); // fails*)
   //e.Rotate(pi / 6, pi / 4, 0(*pi / 3*));
   e.Rotate(pi / 12, -pi / 6, 0);
@@ -112,14 +120,14 @@ begin
   e.Rotate(pi / 3, pi / 2, 0);
   m_worldEntities.Add(e);
 
-  m_cameraManip := cmNone;
-
-  m_move := true;
-
-  Self.DoubleBuffered := true;
-
   e := TCartof.Part(Point3DFromCoords(0, 500, 0));
   m_worldEntities.Add(e);
+
+  e := TProvider.Grabber(Point3DFromCoords(0, 0, 1000), 20);
+  (e as TProvider).AddStock(TCartof.Part(Point3DFromCoords(0, 0, 0)));
+  m_WorldEntities.Add(e);
+
+  (conveyor as TTestConveyor).InputSource(e as TProvider)
 end;
 
 procedure TJakRandr.FormDeactivate(Sender: TObject);
