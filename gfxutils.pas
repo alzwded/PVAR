@@ -408,27 +408,6 @@ begin
     exit;
   end;
 
-  (* TODO
-     do the following on a separate thread with mutex, should end up
-         projecting a polygon and sorting a polygon at the same time
-         thus improving speed greatly
-  *)
-  (*
-        stuff to use:
-                TThread
-                EnterCriticalSection
-                LeaveCriticalSection
-  *)
-  (*
-        actually, it's something like this:
-
-        def Thread.Execute(IEntity3D e, JakRandrProjector context):
-                e = Project(e)
-                EnterCriticalSection(mutex)
-                context.Sort(e)
-                LeaveCriticalSection(mutex)
-  *)
-
   (*$IFDEF DEBUG_ADD_ENTITY*)
   writeln('Begin sorting new entity');
   candidate.Dump;
