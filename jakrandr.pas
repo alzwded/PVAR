@@ -130,11 +130,15 @@ begin
   (e as TProvider).AddStock(TCartof.Part(Point3DFromCoords(0, 0, 0)));
   (e as TProvider).AddStock(TCartof.Part(Point3DFromCoords(0, 0, 0)));
   (e as TProvider).AddStock(TCartof.Part(Point3DFromCoords(0, 0, 0)));
+  (e as TProvider).AddStock(TCartof.Part(Point3DFromCoords(0, 0, 0)));
+  (e as TProvider).AddStock(TCartof.Part(Point3DFromCoords(0, 0, 0)));
+  (e as TProvider).AddStock(TCartof.Part(Point3DFromCoords(0, 0, 0)));
+  (e as TProvider).AddStock(TCartof.Part(Point3DFromCoords(0, 0, 0)));
   m_WorldEntities.Add(e);
 
   (conveyor as TTestConveyor).InputSource(e as TProvider);
 
-  e := TTestConveyor.Conveyor(Point3DFromCoords(0, 388, 1448), 20, 10, 400);
+  e := TTestConveyor.Conveyor(Point3DFromCoords(0, -388, 1448 + 1000), 20, 10, 400);
   e.Rotate(0, -pi / 6, 0);
   m_worldEntities.Add(e);
 
