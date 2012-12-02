@@ -14,6 +14,7 @@ Provider
 {$R *.res}
 
 begin
+  Application.Title:='JakRandr';
   Application.Initialize;
   Application.CreateForm(TJakRandr, randr);
   Application.Run;
