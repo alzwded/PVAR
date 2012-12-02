@@ -27,6 +27,12 @@ type
     procedure RotatePolar(c: TPoint3D; theta, fi: real); virtual;
     (* Collidable *)
     function GetBoundingBox: PBoundingBox; virtual;
+  private
+    m_hidden: Boolean;
+  public
+    property Hidden: Boolean read m_hidden write m_hidden;
+  protected
+    constructor Create;
   end;
 
   TListOfWorldEntities = specialize TFPGObjectList<IWorldEntity>;
@@ -167,7 +173,12 @@ function BoundingBoxesIntersect(b1, b2: PBoundingBox): boolean;
 
 implementation
 
-(* buggery *)
+(* IWorldEntity *)
+
+constructor IWorldEntity.Create;
+begin
+  m_hidden := false;
+end;
 
 procedure IWorldEntity.MoveTo(p: TPoint3D); begin end;
 procedure IWorldEntity.Translate(dp: TPoint3D); begin end;
@@ -180,6 +191,7 @@ procedure IWorldEntity.RotatePolar(c: TPoint3D; theta, fi: real); begin end;
 
 constructor TSupport.Support(centre: TPoint3D);
 begin
+  inherited Create;
   m_c := RealPoint3DFromPoint(centre);
   m_n := 0;
 end;
@@ -293,6 +305,7 @@ end;
 
 constructor ACompound.Compound(centre: TPoint3D; interval: cardinal);
 begin
+  inherited Create;
   m_clock := TTimer.Create(Nil);
   m_clock.Interval := interval;
   if interval > 0 then
@@ -328,6 +341,7 @@ procedure ACompound.Render(engine: PJakRandrEngine);
 var
   i: integer;
 begin
+  if Hidden then exit;
   for i := 0 to m_entities.Count - 1 do
     m_entities[i].Render(engine);
 end;
@@ -487,6 +501,7 @@ procedure AGrabber.Render(engine: PJakRandrEngine);
 var
   i: integer;
 begin
+  if Hidden then exit;
   inherited Render(engine);
   if m_inanimateObjects.Count <= 0 then exit;
   for i := 0 to m_inanimateObjects.Count - 1 do
@@ -514,9 +529,13 @@ begin
         one could stop if we know after the first obejct that none are gonna
         be collided with *)
   for i := 0 to m_inanimateObjects.Count - 1 do
-    if BoundingBoxesIntersect(m_inanimateObjects[i].GetBoundingBox, bbox) then begin
+    if not m_inanimateObjects[i].Hidden and
+        (BoundingBoxesIntersect(m_inanimateObjects[i].GetBoundingBox, bbox))
+    then begin
       // carefully remove object from list (huzzah for extract!)
       e := m_inanimateObjects.Extract(m_inanimateObjects[i]);
+      TryGive := true;
+      exit;
     end;
 
   TryGive := false;
@@ -526,14 +545,16 @@ end;
 
 constructor AWorldEntity.AWorldEntity;
 begin
- m_c := RealPoint3DFromCoords(0, 0, 0);
- m_geometry := TEntity3DList.Create;
+  inherited Create;
+  m_c := RealPoint3DFromCoords(0, 0, 0);
+  m_geometry := TEntity3DList.Create;
 end;
 
 constructor AWorldEntity.AWorldEntity(location: TPoint3D);
 begin
- m_c := RealPoint3DFromPoint(location);
- m_geometry := TEntity3DList.Create;
+  inherited Create;
+  m_c := RealPoint3DFromPoint(location);
+  m_geometry := TEntity3DList.Create;
 end;
 
 destructor AWorldEntity.Destroy;
@@ -550,6 +571,8 @@ var
 begin
   if engine = Nil then
     Raise Exception.Create('NULL engine parameter provided!');
+
+  if Hidden then exit;
 
   for i := 0 to m_geometry.Count - 1 do
     engine^.AddEntity(m_geometry.Items[i]);
@@ -616,9 +639,9 @@ begin
     Geometry.Items[i].Translate(reverse);
     Geometry.Items[i].Translate(p);
   end;
-  incr(m_c.rotationCentre.x, p.x - Location.p.x);
-  incr(m_c.rotationCentre.y, p.y - Location.p.y);
-  incr(m_c.rotationCentre.z, p.z - Location.p.z);
+  incr(m_c.rotationCentre.x, p.x - rp.x);
+  incr(m_c.rotationCentre.y, p.y - rp.y);
+  incr(m_c.rotationCentre.z, p.z - rp.z);
   m_c.p.x := p.x;
   m_c.p.y := p.y;
   m_c.p.z := p.z;
@@ -705,26 +728,14 @@ begin
     exit;
   end;
 
-  if ((b1^.p1.x <= b2^.p1.x)
-  and (b1^.p2.x > b2^.p1.x)
-  and (b1^.p1.y <= b2^.p1.y)
-  and (b1^.p2.y > b2^.p1.y)
-  and (b1^.p1.z <= b2^.p1.z)
-  and (b1^.p2.z > b2^.p1.z))
-
-  or ((b1^.p1.x > b2^.p2.x)
-  and (b1^.p2.x <= b2^.p2.x)
-  and (b1^.p1.y > b2^.p2.y)
-  and (b1^.p2.y <= b2^.p2.y)
-  and (b1^.p1.z > b2^.p2.z)
-  and (b1^.p2.z <= b2^.p2.z))
-
-  (* TODO this test is broken *)
-
-  then
-    BoundingBoxesIntersect := true
-  else
-    BoundingBoxesIntersect := false;
+  BoundingBoxesIntersect := not(
+        (b1^.p2.x < b2^.p1.x)
+        or (b2^.p2.x < b1^.p1.x)
+        or (b1^.p2.z < b2^.p1.z)
+        or (b2^.p2.z < b1^.p1.z)
+        or (b1^.p2.y < b2^.p1.y)
+        or (b2^.p2.y < b1^.p1.y)
+  );
 end;
 
 end.

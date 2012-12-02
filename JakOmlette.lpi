@@ -159,12 +159,12 @@
         <PackageName Value="LCL"/>
       </Item1>
     </RequiredPackages>
-    <Units Count="20">
+    <Units Count="13">
       <Unit0>
         <Filename Value="JakOmlette.lpr"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="JakOmlette"/>
-        <EditorIndex Value="7"/>
+        <EditorIndex Value="8"/>
         <WindowIndex Value="0"/>
         <TopLine Value="2"/>
         <CursorPos X="33" Y="21"/>
@@ -178,13 +178,13 @@
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
         <UnitName Value="JakRandr"/>
+        <IsVisibleTab Value="True"/>
         <EditorIndex Value="0"/>
         <WindowIndex Value="0"/>
-        <TopLine Value="116"/>
-        <CursorPos X="1" Y="130"/>
+        <TopLine Value="122"/>
+        <CursorPos X="3" Y="140"/>
         <UsageCount Value="216"/>
         <Loaded Value="True"/>
-        <LoadedDesigner Value="True"/>
       </Unit1>
       <Unit2>
         <Filename Value="gfxutils.pas"/>
@@ -192,8 +192,8 @@
         <UnitName Value="GfxUtils"/>
         <EditorIndex Value="2"/>
         <WindowIndex Value="0"/>
-        <TopLine Value="1754"/>
-        <CursorPos X="1" Y="1769"/>
+        <TopLine Value="67"/>
+        <CursorPos X="42" Y="82"/>
         <UsageCount Value="216"/>
         <Loaded Value="True"/>
       </Unit2>
@@ -201,11 +201,10 @@
         <Filename Value="coreutils.pas"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="CoreUtils"/>
-        <IsVisibleTab Value="True"/>
         <EditorIndex Value="3"/>
         <WindowIndex Value="0"/>
-        <TopLine Value="609"/>
-        <CursorPos X="25" Y="618"/>
+        <TopLine Value="644"/>
+        <CursorPos X="12" Y="656"/>
         <UsageCount Value="214"/>
         <Loaded Value="True"/>
       </Unit3>
@@ -214,20 +213,20 @@
         <WindowIndex Value="0"/>
         <TopLine Value="1677"/>
         <CursorPos X="7" Y="1688"/>
-        <UsageCount Value="103"/>
+        <UsageCount Value="85"/>
       </Unit4>
       <Unit5>
         <Filename Value="/usr/lib/lazarus/lcl/include/canvas.inc"/>
         <WindowIndex Value="0"/>
         <TopLine Value="807"/>
         <CursorPos X="1" Y="818"/>
-        <UsageCount Value="103"/>
+        <UsageCount Value="85"/>
       </Unit5>
       <Unit6>
         <Filename Value="testutils.pas"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="TestUtils"/>
-        <EditorIndex Value="5"/>
+        <EditorIndex Value="6"/>
         <WindowIndex Value="0"/>
         <TopLine Value="1"/>
         <CursorPos X="1" Y="1"/>
@@ -240,16 +239,16 @@
         <WindowIndex Value="0"/>
         <TopLine Value="507"/>
         <CursorPos X="27" Y="526"/>
-        <UsageCount Value="130"/>
+        <UsageCount Value="112"/>
       </Unit7>
       <Unit8>
         <Filename Value="testconveyor.pas"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="TestConveyor"/>
-        <EditorIndex Value="6"/>
+        <EditorIndex Value="7"/>
         <WindowIndex Value="0"/>
-        <TopLine Value="298"/>
-        <CursorPos X="1" Y="314"/>
+        <TopLine Value="273"/>
+        <CursorPos X="1" Y="282"/>
         <UsageCount Value="327"/>
         <Loaded Value="True"/>
       </Unit8>
@@ -259,7 +258,7 @@
         <WindowIndex Value="0"/>
         <TopLine Value="251"/>
         <CursorPos X="3" Y="260"/>
-        <UsageCount Value="129"/>
+        <UsageCount Value="111"/>
       </Unit9>
       <Unit10>
         <Filename Value="cartof.pas"/>
@@ -268,7 +267,7 @@
         <EditorIndex Value="1"/>
         <WindowIndex Value="0"/>
         <TopLine Value="68"/>
-        <CursorPos X="1" Y="78"/>
+        <CursorPos X="1" Y="80"/>
         <UsageCount Value="225"/>
         <Loaded Value="True"/>
       </Unit10>
@@ -276,192 +275,144 @@
         <Filename Value="provider.pas"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="Provider"/>
-        <EditorIndex Value="4"/>
+        <EditorIndex Value="5"/>
         <WindowIndex Value="0"/>
-        <TopLine Value="35"/>
-        <CursorPos X="1" Y="41"/>
+        <TopLine Value="1"/>
+        <CursorPos X="29" Y="11"/>
         <UsageCount Value="223"/>
         <Loaded Value="True"/>
       </Unit11>
       <Unit12>
-        <Filename Value="C:/lazarus/fpc/2.6.0/source/rtl/win/wininc/func.inc"/>
+        <Filename Value="C:/lazarus/fpc/2.6.0/source/rtl/objpas/fgl.pp"/>
+        <UnitName Value="fgl"/>
+        <EditorIndex Value="4"/>
         <WindowIndex Value="0"/>
-        <TopLine Value="1"/>
-        <CursorPos X="1" Y="1"/>
-        <UsageCount Value="2"/>
-      </Unit12>
-      <Unit13>
-        <Filename Value="C:/lazarus/fpc/2.6.0/source/rtl/objpas/sysutils/sysstrh.inc"/>
-        <WindowIndex Value="0"/>
-        <TopLine Value="189"/>
-        <CursorPos X="1" Y="208"/>
-        <UsageCount Value="2"/>
-      </Unit13>
-      <Unit14>
-        <Filename Value="C:/lazarus/fpc/2.6.0/source/rtl/objpas/math.pp"/>
-        <UnitName Value="math"/>
-        <WindowIndex Value="0"/>
-        <TopLine Value="323"/>
-        <CursorPos X="10" Y="332"/>
-        <UsageCount Value="2"/>
-      </Unit14>
-      <Unit15>
-        <Filename Value="C:/lazarus/fpc/2.6.0/source/rtl/inc/threadh.inc"/>
-        <WindowIndex Value="0"/>
-        <TopLine Value="148"/>
-        <CursorPos X="17" Y="153"/>
-        <UsageCount Value="6"/>
-      </Unit15>
-      <Unit16>
-        <Filename Value="C:/lazarus/fpc/2.6.0/source/rtl/inc/objpash.inc"/>
-        <WindowIndex Value="0"/>
-        <TopLine Value="182"/>
-        <CursorPos X="23" Y="192"/>
-        <UsageCount Value="12"/>
-      </Unit16>
-      <Unit17>
-        <Filename Value="C:/lazarus/fpc/2.6.0/source/rtl/objpas/classes/classesh.inc"/>
-        <WindowIndex Value="0"/>
-        <TopLine Value="1518"/>
-        <CursorPos X="17" Y="1536"/>
-        <UsageCount Value="12"/>
-      </Unit17>
-      <Unit18>
-        <Filename Value="C:/lazarus/fpc/2.6.0/source/rtl/objpas/classes/classesh.inc"/>
-        <WindowIndex Value="0"/>
-        <TopLine Value="1528"/>
-        <CursorPos X="15" Y="1536"/>
-        <UsageCount Value="12"/>
-      </Unit18>
-      <Unit19>
-        <Filename Value="C:/lazarus/lcl/customtimer.pas"/>
-        <UnitName Value="CustomTimer"/>
-        <WindowIndex Value="0"/>
-        <TopLine Value="171"/>
-        <CursorPos X="72" Y="181"/>
+        <TopLine Value="513"/>
+        <CursorPos X="1" Y="524"/>
         <UsageCount Value="11"/>
-      </Unit19>
+        <Loaded Value="True"/>
+      </Unit12>
     </Units>
     <JumpHistory Count="30" HistoryIndex="29">
       <Position1>
-        <Filename Value="coreutils.pas"/>
-        <Caret Line="622" Column="1" TopLine="613"/>
+        <Filename Value="gfxutils.pas"/>
+        <Caret Line="248" Column="24" TopLine="230"/>
       </Position1>
       <Position2>
-        <Filename Value="jakrandr.pas"/>
-        <Caret Line="130" Column="1" TopLine="116"/>
+        <Filename Value="coreutils.pas"/>
+        <Caret Line="609" Column="15" TopLine="605"/>
       </Position2>
       <Position3>
-        <Filename Value="provider.pas"/>
-        <Caret Line="41" Column="1" TopLine="35"/>
+        <Filename Value="coreutils.pas"/>
+        <Caret Line="35" Column="24" TopLine="16"/>
       </Position3>
       <Position4>
         <Filename Value="coreutils.pas"/>
-        <Caret Line="724" Column="1" TopLine="709"/>
+        <Caret Line="190" Column="21" TopLine="172"/>
       </Position4>
       <Position5>
-        <Filename Value="gfxutils.pas"/>
-        <Caret Line="1764" Column="1" TopLine="1754"/>
+        <Filename Value="coreutils.pas"/>
+        <Caret Line="194" Column="20" TopLine="176"/>
       </Position5>
       <Position6>
-        <Filename Value="gfxutils.pas"/>
-        <Caret Line="1765" Column="1" TopLine="1754"/>
+        <Filename Value="coreutils.pas"/>
+        <Caret Line="308" Column="20" TopLine="290"/>
       </Position6>
       <Position7>
-        <Filename Value="gfxutils.pas"/>
-        <Caret Line="1766" Column="1" TopLine="1754"/>
+        <Filename Value="coreutils.pas"/>
+        <Caret Line="443" Column="12" TopLine="426"/>
       </Position7>
       <Position8>
-        <Filename Value="gfxutils.pas"/>
-        <Caret Line="1767" Column="1" TopLine="1754"/>
+        <Filename Value="coreutils.pas"/>
+        <Caret Line="546" Column="3" TopLine="527"/>
       </Position8>
       <Position9>
-        <Filename Value="gfxutils.pas"/>
-        <Caret Line="1768" Column="1" TopLine="1754"/>
+        <Filename Value="coreutils.pas"/>
+        <Caret Line="553" Column="3" TopLine="534"/>
       </Position9>
       <Position10>
-        <Filename Value="gfxutils.pas"/>
-        <Caret Line="1769" Column="1" TopLine="1754"/>
+        <Filename Value="coreutils.pas"/>
+        <Caret Line="582" Column="12" TopLine="565"/>
       </Position10>
       <Position11>
         <Filename Value="coreutils.pas"/>
-        <Caret Line="613" Column="1" TopLine="603"/>
+        <Caret Line="615" Column="12" TopLine="599"/>
       </Position11>
       <Position12>
         <Filename Value="coreutils.pas"/>
-        <Caret Line="614" Column="1" TopLine="603"/>
+        <Caret Line="681" Column="12" TopLine="665"/>
       </Position12>
       <Position13>
         <Filename Value="coreutils.pas"/>
-        <Caret Line="615" Column="1" TopLine="603"/>
+        <Caret Line="1" Column="1" TopLine="1"/>
       </Position13>
       <Position14>
         <Filename Value="coreutils.pas"/>
-        <Caret Line="616" Column="1" TopLine="603"/>
+        <Caret Line="212" Column="26" TopLine="196"/>
       </Position14>
       <Position15>
         <Filename Value="coreutils.pas"/>
-        <Caret Line="617" Column="1" TopLine="603"/>
+        <Caret Line="344" Column="23" TopLine="331"/>
       </Position15>
       <Position16>
         <Filename Value="coreutils.pas"/>
-        <Caret Line="616" Column="1" TopLine="603"/>
+        <Caret Line="346" Column="25" TopLine="331"/>
       </Position16>
       <Position17>
         <Filename Value="coreutils.pas"/>
-        <Caret Line="617" Column="1" TopLine="603"/>
+        <Caret Line="504" Column="23" TopLine="490"/>
       </Position17>
       <Position18>
         <Filename Value="coreutils.pas"/>
-        <Caret Line="616" Column="1" TopLine="603"/>
+        <Caret Line="508" Column="33" TopLine="492"/>
       </Position18>
       <Position19>
         <Filename Value="coreutils.pas"/>
-        <Caret Line="617" Column="1" TopLine="603"/>
+        <Caret Line="573" Column="23" TopLine="554"/>
       </Position19>
       <Position20>
         <Filename Value="coreutils.pas"/>
-        <Caret Line="616" Column="1" TopLine="603"/>
+        <Caret Line="1" Column="1" TopLine="1"/>
       </Position20>
       <Position21>
         <Filename Value="coreutils.pas"/>
-        <Caret Line="617" Column="1" TopLine="603"/>
+        <Caret Line="124" Column="48" TopLine="108"/>
       </Position21>
       <Position22>
         <Filename Value="coreutils.pas"/>
-        <Caret Line="616" Column="1" TopLine="603"/>
+        <Caret Line="128" Column="48" TopLine="112"/>
       </Position22>
       <Position23>
         <Filename Value="coreutils.pas"/>
-        <Caret Line="617" Column="1" TopLine="603"/>
+        <Caret Line="130" Column="21" TopLine="115"/>
       </Position23>
       <Position24>
-        <Filename Value="coreutils.pas"/>
-        <Caret Line="616" Column="1" TopLine="603"/>
+        <Filename Value="provider.pas"/>
+        <Caret Line="42" Column="20" TopLine="25"/>
       </Position24>
       <Position25>
-        <Filename Value="coreutils.pas"/>
-        <Caret Line="617" Column="1" TopLine="603"/>
+        <Filename Value="jakrandr.pas"/>
+        <Caret Line="133" Column="23" TopLine="124"/>
       </Position25>
       <Position26>
         <Filename Value="coreutils.pas"/>
-        <Caret Line="619" Column="1" TopLine="603"/>
+        <Caret Line="637" Column="11" TopLine="626"/>
       </Position26>
       <Position27>
-        <Filename Value="coreutils.pas"/>
-        <Caret Line="620" Column="1" TopLine="604"/>
+        <Filename Value="jakrandr.pas"/>
+        <Caret Line="129" Column="11" TopLine="124"/>
       </Position27>
       <Position28>
-        <Filename Value="coreutils.pas"/>
-        <Caret Line="621" Column="1" TopLine="605"/>
+        <Filename Value="jakrandr.pas"/>
+        <Caret Line="1" Column="1" TopLine="1"/>
       </Position28>
       <Position29>
-        <Filename Value="coreutils.pas"/>
-        <Caret Line="622" Column="1" TopLine="606"/>
+        <Filename Value="jakrandr.pas"/>
+        <Caret Line="235" Column="22" TopLine="223"/>
       </Position29>
       <Position30>
-        <Filename Value="coreutils.pas"/>
-        <Caret Line="623" Column="1" TopLine="607"/>
+        <Filename Value="jakrandr.pas"/>
+        <Caret Line="1" Column="1" TopLine="1"/>
       </Position30>
     </JumpHistory>
   </ProjectOptions>
@@ -500,155 +451,19 @@
     </Other>
   </CompilerOptions>
   <Debugging>
-    <BreakPoints Count="16">
+    <Watches Count="4">
       <Item1>
-        <Kind Value="bpkSource"/>
-        <WatchScope Value="wpsLocal"/>
-        <WatchKind Value="wpkWrite"/>
-        <Source Value="gfxutils.pas"/>
-        <InitialEnabled Value="False"/>
-        <Line Value="2261"/>
+        <Expression Value="b1^"/>
       </Item1>
       <Item2>
-        <Kind Value="bpkSource"/>
-        <WatchScope Value="wpsLocal"/>
-        <WatchKind Value="wpkWrite"/>
-        <Source Value="gfxutils.pas"/>
-        <InitialEnabled Value="False"/>
-        <Line Value="2266"/>
-      </Item2>
-      <Item3>
-        <Kind Value="bpkSource"/>
-        <WatchScope Value="wpsLocal"/>
-        <WatchKind Value="wpkWrite"/>
-        <Source Value="gfxutils.pas"/>
-        <InitialEnabled Value="False"/>
-        <Line Value="726"/>
-      </Item3>
-      <Item4>
-        <Kind Value="bpkSource"/>
-        <WatchScope Value="wpsLocal"/>
-        <WatchKind Value="wpkWrite"/>
-        <Source Value="gfxutils.pas"/>
-        <InitialEnabled Value="False"/>
-        <Line Value="456"/>
-      </Item4>
-      <Item5>
-        <Kind Value="bpkSource"/>
-        <WatchScope Value="wpsLocal"/>
-        <WatchKind Value="wpkWrite"/>
-        <Expression Value="i = 3"/>
-        <Source Value="jakrandr.pas"/>
-        <InitialEnabled Value="False"/>
-        <Line Value="342"/>
-      </Item5>
-      <Item6>
-        <Kind Value="bpkSource"/>
-        <WatchScope Value="wpsLocal"/>
-        <WatchKind Value="wpkWrite"/>
-        <Expression Value="i = 2"/>
-        <Source Value="coreutils.pas"/>
-        <InitialEnabled Value="False"/>
-        <Line Value="332"/>
-      </Item6>
-      <Item7>
-        <Kind Value="bpkSource"/>
-        <WatchScope Value="wpsLocal"/>
-        <WatchKind Value="wpkWrite"/>
-        <Expression Value="i = 0"/>
-        <Source Value="coreutils.pas"/>
-        <InitialEnabled Value="False"/>
-        <Line Value="555"/>
-      </Item7>
-      <Item8>
-        <Kind Value="bpkSource"/>
-        <WatchScope Value="wpsLocal"/>
-        <WatchKind Value="wpkWrite"/>
-        <Expression Value="(m_ctx = nil) or (m_ctx^.master = nil) or (m_ctx^.master^.m_entities = nil)"/>
-        <Source Value="gfxutils.pas"/>
-        <InitialEnabled Value="False"/>
-        <Line Value="2437"/>
-      </Item8>
-      <Item9>
-        <Kind Value="bpkSource"/>
-        <WatchScope Value="wpsLocal"/>
-        <WatchKind Value="wpkWrite"/>
-        <Source Value="gfxutils.pas"/>
-        <InitialEnabled Value="False"/>
-        <Line Value="516"/>
-      </Item9>
-      <Item10>
-        <Kind Value="bpkSource"/>
-        <WatchScope Value="wpsLocal"/>
-        <WatchKind Value="wpkWrite"/>
-        <Source Value="testconveyor.pas"/>
-        <Line Value="282"/>
-      </Item10>
-      <Item11>
-        <Kind Value="bpkSource"/>
-        <WatchScope Value="wpsLocal"/>
-        <WatchKind Value="wpkWrite"/>
-        <Source Value="jakrandr.pas"/>
-        <Line Value="130"/>
-      </Item11>
-      <Item12>
-        <Kind Value="bpkSource"/>
-        <WatchScope Value="wpsLocal"/>
-        <WatchKind Value="wpkWrite"/>
-        <Source Value="coreutils.pas"/>
-        <Line Value="708"/>
-      </Item12>
-      <Item13>
-        <Kind Value="bpkSource"/>
-        <WatchScope Value="wpsLocal"/>
-        <WatchKind Value="wpkWrite"/>
-        <Source Value="coreutils.pas"/>
-        <Line Value="622"/>
-      </Item13>
-      <Item14>
-        <Kind Value="bpkSource"/>
-        <WatchScope Value="wpsLocal"/>
-        <WatchKind Value="wpkWrite"/>
-        <Source Value="testconveyor.pas"/>
-        <Line Value="309"/>
-      </Item14>
-      <Item15>
-        <Kind Value="bpkSource"/>
-        <WatchScope Value="wpsLocal"/>
-        <WatchKind Value="wpkWrite"/>
-        <Source Value="cartof.pas"/>
-        <Line Value="78"/>
-      </Item15>
-      <Item16>
-        <Kind Value="bpkSource"/>
-        <WatchScope Value="wpsLocal"/>
-        <WatchKind Value="wpkWrite"/>
-        <Source Value="provider.pas"/>
-        <Line Value="41"/>
-      </Item16>
-    </BreakPoints>
-    <Watches Count="7">
-      <Item1>
-        <Expression Value="m_threadContext.cnt"/>
-      </Item1>
-      <Item2>
-        <Expression Value="Self"/>
+        <Expression Value="b2^"/>
       </Item2>
       <Item3 ClassAutoCast="True">
-        <Expression Value="m_disp.m_threadContext.cnt"/>
+        <Expression Value="e"/>
       </Item3>
       <Item4>
-        <Expression Value="m_ctx^.master^.m_entities"/>
+        <Expression Value="m_nodes"/>
       </Item4>
-      <Item5>
-        <Expression Value="m_threadContext.workers.GetItem(0)"/>
-      </Item5>
-      <Item6>
-        <Expression Value="m_threadContext.workers[1]"/>
-      </Item6>
-      <Item7>
-        <Expression Value="entity.m_points"/>
-      </Item7>
     </Watches>
     <Exceptions Count="3">
       <Item1>

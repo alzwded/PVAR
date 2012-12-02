@@ -106,7 +106,7 @@ begin
   conveyor := e;
   (*e.Rotate(0, 0, pi/3); // fails*)
   //e.Rotate(pi / 6, pi / 4, 0(*pi / 3*));
-  e.Rotate(pi / 12, -pi / 6, 0);
+  e.Rotate(pi / 12, 0(*-pi / 6*), 0);
   (*e := TTestConveyor.Conveyor(Point3DFromCoords(0.0, -700, 1000), 500, 30, 400);
   e.Rotate(0, pi / 4, 0);*)
 
@@ -116,18 +116,29 @@ begin
   m_worldEntities.Add(e);
 
 
+  (*
   e := TTestConveyor.Conveyor(Point3DFromCoords(-500.0, -700, 1000), 20, 20, 200);
   e.Rotate(pi / 3, pi / 2, 0);
   m_worldEntities.Add(e);
+  *)
 
   e := TCartof.Part(Point3DFromCoords(0, 500, 0));
   m_worldEntities.Add(e);
 
-  e := TProvider.Grabber(Point3DFromCoords(0, 0, 1000), 20);
+  e := TProvider.Grabber(Point3DFromCoords(0, 24, 1000), 500);
+  (e as TProvider).AddStock(TCartof.Part(Point3DFromCoords(0, 0, 0)));
+  (e as TProvider).AddStock(TCartof.Part(Point3DFromCoords(0, 0, 0)));
+  (e as TProvider).AddStock(TCartof.Part(Point3DFromCoords(0, 0, 0)));
   (e as TProvider).AddStock(TCartof.Part(Point3DFromCoords(0, 0, 0)));
   m_WorldEntities.Add(e);
 
-  (conveyor as TTestConveyor).InputSource(e as TProvider)
+  (conveyor as TTestConveyor).InputSource(e as TProvider);
+
+  e := TTestConveyor.Conveyor(Point3DFromCoords(0, 388, 1448), 20, 10, 400);
+  e.Rotate(0, -pi / 6, 0);
+  m_worldEntities.Add(e);
+
+  (e as TTestConveyor).InputSource(conveyor as TTestConveyor);
 end;
 
 procedure TJakRandr.FormDeactivate(Sender: TObject);

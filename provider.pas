@@ -9,7 +9,6 @@ uses
 
 const
   PROVIDE_ON_FRAME = 10;
-  OFF_SCREEN_POINT = -1e+27;
 
 type
   TProvider = class(AGrabber)
@@ -39,6 +38,7 @@ procedure TProvider.Loop;
 begin
   if (InanimateObjects.Count > 0) and (m_pc = 0) then begin
     InanimateObjects[0].MoveTo(GetRotatedPoint(Centre));
+    InanimateObjects[0].Hidden := False;;
   end;
 
   m_pc := (m_pc + 1) mod m_provideOnFrame;
@@ -46,7 +46,8 @@ end;
 
 procedure TProvider.AddStock(e: IWorldEntity);
 begin
-  e.MoveTo(Point3DFromCoords(0, 0, OFF_SCREEN_POINT));
+  //e.MoveTo(Point3DFromCoords(0, 0, OFF_SCREEN_POINT));
+  e.Hidden := true;
   InanimateObjects.Add(e);
 end;
 
