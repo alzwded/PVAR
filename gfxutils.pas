@@ -358,10 +358,6 @@ end;
 
 procedure TJakRandrEngine.ClearEntities;
 begin
-  (* in theory TFGLObjectList autofrees objects *)
-  (*for i := 0 to m_entities.Count - 1 do
-    m_entities[i].Free;*)
-
   m_entities.Clear;
 end;
 
@@ -453,41 +449,7 @@ begin
     end;
   end;
 
-  Raise Exception.Create('lol');
-  exit;
-
-
-
-  (*$IFDEF DEBUG_ADD_ENTITY*)
-  writeln('Begin sorting new entity');
-  candidate.Dump;
-  (*$ENDIF*)
-  //for i := 0 to m_entities.Count - 1 do begin
-  i := m_entities.Count;
-  while (i > 0)
-        and (m_visu.InOrder(candidate, m_entities.Items[i - 1]))
-  do begin
-    (*$IFDEF DEBUG_ADD_ENTITY*)
-    writeln('  comparing with:');
-    write('  '); m_entities.Items[i - 1].Dump;
-    (*$ENDIF*)
-    dec(i);
-  end;
-
-  (*$IFDEF DEBUG_ADD_ENTITY*)
-  writeln(i, ' ', m_entities.Count);
-  (*$ENDIF*)
-  if i = m_entities.Count then begin
-    (*$IFDEF DEBUG_ADD_ENTITY*)
-    writeln('  inserting at end');
-    (*$ENDIF*)
-    m_entities.Add(candidate);
-    exit;
-  end;
-  (*$IFDEF DEBUG_ADD_ENTITY*)
-  writeln('  inserting at ', i);
-  (*$ENDIF*)
-  m_entities.Insert(i, candidate);
+  Raise Exception.Create('Sorting Exception -- Failed to insert entity');
 end;
 
 (* TJakRandrProjector *)
@@ -579,8 +541,6 @@ begin
   (* scale down *)
   rx := (rx * m_canvas.Width) / 4000.0 * s;
   ry := (ry * m_canvas.Height) / 3000.0 * s;
-  (* note on relevance of z: *)
-  (* rx := p.x * screenWidth / p.z; ry := p.y * screenWidth / p.z *)
 
   rx := rx + m_canvas.Width / 2;
   ry := ry + m_canvas.Height / 2;
@@ -2016,30 +1976,6 @@ begin
         - x * sinY
         + y * sinX * cosY
         + z * cosX * cosY;
-
-
-  (*     gimbal-like rotations -- do not use
-  if rx <> 0.0 then begin
-    y := cos(rx) * translationVector.y - sin(rx) * translationVector.z;
-    z := sin(rx) * translationVector.y + cos(rx) * translationVector.z;
-    translationVector.y := y;
-    translationVector.z := z;
-  end;
-
-  if ry <> 0.0 then begin
-    x := cos(ry) * translationVector.x + sin(ry) * translationVector.z;
-    z := (-(sin(ry))) * translationVector.x + cos(ry) * translationVector.z;
-    translationVector.x := x;
-    translationVector.z := z;
-  end;
-
-  if rz <> 0.0 then begin
-    x := cos(rz) * translationVector.x - sin(rz) * translationVector.y;
-    y := sin(rz) * translationVector.x + cos(rz) * translationVector.y;
-    translationVector.x := x;
-    translationVector.y := y;
-  end;
-  *)
 
   (* offset node back to where it was *)
   node.x := centre.x + translationVector.x;
