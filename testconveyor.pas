@@ -307,8 +307,12 @@ var
   c: TPoint3D;
 begin
   c := GetRotatedPoint(m_c);
-  m_grabbingBox.p1 := Point3DFromCoords(c.x - m_width / 2, c.y - PLATE_LENGTH / 2, c.z - PLATE_LENGTH / 2);
-  m_grabbingBox.p2 := Point3DFromCoords(c.x + m_width / 2, c.y + PLATE_LENGTH / 2, c.z + PLATE_LENGTH / 2);
+  m_grabbingBox.p1 := Point3DFromCoords(c.x - m_width / 2,
+        c.y + PLATE_LENGTH, c.z - PLATE_LENGTH / 2);
+  m_grabbingBox.p2 := Point3DFromCoords(c.x + m_width / 2,
+        c.y + PLATE_LENGTH + 5, c.z + PLATE_LENGTH / 2);
+  (*m_grabbingBox.p1 := Point3DFromCoords(c.x - m_width / 2, c.y - PLATE_LENGTH / 2, c.z - PLATE_LENGTH / 2);
+  m_grabbingBox.p2 := Point3DFromCoords(c.x + m_width / 2, c.y + PLATE_LENGTH / 2, c.z + PLATE_LENGTH / 2);*)
 
   GrabbingBox := @m_grabbingBox;
 end;

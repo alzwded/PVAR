@@ -404,6 +404,14 @@ begin
     exit;
   end;
 
+  (* how to fix this for another day...
+     it works like this:
+       start from N
+       while(i > 0 and InOrder(candidate, e[i-1])) i--;
+       if i = N e.append(candidate);
+       else e.insert(i, candidate);
+  *)
+
   if m_entities.Count = 0 then begin
     m_entities.Add(candidate);
     exit;
@@ -414,40 +422,73 @@ begin
     exit;
   end
   else if not m_visu.InOrder(candidate, m_entities.Items[m_entities.Count - 1]) then begin
-    m_entities.Add(candidate);;
+    m_entities.Add(candidate);
     exit;
   end;
 
+  m := m_entities.Count;
+  i := 0;
+  j := (m_entities.Count - 1) div 2 + 1;   // rename to gap
+  while m > 0 do begin
+    if m - j < 0 then
+      j := m;
+
+    if m_visu.InOrder(candidate, m_entities[m - j]) then begin
+      m := m - j;
+    end else if j = 1 then begin
+      break;
+    end else begin
+      j := j div 2;
+      if j = 0 then begin
+        j := 1;
+      end;
+    end;
+
+    (*
+    if not m_visu.InOrder(candidate, m_entities.Items[m - 1]) then begin
+      break;
+    end;
+
+    dec(m);
+    *)
+  end;
+  if m = m_entities.Count then begin
+    m_entities.Add(candidate);
+  end else
+    m_entities.Insert(m, candidate);
+  exit;
+
   i := 0;
   j := m_entities.Count - 1;
+  while i <= j do begin
+    m := (i + j) div 2;
+    if m_visu.InOrder(candidate, m_entities.Items[m]) then
+      j := m - 1
+    else
+      i := m + 1;
+  end;
+  m_entities.Insert(m, candidate);
+  exit;
+  (*
   while i < j do begin
     m := (i + j) div 2;
     if m_visu.InOrder(candidate, m_entities.Items[m]) then begin
-      if m > 0 then
         if not m_visu.InOrder(candidate, m_entities.Items[m - 1]) then begin
           m_entities.Insert(m, candidate);
           exit;
         end else begin
           j := m;
-        end
-      else begin
-        m_entities.Insert(0, candidate);
-        exit;
-      end;
+        end;
     end else begin
-      if m < m_entities.Count - 1 then
         if m_visu.InOrder(candidate, m_entities[m + 1]) then begin
           m_entities.Insert(m + 1, candidate);
           exit;
         end else begin
           i := m + 1;
-        end
-      else begin
-        m_entities.Add(candidate);
-        exit;
-      end;
+        end;
     end;
   end;
+  *)
 
   Raise Exception.Create('Sorting Exception -- Failed to insert entity');
 end;

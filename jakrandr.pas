@@ -125,7 +125,7 @@ begin
   e := TCartof.Part(Point3DFromCoords(0, 500, 0));
   m_worldEntities.Add(e);
 
-  e := TProvider.Grabber(Point3DFromCoords(0, 24, 1000), 500);
+  e := TProvider.Grabber(Point3DFromCoords(0, 34, 1000), 500);
   (e as TProvider).AddStock(TCartof.Part(Point3DFromCoords(0, 0, 0)));
   (e as TProvider).AddStock(TCartof.Part(Point3DFromCoords(0, 0, 0)));
   (e as TProvider).AddStock(TCartof.Part(Point3DFromCoords(0, 0, 0)));
