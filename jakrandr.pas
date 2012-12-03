@@ -357,7 +357,7 @@ begin
   m_disp.CommitScene;
   t := GetTickCount;
 
-  if t > t0 then
+  if t >= t0 then
     t := t - t0
   else
     t := t + (MAXDWORD - t0);

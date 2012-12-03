@@ -392,7 +392,7 @@ end;
 
 procedure TJakRandrEngine.AddEntity(entity: IEntity3D);
 var
-  i: integer;
+  i, j, m: integer;
   candidate: IEntity3D;
 begin
   candidate := entity.GetFacingCamera(
@@ -407,6 +407,56 @@ begin
     candidate.Free;
     exit;
   end;
+
+  if m_entities.Count = 0 then begin
+    m_entities.Add(candidate);
+    exit;
+  end;
+
+  if m_visu.InOrder(candidate, m_entities.Items[0]) then begin
+    m_entities.Insert(0, candidate);
+    exit;
+  end
+  else if not m_visu.InOrder(candidate, m_entities.Items[m_entities.Count - 1]) then begin
+    m_entities.Add(candidate);;
+    exit;
+  end;
+
+  i := 0;
+  j := m_entities.Count - 1;
+  while i < j do begin
+    m := (i + j) div 2;
+    if m_visu.InOrder(candidate, m_entities.Items[m]) then begin
+      if m > 0 then
+        if not m_visu.InOrder(candidate, m_entities.Items[m - 1]) then begin
+          m_entities.Insert(m, candidate);
+          exit;
+        end else begin
+          j := m;
+        end
+      else begin
+        m_entities.Insert(0, candidate);
+        exit;
+      end;
+    end else begin
+      if m < m_entities.Count - 1 then
+        if m_visu.InOrder(candidate, m_entities[m + 1]) then begin
+          m_entities.Insert(m + 1, candidate);
+          exit;
+        end else begin
+          i := m + 1;
+        end
+      else begin
+        m_entities.Add(candidate);
+        exit;
+      end;
+    end;
+  end;
+
+  Raise Exception.Create('lol');
+  exit;
+
+
 
   (*$IFDEF DEBUG_ADD_ENTITY*)
   writeln('Begin sorting new entity');
