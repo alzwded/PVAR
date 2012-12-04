@@ -302,8 +302,11 @@ function Point3DFromCoords(x, y, z: real): TPoint3D;
 function RealPoint3DFromCoords(x, y, z: real): TRealPoint3D;
 function RealPoint3DFromPoint(p: TPoint3D): TRealPoint3D;
 function GetRotatedPoint(p: TRealPoint3D): TPoint3D;
-function Centroid(p: TPolygon): TPoint3D;
 function SameVector(v1, v2: TPoint3D): boolean;
+
+function Centroid(e: IEntity3D): TPoint3D;
+function Centroid(p: TPolygon): TPoint3D;
+function Centroid(l: TLine): TPoint3D;
 
 (* warning! careful what you do with this
    if unsure, just don't use it and apply rotations manually
@@ -380,9 +383,20 @@ procedure TJakRandrEngine.CommitScene;
 var
   i: integer;
 begin
-  for i := 0 to m_entities.Count - 1 do begin
-    m_visu.Draw(m_entities.Items[i])
+  while m_entities.Count > 1 do begin
+    if m_visu.InOrder(m_entities[0], m_entities[1]) then begin
+      m_visu.Draw(m_entities[0]);
+      m_entities.Delete(0);
+    end else begin
+      // swap suffices
+      m_visu.Draw(m_entities[1]);
+      m_entities.Delete(1);
+    end;
   end;
+
+  if m_entities.Count = 1 then
+    m_visu.Draw(m_entities[0]);
+
   m_canvas.Draw(0, 0, m_buffer);
 end;
 
@@ -417,11 +431,20 @@ begin
     exit;
   end;
 
-  if m_visu.InOrder(candidate, m_entities.Items[0]) then begin
+  (* just sort by Z here *)
+  (* then, in commit scene, sort with InOrder *)
+  (* Start with last poly, P and penultimate Q
+     if InOrder(p, q) one can safely draw P
+     else pop & draw q
+     repeat
+  *)
+
+  if Centroid(candidate).z < Centroid(m_entities.Items[0]).z then begin
     m_entities.Insert(0, candidate);
     exit;
   end
-  else if not m_visu.InOrder(candidate, m_entities.Items[m_entities.Count - 1]) then begin
+  else if Centroid(candidate).z >=
+      Centroid(m_entities.Items[m_entities.Count - 1]).z then begin
     m_entities.Add(candidate);
     exit;
   end;
@@ -433,64 +456,30 @@ begin
     if m - j < 0 then
       j := m;
 
-    if m_visu.InOrder(candidate, m_entities[m - j]) then begin
+    if Centroid(candidate).z < Centroid(m_entities[m - j]).z then begin
       m := m - j;
     end else if j = 1 then begin
-      break;
+      if (m < m_entities.Count)
+        and (Centroid(candidate).z < Centroid(m_entities[m]).z) then
+        break
+      else begin
+        j := j div 2;
+        if j = 0 then begin
+          j := 1;
+        end;
+      end;
     end else begin
       j := j div 2;
       if j = 0 then begin
         j := 1;
       end;
     end;
-
-    (*
-    if not m_visu.InOrder(candidate, m_entities.Items[m - 1]) then begin
-      break;
-    end;
-
-    dec(m);
-    *)
   end;
-  if m = m_entities.Count then begin
-    m_entities.Add(candidate);
-  end else
+
+  if m = m_entities.Count then
+    m_entities.Add(candidate)
+  else
     m_entities.Insert(m, candidate);
-  exit;
-
-  i := 0;
-  j := m_entities.Count - 1;
-  while i <= j do begin
-    m := (i + j) div 2;
-    if m_visu.InOrder(candidate, m_entities.Items[m]) then
-      j := m - 1
-    else
-      i := m + 1;
-  end;
-  m_entities.Insert(m, candidate);
-  exit;
-  (*
-  while i < j do begin
-    m := (i + j) div 2;
-    if m_visu.InOrder(candidate, m_entities.Items[m]) then begin
-        if not m_visu.InOrder(candidate, m_entities.Items[m - 1]) then begin
-          m_entities.Insert(m, candidate);
-          exit;
-        end else begin
-          j := m;
-        end;
-    end else begin
-        if m_visu.InOrder(candidate, m_entities[m + 1]) then begin
-          m_entities.Insert(m + 1, candidate);
-          exit;
-        end else begin
-          i := m + 1;
-        end;
-    end;
-  end;
-  *)
-
-  Raise Exception.Create('Sorting Exception -- Failed to insert entity');
 end;
 
 (* TJakRandrProjector *)
@@ -1029,7 +1018,7 @@ begin
   (*$IFDEF DEBUG_NEWELL*)
   writeln('test2');
   (*$ENDIF*)
-  InOrderPolygons := Centroid(t1).z < Centroid(t2).z; // right, lines too, not just polys
+  InOrderPolygons := true; // right, lines too, not just polys
   exit;
 
   test3:
@@ -1051,21 +1040,21 @@ begin
   (*$IFDEF DEBUG_NEWELL*)
   writeln('test3');
   (*$ENDIF*)
-  InOrderPolygons := Centroid(t1).z < Centroid(t2).z; // lines too
+  InOrderPolygons := true; // lines too
   exit;
 
   test4:
   (* test 4 - all vertices of t1 are on the opposite side of t2 versus viewpoint *)
   (*   idem but with SideOfPlane instead of minZ/maxZ *)
   (*   if true, return true, else continue with tests *)
-  viewportSide := SideOfPlane(t2,
+  (*viewportSide := SideOfPlane(t2,
         GetViewportLocation);
   if viewportSide = plOn then
-    goto test5;
+    goto test5;*)
 
   for i := 0 to t1.NbNodes - 1 do begin
     side := SideOfPlane(t2, t1.Nodes[i].p);
-    if side = viewportSide then
+    if side = plFront then
       goto test5;
   end;
 
@@ -1078,15 +1067,15 @@ begin
   test5:
   (* test 5 - all vertices of t2 are on the same side of t1 versus viewpoint *)
   (*   idem but with SideOfPlane *)
-  viewportSide := SideOfPlane(t1,
+  (*viewportSide := SideOfPlane(t1,
         GetViewportLocation);
   if viewportSide = plOn then
-    goto test6;
+    goto test6;*)
 
   for i := 0 to t2.NbNodes - 1 do begin
     side := SideOfPlane(t1, t2.Nodes[i].p);
     if side = plOn then continue;
-    if side <> viewportSide then
+    if side = plBehind then
       goto test6;
   end;
 
@@ -1120,21 +1109,21 @@ begin
     (*$IFDEF DEBUG_NEWELL*)
     writeln('test6');
     (*$ENDIF*)
-    InOrderPolygons := Centroid(t1).z < Centroid(t2).z;
+    InOrderPolygons := true;
     exit;
   end;
 
   test7:
   (* test 7 - all vertices of t2 are on opposite side of t1 (false if passes)*)
   (* same as 4 but swap t2 and t1 *)
-  viewportSide := SideOfPlane(t1,
+  (*viewportSide := SideOfPlane(t1,
         GetViewportLocation);
   if viewportSide = plOn then
-    goto test8;
+    goto test8;*)
 
   for i := 0 to t2.NbNodes - 1 do begin
     side := SideOfPlane(t1, t2.Nodes[i].p);
-    if side = viewportSide then begin
+    if side = plFront then begin
       goto test8;
     end;
   end;
@@ -1148,15 +1137,15 @@ begin
   test8:
   (* test 8 - all vertices of t1 are on same side of t2 (false if passes) *)
   (* same as 5 but swap t2 and t1 *)
-  viewportSide := SideOfPlane(t2,
+  (*viewportSide := SideOfPlane(t2,
         GetViewportLocation);
   if viewportSide = plOn then
-    goto testOther;
+    goto testOther;*)
 
   for i := 0 to t1.NbNodes - 1 do begin
     side := SideOfPlane(t2, t1.Nodes[i].p);
     if side = plOn then continue;
-    if side <> viewportSide then
+    if side = plBehind then
       goto testOther;
   end;
 
@@ -1883,9 +1872,9 @@ begin
 
   prod := DotProduct(normal, myVector);
 
-  if prod < -0.000000001 then
+  if prod < -0.0001 then
     SideOfPlane := plBehind
-  else if prod > 0.000000001 then
+  else if prod > 0.0001 then
     SideOfPlane := plFront
   else
     SIdeOfPlane := plOn;
@@ -1910,8 +1899,8 @@ begin
 
   prod := DotProduct(normal, myVector);
 
-  if prod < -0.000000001 then SideOfPlane := plBehind
-  else if prod > 0.000000001 then SideOfPlane := plFront
+  if prod < -0.0001 then SideOfPlane := plBehind
+  else if prod > 0.0001 then SideOfPlane := plFront
   else SideOfPlane := plOn;
 end;
 
@@ -2110,6 +2099,25 @@ begin
   node.z := r * cos(th) * sin(fi);
 
   TranslateVector(node, centre);
+end;
+
+function Centroid(e: IEntity3D): TPoint3D;
+begin
+  if e is TPolygon then Centroid := Centroid(e as TPolygon)
+  else if e is TLine then Centroid := Centroid(e as TLine)
+  else Raise Exception.Create('Centroid: Unsupported entity type');
+end;
+
+function Centroid(l: TLine): TPoint3D;
+var
+  p1, p2: TPoint3D;
+begin
+  p1 := GetRotatedPoint(l.Nodes[0]);
+  p2 := GetRotatedPoint(l.Nodes[1]);
+
+  Centroid.x := (p1.x + p2.x) / 2.0;
+  Centroid.y := (p1.y + p2.y) / 2.0;
+  Centroid.z := (p1.z + p2.z) / 2.0;
 end;
 
 function Centroid(p: TPolygon): TPoint3D;
