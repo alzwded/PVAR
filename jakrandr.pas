@@ -18,7 +18,7 @@ interface
 uses
   Classes, SysUtils, FileUtil, Forms, Controls, Graphics, Dialogs, ExtCtrls,
   GfxUtils, CoreUtils, LCLType, TestUtils, TestConveyor, Cartof, Windows, Math,
-  Provider;
+  Provider, GrimReaper;
 
 const
   DEFAULT_CAPTION = 'JakRandr - F1 for help';
@@ -134,6 +134,12 @@ begin
   e := TTestConveyor.Ghost(Point3DFromCoords(-250 - 25 * 2, -388, 1448 + 1000 + 433 + 40 * 2), 20);
   m_worldEntities.Add(e);
   (e as TTestConveyor).InputSource(conveyor as TTestConveyor);
+
+  conveyor := e;
+  e := TGrimReaper.GrimReaper(Point3DFromCoords(
+        conveyor.GetLocation.x, conveyor.GetLocation.y - 500, conveyor.GetLocation.z));
+  (e as TGrimReaper).InputSource(conveyor as TTestConveyor);
+  m_worldEntities.Add(e);
 end;
 
 procedure TJakRandr.FormDeactivate(Sender: TObject);

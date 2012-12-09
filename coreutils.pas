@@ -322,11 +322,13 @@ constructor ACompound.Compound(centre: TPoint3D; interval: cardinal);
 begin
   inherited Create;
   m_clock := TTimer.Create(Nil);
-  m_clock.Interval := interval;
-  if interval > 0 then
-    m_clock.Enabled := True
+  if interval > 0 then begin
+    m_clock.Interval := interval;
+    m_clock.Enabled := True;
+  end
   else
     m_clock.Enabled := False;
+
   m_clock.OnTimer := @OnClock;
 
   m_entities := TListOfWorldEntities.Create;
