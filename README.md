@@ -86,3 +86,20 @@ TODO
     - ^ although, that's what I want for state machines where timers need to be based on a global timer (like in the real world)
 * JakOmlette
     - implementat particularităţiile proiectului (adică scopul acestui proiect)
+
+What we've learnt from this project
+===================================
+
+(in no particular order:)
+* That z-buffering is so widely used for a reason
+* gpu-assisted maths is many, many times faster
+* don't reinvent the wheel
+* don't bother with algorithms which where invented 30 years ago yet nobody seems to remember them (this, too, happens for a reason)
+* don't bother with things that are documented using the NODoc automated documentation system
+* don't over-architect
+
+Known issues
+============
+
+* polygon sorting uses some shortcuts to improve performance. This means that if you mix in polygons whose dimensions are of different orders of magnitude, you may discover that you can see the smaller one through the big one. This is fixable, but greatly decreases performance.
+Maybe a compilation flag can toggle between performance and correctitude
