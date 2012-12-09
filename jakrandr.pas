@@ -25,6 +25,13 @@ const
   DYNAMIC_FRAMERATE_LOW = 0.5;
   DYNAMIC_FRAMERATE_HIGH = 0.9;
 
+  ROOM_X_LOW = -2000;
+  ROOM_X_HIGH = 2000;
+  ROOM_Y_LOW = -1098;
+  ROOM_Y_HIGH = 200;
+  ROOM_Z_LOW = 800;
+  ROOM_Z_HIGH = 3000;
+
 type
 
   (* TCameraManip *)
@@ -66,6 +73,8 @@ type
     procedure ToggleMotion;
     procedure CentreCamera;
     procedure ScreenShot;
+
+    procedure AddEntities; virtual;
   public
     { public declarations }
   end; 
@@ -79,37 +88,28 @@ implementation
 
 { TJakRandr }
 
-procedure TJakRandr.FormCreate(Sender: TObject);
+procedure TJakRandr.AddEntities;
 var
   e, conveyor: IWorldEntity;
+  t: TPolygon;
 begin
-  m_disp := TJakRandrEngine.Create(DisplaySurface.Canvas, clBlack);
-
-  m_cameraManip := cmNone;
-
-  m_move := true;
-
-  Self.DoubleBuffered := true;
-
-  m_worldEntities := TListOfWorldEntities.Create;
-
   e := TTestWE.Create(Point3DFromCoords(500.0, 0.0, 0.0), 1, 0);
   m_worldEntities.Add(e);
-  e := TTestWE.Create(Point3DFromCoords(500.0, 0.0, 0.0), 0, 0);
+  (*e := TTestWE.Create(Point3DFromCoords(500.0, 0.0, 0.0), 0, 0);
   m_worldEntities.Add(e);
   e := TTestAxis.Create;
-  m_worldEntities.Add(e);
+  m_worldEntities.Add(e);*)
 
-  e := TArm.Compound(Point3DFromCoords(-300.0, 0.0, 0.0), 20);
-  m_worldEntities.Add(e);
+  (*e := TArm.Compound(Point3DFromCoords(-300.0, 0.0, 0.0), 20);
+  m_worldEntities.Add(e);*)
 
   e := TTestConveyor.Conveyor(Point3DFromCoords(0.0, 0, 1000), 12, 30, 400);
   conveyor := e;
   e.Rotate(pi / 12, 0(*-pi / 6*), 0);
   m_worldEntities.Add(e);
 
-  e := TCartof.Part(Point3DFromCoords(0, 500, 0));
-  m_worldEntities.Add(e);
+  (*e := TCartof.Part(Point3DFromCoords(0, 500, 0));
+  m_worldEntities.Add(e);*)
 
   e := TProvider.Grabber(Point3DFromCoords(0, 34, 1000), 500);
   (e as TProvider).AddStock(TCartof.Part(Point3DFromCoords(0, 0, 0)));
@@ -131,15 +131,34 @@ begin
   (e as TTestConveyor).InputSource(conveyor as TTestConveyor);
 
   conveyor := e;
-  e := TTestConveyor.Ghost(Point3DFromCoords(-250 - 25 * 2, -388, 1448 + 1000 + 433 + 40 * 2), 20);
+  e := TTestConveyor.Ghost(Point3DFromCoords(-250 - 25 * 4, -388, 1448 + 1000 + 433 + 34 * 4), 20);
   m_worldEntities.Add(e);
   (e as TTestConveyor).InputSource(conveyor as TTestConveyor);
 
   conveyor := e;
   e := TGrimReaper.GrimReaper(Point3DFromCoords(
-        conveyor.GetLocation.x, conveyor.GetLocation.y - 500, conveyor.GetLocation.z));
+        conveyor.GetLocation.x +  50, conveyor.GetLocation.y - 500, conveyor.GetLocation.z - 50));
   (e as TGrimReaper).InputSource(conveyor as TTestConveyor);
   m_worldEntities.Add(e);
+end;
+
+procedure TJakRandr.FormCreate(Sender: TObject);
+begin
+  m_disp := TJakRandrEngine.Create(DisplaySurface.Canvas, clBlack);
+
+  m_cameraManip := cmNone;
+
+  m_move := true;
+
+  Self.DoubleBuffered := true;
+
+  m_worldEntities := TListOfWorldEntities.Create;
+
+  AddEntities;
+
+  m_disp.O := Point3DFromCoords(1800, -500, 700);
+  m_disp.RX := -pi/24;
+  m_disp.RY := -pi/4;
 end;
 
 procedure TJakRandr.FormDeactivate(Sender: TObject);

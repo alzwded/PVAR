@@ -107,10 +107,13 @@ var
   i, j: integer;
   p: TPoint3D;
   e: TPolygon;
+  nailColor: TColor;
 begin
   p := GetLocation;
   p.x := p.x - NAIL_WIDTH * m_u div 2;
   p.z := p.z - NAIL_WIDTH * m_v div 2;
+
+  nailColor := RGBToColor(70, 90, 60);
 
   for i := 0 to m_u - 1 - 1 do begin
     for j := 0 to m_v - 1 - 1 do begin
@@ -119,7 +122,7 @@ begin
                 Point3DFromCoords(p.x + NAIL_WIDTH * i, p.y, p.z + NAIL_WIDTH * (j + 1)),
                 Point3DFromCoords(p.x + NAIL_WIDTH * i + NAIL_WIDTH / 2, p.y + NAIL_HEIGHT, p.z + NAIL_WIDTH * j + NAIL_WIDTH / 2));
       e.ContourColour:=clBlack;
-      e.FillColour:=RGBToColor(20, 20, 20);
+      e.FillColour:=nailColor;
       Geometry.Add(e);
 
       e := TPolygon.Triangle(
@@ -127,7 +130,7 @@ begin
                 Point3DFromCoords(p.x + NAIL_WIDTH * i, p.y, p.z + NAIL_WIDTH * j),
                 Point3DFromCoords(p.x + NAIL_WIDTH * i + NAIL_WIDTH / 2, p.y + NAIL_HEIGHT, p.z + NAIL_WIDTH * j + NAIL_WIDTH / 2));
       e.ContourColour:=clBlack;
-      e.FillColour:=RGBToColor(20, 20, 20);
+      e.FillColour:=nailColor;
       Geometry.Add(e);
 
       e := TPolygon.Triangle(
@@ -135,7 +138,7 @@ begin
                 Point3DFromCoords(p.x + NAIL_WIDTH * (i + 1), p.y, p.z + NAIL_WIDTH * j),
                 Point3DFromCoords(p.x + NAIL_WIDTH * i + NAIL_WIDTH / 2, p.y + NAIL_HEIGHT, p.z + NAIL_WIDTH * j + NAIL_WIDTH / 2));
       e.ContourColour:=clBlack;
-      e.FillColour:=RGBToColor(20, 20, 20);
+      e.FillColour:=nailColor;
       Geometry.Add(e);
 
       e := TPolygon.Triangle(
@@ -143,7 +146,7 @@ begin
                 Point3DFromCoords(p.x + NAIL_WIDTH * (i + 1), p.y, p.z + NAIL_WIDTH * (j + 1)),
                 Point3DFromCoords(p.x + NAIL_WIDTH * i + NAIL_WIDTH / 2, p.y + NAIL_HEIGHT, p.z + NAIL_WIDTH * j + NAIL_WIDTH / 2));
       e.ContourColour:=clBlack;
-      e.FillColour:=RGBToColor(20, 20, 20);
+      e.FillColour:=nailColor;
       Geometry.Add(e);
     end;
   end;
@@ -395,6 +398,7 @@ var
 begin
   e := Nil;
   if TryGrab(@m_bbox, true, e) then begin
+    Entities[GrimReaper_Splosion].MoveTo(e.GetLocation);
     e.Free;
     (Entities[GrimReaper_Splosion] as TSplosion).Splode;
   end;

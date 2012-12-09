@@ -179,10 +179,11 @@
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
         <UnitName Value="JakRandr"/>
+        <IsVisibleTab Value="True"/>
         <EditorIndex Value="0"/>
         <WindowIndex Value="0"/>
-        <TopLine Value="131"/>
-        <CursorPos X="26" Y="143"/>
+        <TopLine Value="127"/>
+        <CursorPos X="93" Y="134"/>
         <UsageCount Value="216"/>
         <Loaded Value="True"/>
       </Unit1>
@@ -192,8 +193,8 @@
         <UnitName Value="GfxUtils"/>
         <EditorIndex Value="3"/>
         <WindowIndex Value="0"/>
-        <TopLine Value="355"/>
-        <CursorPos X="22" Y="373"/>
+        <TopLine Value="197"/>
+        <CursorPos X="15" Y="213"/>
         <UsageCount Value="216"/>
         <Loaded Value="True"/>
       </Unit2>
@@ -321,7 +322,7 @@
         <WindowIndex Value="0"/>
         <TopLine Value="403"/>
         <CursorPos X="75" Y="419"/>
-        <UsageCount Value="10"/>
+        <UsageCount Value="9"/>
       </Unit16>
       <Unit17>
         <Filename Value="C:/lazarus/lcl/include/filedialog.inc"/>
@@ -355,135 +356,134 @@
         <Filename Value="grimreaper.pas"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="GrimReaper"/>
-        <IsVisibleTab Value="True"/>
         <EditorIndex Value="1"/>
         <WindowIndex Value="0"/>
-        <TopLine Value="373"/>
-        <CursorPos X="10" Y="389"/>
-        <UsageCount Value="26"/>
+        <TopLine Value="329"/>
+        <CursorPos X="42" Y="342"/>
+        <UsageCount Value="28"/>
         <Loaded Value="True"/>
       </Unit21>
     </Units>
     <JumpHistory Count="30" HistoryIndex="29">
       <Position1>
-        <Filename Value="grimreaper.pas"/>
-        <Caret Line="341" Column="1" TopLine="325"/>
+        <Filename Value="gfxutils.pas"/>
+        <Caret Line="362" Column="17" TopLine="355"/>
       </Position1>
       <Position2>
-        <Filename Value="grimreaper.pas"/>
-        <Caret Line="342" Column="1" TopLine="326"/>
+        <Filename Value="gfxutils.pas"/>
+        <Caret Line="1" Column="1" TopLine="1"/>
       </Position2>
       <Position3>
-        <Filename Value="grimreaper.pas"/>
-        <Caret Line="343" Column="1" TopLine="328"/>
+        <Filename Value="gfxutils.pas"/>
+        <Caret Line="237" Column="29" TopLine="221"/>
       </Position3>
       <Position4>
-        <Filename Value="grimreaper.pas"/>
-        <Caret Line="344" Column="1" TopLine="328"/>
+        <Filename Value="gfxutils.pas"/>
+        <Caret Line="239" Column="29" TopLine="223"/>
       </Position4>
       <Position5>
-        <Filename Value="grimreaper.pas"/>
-        <Caret Line="345" Column="1" TopLine="329"/>
+        <Filename Value="gfxutils.pas"/>
+        <Caret Line="249" Column="29" TopLine="234"/>
       </Position5>
       <Position6>
-        <Filename Value="grimreaper.pas"/>
-        <Caret Line="347" Column="1" TopLine="331"/>
+        <Filename Value="gfxutils.pas"/>
+        <Caret Line="809" Column="31" TopLine="793"/>
       </Position6>
       <Position7>
-        <Filename Value="grimreaper.pas"/>
-        <Caret Line="348" Column="1" TopLine="332"/>
+        <Filename Value="gfxutils.pas"/>
+        <Caret Line="815" Column="31" TopLine="799"/>
       </Position7>
       <Position8>
-        <Filename Value="grimreaper.pas"/>
-        <Caret Line="349" Column="1" TopLine="333"/>
+        <Filename Value="gfxutils.pas"/>
+        <Caret Line="824" Column="31" TopLine="808"/>
       </Position8>
       <Position9>
-        <Filename Value="grimreaper.pas"/>
-        <Caret Line="350" Column="1" TopLine="334"/>
+        <Filename Value="gfxutils.pas"/>
+        <Caret Line="956" Column="44" TopLine="940"/>
       </Position9>
       <Position10>
-        <Filename Value="grimreaper.pas"/>
-        <Caret Line="351" Column="1" TopLine="335"/>
+        <Filename Value="gfxutils.pas"/>
+        <Caret Line="958" Column="18" TopLine="942"/>
       </Position10>
       <Position11>
-        <Filename Value="grimreaper.pas"/>
-        <Caret Line="352" Column="1" TopLine="336"/>
+        <Filename Value="gfxutils.pas"/>
+        <Caret Line="1011" Column="24" TopLine="1008"/>
       </Position11>
       <Position12>
-        <Filename Value="grimreaper.pas"/>
-        <Caret Line="354" Column="1" TopLine="338"/>
+        <Filename Value="gfxutils.pas"/>
+        <Caret Line="1" Column="1" TopLine="1"/>
       </Position12>
       <Position13>
         <Filename Value="grimreaper.pas"/>
-        <Caret Line="355" Column="1" TopLine="339"/>
+        <Caret Line="12" Column="21" TopLine="1"/>
       </Position13>
       <Position14>
-        <Filename Value="grimreaper.pas"/>
-        <Caret Line="399" Column="1" TopLine="383"/>
+        <Filename Value="gfxutils.pas"/>
+        <Caret Line="463" Column="61" TopLine="456"/>
       </Position14>
       <Position15>
-        <Filename Value="grimreaper.pas"/>
-        <Caret Line="398" Column="48" TopLine="383"/>
+        <Filename Value="jakrandr.pas"/>
+        <Caret Line="96" Column="15" TopLine="77"/>
       </Position15>
       <Position16>
-        <Filename Value="grimreaper.pas"/>
-        <Caret Line="108" Column="1" TopLine="107"/>
+        <Filename Value="jakrandr.pas"/>
+        <Caret Line="151" Column="22" TopLine="139"/>
       </Position16>
       <Position17>
-        <Filename Value="grimreaper.pas"/>
-        <Caret Line="154" Column="48" TopLine="140"/>
+        <Filename Value="jakrandr.pas"/>
+        <Caret Line="150" Column="11" TopLine="141"/>
       </Position17>
       <Position18>
-        <Filename Value="grimreaper.pas"/>
-        <Caret Line="60" Column="20" TopLine="41"/>
+        <Filename Value="jakrandr.pas"/>
+        <Caret Line="149" Column="10" TopLine="141"/>
       </Position18>
       <Position19>
-        <Filename Value="grimreaper.pas"/>
-        <Caret Line="367" Column="1" TopLine="366"/>
+        <Filename Value="jakrandr.pas"/>
+        <Caret Line="151" Column="12" TopLine="141"/>
       </Position19>
       <Position20>
-        <Filename Value="grimreaper.pas"/>
-        <Caret Line="1" Column="1" TopLine="1"/>
+        <Filename Value="jakrandr.pas"/>
+        <Caret Line="255" Column="43" TopLine="239"/>
       </Position20>
       <Position21>
-        <Filename Value="grimreaper.pas"/>
-        <Caret Line="162" Column="25" TopLine="146"/>
+        <Filename Value="gfxutils.pas"/>
+        <Caret Line="455" Column="14" TopLine="452"/>
       </Position21>
       <Position22>
-        <Filename Value="grimreaper.pas"/>
-        <Caret Line="323" Column="1" TopLine="315"/>
+        <Filename Value="gfxutils.pas"/>
+        <Caret Line="1" Column="1" TopLine="1"/>
       </Position22>
       <Position23>
-        <Filename Value="grimreaper.pas"/>
-        <Caret Line="1" Column="1" TopLine="1"/>
+        <Filename Value="jakrandr.pas"/>
+        <Caret Line="150" Column="10" TopLine="141"/>
       </Position23>
       <Position24>
-        <Filename Value="grimreaper.pas"/>
-        <Caret Line="298" Column="74" TopLine="289"/>
+        <Filename Value="jakrandr.pas"/>
+        <Caret Line="97" Column="18" TopLine="93"/>
       </Position24>
       <Position25>
-        <Filename Value="grimreaper.pas"/>
-        <Caret Line="394" Column="52" TopLine="375"/>
+        <Filename Value="jakrandr.pas"/>
+        <Caret Line="117" Column="46" TopLine="110"/>
       </Position25>
       <Position26>
-        <Filename Value="coreutils.pas"/>
-        <Caret Line="308" Column="23" TopLine="305"/>
+        <Filename Value="jakrandr.pas"/>
+        <Caret Line="122" Column="72" TopLine="115"/>
       </Position26>
       <Position27>
-        <Filename Value="coreutils.pas"/>
-        <Caret Line="1" Column="1" TopLine="1"/>
+        <Filename Value="jakrandr.pas"/>
+        <Caret Line="128" Column="52" TopLine="118"/>
       </Position27>
       <Position28>
-        <Filename Value="coreutils.pas"/>
-        <Caret Line="153" Column="8" TopLine="153"/>
+        <Filename Value="jakrandr.pas"/>
+        <Caret Line="107" Column="18" TopLine="90"/>
       </Position28>
       <Position29>
-        <Filename Value="coreutils.pas"/>
-        <Caret Line="1" Column="1" TopLine="1"/>
+        <Filename Value="grimreaper.pas"/>
+        <Caret Line="140" Column="13" TopLine="135"/>
       </Position29>
       <Position30>
         <Filename Value="grimreaper.pas"/>
-        <Caret Line="41" Column="17" TopLine="31"/>
+        <Caret Line="332" Column="27" TopLine="315"/>
       </Position30>
     </JumpHistory>
   </ProjectOptions>
@@ -528,35 +528,35 @@
         <WatchScope Value="wpsLocal"/>
         <WatchKind Value="wpkWrite"/>
         <Source Value="grimreaper.pas"/>
-        <Line Value="231"/>
+        <Line Value="234"/>
       </Item1>
       <Item2>
         <Kind Value="bpkSource"/>
         <WatchScope Value="wpsLocal"/>
         <WatchKind Value="wpkWrite"/>
         <Source Value="grimreaper.pas"/>
-        <Line Value="235"/>
+        <Line Value="238"/>
       </Item2>
       <Item3>
         <Kind Value="bpkSource"/>
         <WatchScope Value="wpsLocal"/>
         <WatchKind Value="wpkWrite"/>
         <Source Value="grimreaper.pas"/>
-        <Line Value="245"/>
+        <Line Value="248"/>
       </Item3>
       <Item4>
         <Kind Value="bpkSource"/>
         <WatchScope Value="wpsLocal"/>
         <WatchKind Value="wpkWrite"/>
         <Source Value="grimreaper.pas"/>
-        <Line Value="261"/>
+        <Line Value="264"/>
       </Item4>
       <Item5>
         <Kind Value="bpkSource"/>
         <WatchScope Value="wpsLocal"/>
         <WatchKind Value="wpkWrite"/>
         <Source Value="grimreaper.pas"/>
-        <Line Value="332"/>
+        <Line Value="335"/>
       </Item5>
     </BreakPoints>
     <Watches Count="3">

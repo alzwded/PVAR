@@ -456,11 +456,11 @@ begin
     if m - j < 0 then
       j := m;
 
-    if Centroid(candidate).z < Centroid(m_entities[m - j]).z then begin
-      m := m - j;
-    end else if j = 1 then begin
+    if Centroid(candidate).z < Centroid(m_entities[m - j]).z then
+      m := m - j
+    else if j = 1 then begin
       if (m < m_entities.Count)
-        and (Centroid(candidate).z < Centroid(m_entities[m]).z) then
+        and (Centroid(candidate).z <= Centroid(m_entities[m]).z) then
         break
       else begin
         j := j div 2;
