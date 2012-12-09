@@ -156,7 +156,7 @@ begin
 
   AddEntities;
 
-  m_disp.O := Point3DFromCoords(1800, -500, 700);
+  m_disp.O := Point3DFromCoords(1800, -700, 700);
   m_disp.RX := -pi/24;
   m_disp.RY := -pi/4;
 end;
