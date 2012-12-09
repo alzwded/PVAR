@@ -6,11 +6,11 @@ Proiect pentru cursul de PVAR, anul III -- platformă pentru simulări-automatiz
 Componente
 ==========
 
-* CoreUtils (model)
+* CoreUtils (model abstract)
     - Interfaţă pentru entităţi, clase abstracte
-* GfxUtils (low level)
+* GfxUtils (low level, renderer)
     - Engine grafic şi utilitare grafice
-* JakRandr (view/controller)
+* JakRandr (view)
     - Interfaţă grafică pentru engine, ceas de rendare, manipulare cameră
 
 Building
@@ -30,7 +30,9 @@ Misc
 
 Engineul grafic foloseşte algoritmul lui Newell pentru sortare poligoanelor.
 
-Fiecare entitate rulează independent pe propriul ceas, rendarea se face la ~30hz (+/-)
+Fiecare entitate rulează independent pe propriul ceas.
+
+Frecvența rendării se reglează automat în funcție de încărcare (oarecum).
 
 Arhitectură cât de cât MVC.
 
@@ -71,16 +73,16 @@ TODO
 
 * CoreUtils
     - ~~câteva exemple pentru a vedea ce cod rămâne comun~~
-    - test new classes
-    - implement RotateAround/Rotate for all useful classes
-    - finalizat designul
+    - ~~test new classes~~
+    - ~~implement RotateAround/Rotate for all useful classes~~
+    - ~~finalizat designul~~
 * GfxUtils
-    - export nodes of polygons as pointers as well (useful for TSkin)
+    - ~~export nodes of polygons as pointers as well (useful for TSkin)~~ overruled
     - ~~test sprite, sphere rendering / scaling~~ actually, I don't think I'll use those
     - use constants/singletons where aplicable
     - improve performance of InOrderLinePolygon
 * JakRandr
-    - implement rendering on separate thread because lcl is stupid and timers are kinda executed serially and that's what I DON'T want
+    - ~~implement rendering on separate thread because lcl is stupid and timers are kinda executed serially and that's what I DON'T want~~ no.
     - ^ although, that's what I want for state machines where timers need to be based on a global timer (like in the real world)
 * JakOmlette
     - implementat particularităţiile proiectului (adică scopul acestui proiect)
