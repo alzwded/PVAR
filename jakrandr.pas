@@ -65,6 +65,7 @@ type
   private
     procedure ToggleMotion;
     procedure CentreCamera;
+    procedure ScreenShot;
   public
     { public declarations }
   end; 
@@ -302,9 +303,14 @@ var
   i: integer;
 begin
   case Key of
+  VK_PRINT: ScreenShot;
+  VK_P: begin;
+    if ssCtrl in Shift then
+      ScreenShot;
+    end;
   VK_SPACE: ToggleMotion;
-  VK_RETURN: CentreCamera;
-  VK_ESCAPE: begin
+  VK_RETURN: if ssShift in Shift then CentreCamera;
+  VK_ESCAPE: if ssShift in Shift then begin
     RenderClock.Enabled:=false;
     for i := 0 to m_worldEntities.Count - 1 do
       m_worldEntities[i].Stop;
@@ -314,12 +320,13 @@ begin
     MessageDlg('JakRandr',
         'Proiect realizat de Vlad Meșco. ©2012'#13#10 +
         #13#10 +
-        'Engine de animații 3D scris de la zero.'#13#10 +
+        '3D Animation Software Engine written from scratch.'#13#10 +
         #13#10 +
-        'Esc - exit'#13#10 +
+        'Shift + Esc - exit'#13#10 +
         'Space - toggle animatnion'#13#10 +
-        'Enter - recenter camera'#13#10 +
-        'Mouse - manipulate camera',
+        'Shift + Enter - recenter camera'#13#10 +
+        'Mouse - manipulate camera'#13#10 +
+        'Ctrl + P - take screenshot',
         mtInformation,
         [mbOK],
         0);
@@ -384,6 +391,42 @@ begin
   m_disp.RY := 0.0;
   m_disp.RZ := 0.0;
   m_disp.D := 5000.0;
+end;
+
+procedure TJakRandr.ScreenShot;
+var
+  d: TSaveDialog;
+  stopped: boolean;
+  fileName: String;
+begin
+  if m_move then begin
+    ToggleMotion;
+    stopped := true;
+  end else
+    stopped := false;
+
+  fileName := '';
+
+
+  d := TSaveDialog.Create(Self);
+  d.Options:= [ofOverwritePrompt, ofPathMustExist, ofCreatePrompt,
+                ofEnableSizing, ofViewDetail, ofAutoPreview];
+  d.FileName := 'JakRandr.png';
+  d.Filter := 'Png|*.png|All files|*.*';
+  d.FilterIndex := 1;
+  d.DefaultExt := 'png';
+  d.Title:='JakRandr - Save screenshot';
+
+  if d.Execute then
+    fileName := d.FileName;
+
+  d.Free;
+
+  if fileName <> '' then
+    DisplaySurface.Picture.SaveToFile(fileName, 'png');
+
+  if stopped then
+    ToggleMotion;
 end;
 
 end.
