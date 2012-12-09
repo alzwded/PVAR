@@ -308,6 +308,10 @@ function Centroid(e: IEntity3D): TPoint3D;
 function Centroid(p: TPolygon): TPoint3D;
 function Centroid(l: TLine): TPoint3D;
 
+function MagicZ(e: IEntity3D): real;
+function MagicZ(p: TPolygon): real;
+function MagicZ(l: TLine): real;
+
 (* warning! careful what you do with this
    if unsure, just don't use it and apply rotations manually
 *)
@@ -379,11 +383,41 @@ begin
   m_visu.Clear;
 end;
 
+procedure Swap(var list: TEntity3DList; i, j: integer);
+var
+  e: IEntity3D;
+  atEnd: boolean;
+begin
+  atEnd := j = list.Count - 1;
+  e := list.Extract(list[j]);
+  list.Insert(i, e);
+  e := list.Extract(list[i + 1]);
+  if atEnd then
+    list.Add(e)
+  else
+    list.Insert(j, e);
+end;
+
 procedure TJakRandrEngine.CommitScene;
 var
-  i: integer;
+  i, j: integer;
+  swapped: boolean;
 begin
+  // test all and swap where apropriate
   while m_entities.Count > 1 do begin
+    swapped := false;
+    for j := 1 to m_entities.Count - 1 do begin
+      if not m_visu.InOrder(m_entities[0], m_entities[j]) then begin
+        Swap(m_entities, 0, j);
+        swapped := true;
+        break;
+      end;
+    end;
+    if not swapped then begin
+      m_visu.Draw(m_entities[0]);
+      m_entities.Delete(0);
+    end;
+    (*
     if m_visu.InOrder(m_entities[0], m_entities[1]) then begin
       m_visu.Draw(m_entities[0]);
       m_entities.Delete(0);
@@ -392,6 +426,7 @@ begin
       m_visu.Draw(m_entities[1]);
       m_entities.Delete(1);
     end;
+    *)
   end;
 
   if m_entities.Count = 1 then
@@ -439,12 +474,12 @@ begin
      repeat
   *)
 
-  if Centroid(candidate).z < Centroid(m_entities.Items[0]).z then begin
+  if MagicZ(candidate) < MagicZ(m_entities.Items[0]) then begin
     m_entities.Insert(0, candidate);
     exit;
   end
-  else if Centroid(candidate).z >=
-      Centroid(m_entities.Items[m_entities.Count - 1]).z then begin
+  else if MagicZ(candidate) >=
+      MagicZ(m_entities.Items[m_entities.Count - 1]) then begin
     m_entities.Add(candidate);
     exit;
   end;
@@ -456,11 +491,11 @@ begin
     if m - j < 0 then
       j := m;
 
-    if Centroid(candidate).z < Centroid(m_entities[m - j]).z then
+    if MagicZ(candidate) < MagicZ(m_entities[m - j]) then
       m := m - j
     else if j = 1 then begin
       if (m < m_entities.Count)
-        and (Centroid(candidate).z <= Centroid(m_entities[m]).z) then
+        and (MagicZ(candidate) <= MagicZ(m_entities[m])) then
         break
       else begin
         j := j div 2;
@@ -974,6 +1009,7 @@ var
   i: integer;
   passes: Boolean;
   min, max: real;
+  min2, max2: real;
   viewportSide, side: TPlanarity;
   projection1, projection2: array of TPoint;
 label
@@ -989,18 +1025,33 @@ begin
     else if t2.Nodes[i].p.z < min then
       min := t2.Nodes[i].p.z;
 
-  for i := 0 to t1.NbNodes - 1 do
-    if (t1.Nodes[i].p.z > min) and (t1.Nodes[i].p.z < max) then
-      goto test2;
+  min2 := t1.Nodes[0].p.z;
+  max2 := t1.Nodes[0].p.z;
+  for i := 1 to t1.NbNodes - 1 do
+    if t1.Nodes[i].p.z > max2 then
+      max2 := t1.Nodes[i].p.z
+    else if t1.Nodes[i].p.z < min2 then
+      min2 := t1.Nodes[i].p.z;
+
+  (*
+     i-------a
+         i2------a2
+  *)
+
+  if not((min2 > max) or
+         (max2 < min)) then
+    goto test2;
 
   (*$IFDEF DEBUG_NEWELL*)
   writeln('test1');
   (*$ENDIF*)
   (* test passes *)
-  InOrderPolygons := (Centroid(t1).z < Centroid(t2).z);
+  //InOrderPolygons := (Centroid(t1).z < Centroid(t2).z);
+  InOrderPolygons := true;
   exit;
 
   test2:
+  goto test4;
   (* test 2 - no overlap on X *)
   (*   idem *)
   min := t2.Nodes[0].p.x;
@@ -1011,9 +1062,17 @@ begin
     else if t2.Nodes[i].p.x > max then
       max := t2.Nodes[i].p.x;
 
-  for i := 0 to t1.NbNodes - 1 do
-    if (t1.Nodes[i].p.x > min) and (t1.Nodes[i].p.x < max) then
-      goto test3;
+  min2 := t1.Nodes[0].p.x;
+  max2 := t1.Nodes[0].p.x;
+  for i := 1 to t1.NbNodes - 1 do
+    if t1.Nodes[i].p.x > max2 then
+      max2 := t1.Nodes[i].p.x
+    else if t1.Nodes[i].p.x < min2 then
+      min2 := t1.Nodes[i].p.x;
+
+  if not((min2 > max) or
+         (max2 < min)) then
+    goto test3;
 
   (*$IFDEF DEBUG_NEWELL*)
   writeln('test2');
@@ -1022,6 +1081,7 @@ begin
   exit;
 
   test3:
+  goto test4;
   (* test 3 - no overlap on Y *)
   (*   idem *)
 
@@ -1033,9 +1093,17 @@ begin
     else if t2.Nodes[i].p.y > max then
       max := t2.Nodes[i].p.y;
 
-  for i := 0 to t1.NbNodes - 1 do
-    if (t1.Nodes[i].p.y > min) and (t1.Nodes[i].p.y < max) then
-      goto test4;
+  min2 := t1.Nodes[0].p.y;
+  max2 := t1.Nodes[0].p.y;
+  for i := 1 to t1.NbNodes - 1 do
+    if t1.Nodes[i].p.y > max2 then
+      max2 := t1.Nodes[i].p.y
+    else if t1.Nodes[i].p.y < min2 then
+      min2 := t1.Nodes[i].p.y;
+
+  if not((min2 > max) or
+         (max2 < min)) then
+    goto test4;
 
   (*$IFDEF DEBUG_NEWELL*)
   writeln('test3');
@@ -1074,7 +1142,6 @@ begin
 
   for i := 0 to t2.NbNodes - 1 do begin
     side := SideOfPlane(t1, t2.Nodes[i].p);
-    if side = plOn then continue;
     if side = plBehind then
       goto test6;
   end;
@@ -1098,6 +1165,11 @@ begin
   passes := true;
   for i := 0 to t1.NbNodes - 1 do
     if IsPointInPolygon(projection1[i], projection2, 0, t2.NbNodes) then begin
+      passes := false;
+      break;
+    end;
+  for i := 0 to t2.NbNodes - 1 do
+    if IsPointInPolygon(projection2[i], projection1, 0, t1.NbNodes) then begin
       passes := false;
       break;
     end;
@@ -1144,7 +1216,6 @@ begin
 
   for i := 0 to t1.NbNodes - 1 do begin
     side := SideOfPlane(t2, t1.Nodes[i].p);
-    if side = plOn then continue;
     if side = plBehind then
       goto testOther;
   end;
@@ -2135,6 +2206,33 @@ begin
   ret.y := ret.y / p.NbNodes;
   ret.z := ret.z / p.NbNodes;
   Centroid := ret;
+end;
+
+function MagicZ(e: IEntity3D): real;
+begin
+  if e is TPolygon then MagicZ := MagicZ(e as TPolygon)
+  else if e is TLine then MagicZ := MagicZ(e as TLine)
+  else Raise Exception.Create('unsupported entity type');
+end;
+
+function MagicZ(p: TPolygon): real;
+var
+  i: integer;
+  z: real;
+begin
+  z := p.Nodes[0].p.z;
+  for i := 1 to p.NbNodes - 1 do
+    if p.Nodes[i].p.z > z then
+      z := p.Nodes[i].p.z;
+  MagicZ := z;
+end;
+
+function MagicZ(l: TLine): real;
+begin
+  if l.Nodes[0].p.z > l.Nodes[1].p.z then
+    MagicZ := l.Nodes[0].p.z
+  else
+    MagicZ := l.Nodes[1].p.z;
 end;
 
 end.

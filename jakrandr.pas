@@ -25,12 +25,12 @@ const
   DYNAMIC_FRAMERATE_LOW = 0.5;
   DYNAMIC_FRAMERATE_HIGH = 0.9;
 
-  ROOM_X_LOW = -2000;
-  ROOM_X_HIGH = 2000;
-  ROOM_Y_LOW = -1098;
+  ROOM_X_LOW = -1000;
+  ROOM_X_HIGH = 1000;
+  ROOM_Y_LOW = -1015;
   ROOM_Y_HIGH = 200;
-  ROOM_Z_LOW = 800;
-  ROOM_Z_HIGH = 3000;
+  ROOM_Z_LOW = 920;
+  ROOM_Z_HIGH = 3400;
 
 type
 
@@ -75,6 +75,7 @@ type
     procedure ScreenShot;
 
     procedure AddEntities; virtual;
+    procedure BuildRoom;
   public
     { public declarations }
   end; 
@@ -93,6 +94,9 @@ var
   e, conveyor: IWorldEntity;
   t: TPolygon;
 begin
+  BuildRoom;
+  //exit;
+
   e := TTestWE.Create(Point3DFromCoords(500.0, 0.0, 0.0), 1, 0);
   m_worldEntities.Add(e);
   (*e := TTestWE.Create(Point3DFromCoords(500.0, 0.0, 0.0), 0, 0);
@@ -140,6 +144,70 @@ begin
         conveyor.GetLocation.x +  50, conveyor.GetLocation.y - 500, conveyor.GetLocation.z - 50));
   (e as TGrimReaper).InputSource(conveyor as TTestConveyor);
   m_worldEntities.Add(e);
+end;
+
+procedure TJakRandr.BuildRoom;
+var
+  e: TPart;
+  t: TPolygon;
+begin
+  e := TPart.Part(Point3DFromCoords(0, 0, 0));
+  m_worldEntities.Add(e);
+
+  t := TPolygon.Quad(
+        Point3DFromCoords(ROOM_X_LOW, ROOM_Y_LOW + 10, ROOM_Z_LOW - 10),
+        Point3DFromCoords(ROOM_X_HIGH, ROOM_Y_LOW + 10, ROOM_Z_LOW - 10),
+        Point3DFromCoords(ROOM_X_HIGH, ROOM_Y_HIGH, ROOM_Z_LOW - 10),
+        Point3DFromCoords(ROOM_X_LOW, ROOM_Y_HIGH, ROOM_Z_LOW - 10));
+  t.ContourColour:=clDark;
+  t.FillColour := RGBToColor(255, 255, 130);
+  e.Geometry.Add(t);
+  t := TPolygon.Quad(
+        Point3DFromCoords(ROOM_X_LOW, ROOM_Y_LOW + 10, ROOM_Z_LOW),
+        Point3DFromCoords(ROOM_X_LOW, ROOM_Y_HIGH, ROOM_Z_LOW),
+        Point3DFromCoords(ROOM_X_HIGH, ROOM_Y_HIGH, ROOM_Z_LOW),
+        Point3DFromCoords(ROOM_X_HIGH, ROOM_Y_LOW + 10, ROOM_Z_LOW));
+  t.ContourColour:=clDark;
+  t.FillColour := RGBToColor(255, 255, 130);
+  e.Geometry.Add(t);
+
+
+
+
+  t := TPolygon.Triangle(
+        Point3DFromCoords(0, 0, 0),
+        Point3DFromCoords(0, -500, 0),
+        Point3DFromCoords(500, -500, 0));
+  t.ContourColour := clRed;
+  t.FillColour := clRed;
+  e.Geometry.Add(t);
+  t := TPolygon.Triangle(
+        Point3DFromCoords(0, -500, 0),
+        Point3DFromCoords(0, 0, 0),
+        Point3DFromCoords(500, -500, 0));
+  t.ContourColour := clRed;
+  t.FillColour := clRed;
+  e.Geometry.Add(t);
+
+
+
+
+  t := TPolygon.Quad(
+        Point3DFromCoords(ROOM_X_LOW, ROOM_Y_LOW, ROOM_Z_LOW),
+        Point3DFromCoords(ROOM_X_LOW, ROOM_Y_LOW, ROOM_Z_HIGH),
+        Point3DFromCoords(ROOM_X_HIGH, ROOM_Y_LOW, ROOM_Z_HIGH),
+        Point3DFromCoords(ROOM_X_HIGH, ROOM_Y_LOW, ROOM_Z_LOW));
+  t.ContourColour:=clDark;
+  t.FillColour := RGBToColor(255, 255, 130);
+  e.Geometry.Add(t);
+  t := TPolygon.Quad(
+        Point3DFromCoords(ROOM_X_LOW, ROOM_Y_LOW, ROOM_Z_LOW),
+        Point3DFromCoords(ROOM_X_HIGH, ROOM_Y_LOW, ROOM_Z_LOW),
+        Point3DFromCoords(ROOM_X_HIGH, ROOM_Y_LOW, ROOM_Z_HIGH),
+        Point3DFromCoords(ROOM_X_LOW, ROOM_Y_LOW, ROOM_Z_HIGH));
+  t.ContourColour:=clDark;
+  t.FillColour := RGBToColor(255, 255, 130);
+  e.Geometry.Add(t);
 end;
 
 procedure TJakRandr.FormCreate(Sender: TObject);
