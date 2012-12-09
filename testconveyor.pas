@@ -12,10 +12,12 @@ const
   PLATE_LENGTH = 50; (* DO NOT CHANGE YET
                         the square root constant needs to also be adapted
                         and cached, TODO *)
+  MAX_GRAVITY = 113.0;
 
 type
   TTestConveyor = class(AGrabber)
-    constructor Conveyor(c: TPoint3D; interval: cardinal; nbPlates: integer = 9; width: integer = 120);
+    constructor Conveyor(c: TPoint3D; intrval: cardinal; nbPlates: integer = 9; width: integer = 120);
+    constructor Ghost(c: TPoint3D; intrval: cardinal);
     procedure Init; override;
     procedure Loop; override;
     function GetTranslationVectorPerFrame: TPoint3D;
@@ -25,17 +27,27 @@ type
     m_nbPlates: integer;
     m_width: integer;
     m_grabbingBox: TBoundingBox;
+    m_ghost: boolean;
   public
     function GrabbingBox: PBoundingBox;
   end;
 
 implementation
 
-constructor TTestConveyor.Conveyor(c: TPoint3D; interval: cardinal; nbPlates: integer = 9; width: integer = 120);
+constructor TTestConveyor.Conveyor(c: TPoint3D; intrval: cardinal; nbPlates: integer = 9; width: integer = 120);
 begin
+  m_ghost := false;
   m_nbPlates := nbPlates;
   m_width := width;
-  inherited Grabber(c, interval);
+  inherited Grabber(c, intrval);
+end;
+
+constructor TTestConveyor.Ghost(c: TPoint3D; intrval: cardinal);
+begin
+  m_ghost := true;
+  m_width := 120;
+  m_nbPlates := 3;
+  inherited Grabber(c, intrval);
 end;
 
 procedure TTestConveyor.Init;
@@ -46,6 +58,8 @@ var
   i: integer;
   offset: integer;
   angle: real;
+label
+  last;
 begin
   //angle := (pi / 2) * (PLATE_LENGTH / (CONVEYOR_SPEED / PLATE_LENGTH));
   angle := pi / 2;
@@ -60,6 +74,12 @@ begin
   m_support.AddNode(Point3DFromCoords(Centre.p.x, Centre.p.y, Centre.p.z));
   m_support.AddNode(Point3DFromCoords(Centre.p.x, Centre.p.y, Centre.p.z + m_nbPlates * PLATE_LENGTH));
   m_support.AddNode(Point3DFromCoords(Centre.p.x + 50, Centre.p.y, Centre.p.z));
+
+  if m_ghost then begin
+    m_platesEnd := -1;
+    m_support.Rotate(pi / 2, 0, 0);
+    goto last;
+  end;
 
   skin := TSkin.Skin;
 
@@ -149,6 +169,7 @@ begin
   // add skin
   Entities.Add(skin);
 
+  last:
   // add the frame
   Entities.Add(m_support);
 end;
@@ -156,6 +177,7 @@ end;
 procedure TTestConveyor.Loop;
 var
   v, reverseV: TPoint3D;
+  aDistance: real;
   side: TPlanarity;
   angle: real;
   OB: TPoint3D;
@@ -166,6 +188,7 @@ var
   crAngle: real;
   arbitraryValue: real;
   e: IWorldEntity;
+  rp: TPoint3D;
 begin
   // get the correct vector
   v := GetTranslationVectorPerFrame;
@@ -178,18 +201,20 @@ begin
   else if abs(angle - pi) < 0.00000001 then angle := pi;
 
   // build the limiting polygons at either edges
-  frontPlane := TPolygon.Triangle(
-                GetRotatedPoint(m_support.Nodes[3]^),
-                GetRotatedPoint(m_support.Nodes[4]^),
-                GetRotatedPoint(m_support.Nodes[5]^));
-  backPlane := TPolygon.Triangle(
-                GetRotatedPoint(m_support.Nodes[0]^),
-                GetRotatedPoint(m_support.Nodes[1]^),
-                GetRotatedPoint(m_support.Nodes[2]^));
-  horizPlane := TPolygon.Triangle(
-                GetRotatedPoint(m_support.Nodes[6]^),
-                GetRotatedPoint(m_support.Nodes[7]^),
-                GetRotatedPoint(m_support.Nodes[8]^));
+  if not m_ghost then begin
+    frontPlane := TPolygon.Triangle(
+                  GetRotatedPoint(m_support.Nodes[3]^),
+                  GetRotatedPoint(m_support.Nodes[4]^),
+                  GetRotatedPoint(m_support.Nodes[5]^));
+    backPlane := TPolygon.Triangle(
+                  GetRotatedPoint(m_support.Nodes[0]^),
+                  GetRotatedPoint(m_support.Nodes[1]^),
+                  GetRotatedPoint(m_support.Nodes[2]^));
+    horizPlane := TPolygon.Triangle(
+                  GetRotatedPoint(m_support.Nodes[6]^),
+                  GetRotatedPoint(m_support.Nodes[7]^),
+                  GetRotatedPoint(m_support.Nodes[8]^));
+  end;
 
   (* find rotation around OZ *)
   (* TODO
@@ -210,10 +235,12 @@ begin
   cosz := 0.0;
 
   (* define the vector for the theta=90* case *)
-  vect := GetRotatedPoint(m_support.Nodes[6]^);
-  SubstractVector(vect, GetRotatedPoint(m_support.Nodes[7]^));
-  vect := Point3DFromCoords(vect.x, 0.0, vect.z);
-  NormalizeVector(vect);
+  if not m_ghost then begin
+    vect := GetRotatedPoint(m_support.Nodes[6]^);
+    SubstractVector(vect, GetRotatedPoint(m_support.Nodes[7]^));
+    vect := Point3DFromCoords(vect.x, 0.0, vect.z);
+    NormalizeVector(vect);
+  end;
 
   // rotate plates by a smidgun on the correct vector
   for i := 0 to m_platesEnd do begin
@@ -268,18 +295,33 @@ begin
     end;
   end;
 
-
-  frontPlane.Free;
-  backPlane.Free;
-  horizPlane.Free;
+  if not m_ghost then begin
+    frontPlane.Free;
+    backPlane.Free;
+    horizPlane.Free;
+  end;
 
   // move the entities on the conveyor by a smidgun on the correct vector
-  if InanimateObjects.Count > 0 then
-  for i := 0 to InanimateObjects.Count - 1 do
-    InanimateObjects[i].Translate(v);
+  if InanimateObjects.Count > 0 then begin
+    if not m_ghost then
+      for i := 0 to InanimateObjects.Count - 1 do
+        InanimateObjects[i].Translate(v)
+    else begin
+      NormalizeVector(v);
+      rp := GetRotatedPoint(Centre);
+      for i := 0 to InanimateObjects.Count - 1 do begin
+        aDistance := Distance(InanimateObjects[i].GetLocation, rp)
+                * (10 * Interval / 1000)
+                + 0.00001 (* NEVER 0 *);
+        if aDistance > MAX_GRAVITY then aDistance := MAX_GRAVITY;
+        vect := Point3DFromCoords(v.x * aDistance, v.y * aDistance, v.z * aDistance);
+        InanimateObjects[i].Translate(vect);
+      end;
+    end;
+  end;
 
   // if at correct phase, ask m_inputs for some input
-  if TryGrab(GrabbingBox, e) then
+  if TryGrab(GrabbingBox, true, e) then
     InanimateObjects.Add(e);
 end;
 
@@ -307,12 +349,10 @@ var
   c: TPoint3D;
 begin
   c := GetRotatedPoint(m_c);
-  m_grabbingBox.p1 := Point3DFromCoords(c.x - m_width / 2,
+  m_grabbingBox.p1 := Point3DFromCoords(c.x - PLATE_LENGTH / 2,
         c.y + PLATE_LENGTH, c.z - PLATE_LENGTH / 2);
-  m_grabbingBox.p2 := Point3DFromCoords(c.x + m_width / 2,
+  m_grabbingBox.p2 := Point3DFromCoords(c.x + PLATE_LENGTH / 2,
         c.y + PLATE_LENGTH + 5, c.z + PLATE_LENGTH / 2);
-  (*m_grabbingBox.p1 := Point3DFromCoords(c.x - m_width / 2, c.y - PLATE_LENGTH / 2, c.z - PLATE_LENGTH / 2);
-  m_grabbingBox.p2 := Point3DFromCoords(c.x + m_width / 2, c.y + PLATE_LENGTH / 2, c.z + PLATE_LENGTH / 2);*)
 
   GrabbingBox := @m_grabbingBox;
 end;

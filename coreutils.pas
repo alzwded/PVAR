@@ -27,6 +27,8 @@ type
     procedure RotatePolar(c: TPoint3D; theta, fi: real); virtual;
     (* Collidable *)
     function GetBoundingBox: PBoundingBox; virtual;
+    (* Locateble *)
+    function GetLocation: TPoint3D; virtual;
   private
     m_hidden: Boolean;
   public
@@ -52,6 +54,7 @@ type
     procedure Rotate(rx, ry, rz: real); override;
     procedure RotateAround(c: TPoint3D; rx, ry, rz: real); override;
     procedure RotatePolar(c: TPoint3D; theta, fi: real); override;
+    function GetLocation: TPoint3D; override;
   private
     m_nodes: array of TRealPoint3D;
     m_c: TRealPoint3D;
@@ -71,6 +74,7 @@ type
     procedure Render(engine: PJakRandrEngine); override;
     procedure Start; override;
     procedure Stop; override;
+    function GetLocation: TPoint3D; override;
   protected (* because TranslateVector needs var access *)
     m_geometry: TEntity3DList;
     m_c: TRealPoint3D;
@@ -94,6 +98,7 @@ type
     procedure Translate(dp: TPoint3D); override;
     procedure Rotate(rx, ry, rz: real); override;
     procedure RotateAround(c: TPoint3D; rx, ry, rz: real); override;
+    function GetLocation: TPoint3D; override;
   protected
     m_entities: TListOfWorldEntities;
     m_c: TRealPoint3D;
@@ -104,6 +109,9 @@ type
     m_clock: TTimer;
 
     procedure OnClock(Sender: TObject);
+    function GetInterval: cardinal;
+  protected
+    property Interval: cardinal read GetInterval;
   end;
 
   AGrabber = class;
@@ -111,7 +119,7 @@ type
   TListOfGrabbers = specialize TFPGList<PGrabber>;
 
   AGrabber = class(ACompound)
-    constructor Grabber(c: TPoint3D; interval: cardinal);
+    constructor Grabber(c: TPoint3D; intrval: cardinal);
     destructor Destroy; override;
     procedure InputSource(src: PGrabber);
     (* implementation of IWorldEntity *)
@@ -122,12 +130,13 @@ type
     procedure Loop; override;
   public
     (* iterates over m_inputs and calls TryGive on each one until one yields
-       after that it adds it to m_inanimateObjects *)
-    function TryGrab(bbox: PBoundingBox; var e: IWorldEntity): boolean;
+       after that it adds it to m_inanimateObjects
+       if extract is true, entity will be removed from source *)
+    function TryGrab(bbox: PBoundingBox; extract: boolean; var e: IWorldEntity): boolean;
   protected
     (* caller calls aSuccess := aObject.TryGive(GetBoundingBox(), aItem)
        removes item from list without erasing it and returns it in e *)
-    function TryGive(bbox: PBoundingBox; var e: IWorldEntity): boolean;
+    function TryGive(bbox: PBoundingBox; extract: boolean; var e: IWorldEntity): boolean;
   private
     m_inanimateObjects: TListOfWorldEntities;
     m_inputs: TListOfGrabbers;
@@ -186,6 +195,7 @@ procedure IWorldEntity.Rotate(rx, ry, rz: real); begin end;
 procedure IWorldEntity.RotateAround(c: TPoint3D; rx, ry, rz: real); begin end;
 function IWorldEntity.GetBoundingBox: PBoundingBox; begin GetBoundingBox := Nil; end;
 procedure IWorldEntity.RotatePolar(c: TPoint3D; theta, fi: real); begin end;
+function IWorldEntity.GetLocation: TPoint3D; begin GetLocation := Point3DFromCoords(0, 0, 0); end;
 
 (* TSupport *)
 
@@ -199,6 +209,11 @@ end;
 destructor TSupport.Destroy;
 begin
   SetLength(m_nodes, 0);
+end;
+
+function TSupport.GetLocation: TPoint3D;
+begin
+  GetLocation := GetRotatedPoint(m_c);
 end;
 
 procedure TSupport.AddNode(p: TPoint3D);
@@ -321,6 +336,16 @@ begin
   Init;
 end;
 
+function ACompound.GetInterval: cardinal;
+begin
+  GetInterval := m_clock.Interval;
+end;
+
+function ACompound.GetLocation: TPoint3D;
+begin
+  GetLocation := GetRotatedPoint(m_c);
+end;
+
 destructor ACompound.Destroy;
 begin
   m_entities.Clear;
@@ -440,9 +465,9 @@ end;
 
 (* AGrabber *)
 
-constructor AGrabber.Grabber(c: TPoint3D; interval: cardinal);
+constructor AGrabber.Grabber(c: TPoint3D; intrval: cardinal);
 begin
-  inherited Compound(c, interval);
+  inherited Compound(c, intrval);
   m_inputs := TListOfGrabbers.Create;
   m_inanimateObjects := TListOfWorldEntities.Create;
 end;
@@ -508,12 +533,12 @@ begin
     m_inanimateObjects[i].Render(engine);
 end;
 
-function AGrabber.TryGrab(bbox: PBoundingBox; var e: IWorldEntity): boolean;
+function AGrabber.TryGrab(bbox: PBoundingBox; extract: boolean; var e: IWorldEntity): boolean;
 var
   i: integer;
 begin
   for i := 0 to m_inputs.Count - 1 do
-    if m_inputs[i].TryGive(bbox, e) then begin
+    if m_inputs[i].TryGive(bbox, extract, e) then begin
       TryGrab := true;
       exit;
     end;
@@ -521,7 +546,7 @@ begin
   TryGrab := false;
 end;
 
-function AGrabber.TryGive(bbox: PBoundingBox; var e: IWorldEntity): boolean;
+function AGrabber.TryGive(bbox: PBoundingBox; extract: boolean; var e: IWorldEntity): boolean;
 var
   i: integer;
 begin
@@ -532,8 +557,11 @@ begin
     if not m_inanimateObjects[i].Hidden and
         (BoundingBoxesIntersect(m_inanimateObjects[i].GetBoundingBox, bbox))
     then begin
-      // carefully remove object from list (huzzah for extract!)
-      e := m_inanimateObjects.Extract(m_inanimateObjects[i]);
+      if extract then
+        // carefully remove object from list (huzzah for extract!)
+        e := m_inanimateObjects.Extract(m_inanimateObjects[i])
+      else
+        e := m_inanimateObjects[i];
       TryGive := true;
       exit;
     end;
@@ -548,6 +576,11 @@ begin
   inherited Create;
   m_c := RealPoint3DFromCoords(0, 0, 0);
   m_geometry := TEntity3DList.Create;
+end;
+
+function AWorldEntity.GetLocation: TPoint3D;
+begin
+  GetLocation := GetRotatedPoint(m_c);
 end;
 
 constructor AWorldEntity.AWorldEntity(location: TPoint3D);

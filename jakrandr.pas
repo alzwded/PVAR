@@ -102,7 +102,7 @@ begin
   e := TArm.Compound(Point3DFromCoords(-300.0, 0.0, 0.0), 20);
   m_worldEntities.Add(e);
 
-  e := TTestConveyor.Conveyor(Point3DFromCoords(0.0, 0, 1000), 20, 30, 400);
+  e := TTestConveyor.Conveyor(Point3DFromCoords(0.0, 0, 1000), 12, 30, 400);
   conveyor := e;
   e.Rotate(pi / 12, 0(*-pi / 6*), 0);
   m_worldEntities.Add(e);
@@ -123,10 +123,15 @@ begin
 
   (conveyor as TTestConveyor).InputSource(e as TProvider);
 
-  e := TTestConveyor.Conveyor(Point3DFromCoords(0, -388, 1448 + 1000), 80, 10, 400);
+  e := TTestConveyor.Conveyor(Point3DFromCoords(0, -388, 1448 + 1000), 40, 10, 400);
   e.Rotate(0, -pi / 6, 0);
   m_worldEntities.Add(e);
 
+  (e as TTestConveyor).InputSource(conveyor as TTestConveyor);
+
+  conveyor := e;
+  e := TTestConveyor.Ghost(Point3DFromCoords(-250 - 25 * 2, -388, 1448 + 1000 + 433 + 40 * 2), 20);
+  m_worldEntities.Add(e);
   (e as TTestConveyor).InputSource(conveyor as TTestConveyor);
 end;
 
