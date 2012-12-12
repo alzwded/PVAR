@@ -34,6 +34,7 @@ const
 
   PROVIDER_CLOCK = 15000;
   CONVEYOR_CLOCK = 10;
+  SIDE_CONVEYORS_OFFSET = 47;
 
 type
 
@@ -142,7 +143,7 @@ begin
 
   (* right *)
   producer := TProvider.Grabber(
-        Point3DFromCoords(0, 35 + 20, -500), PROVIDER_CLOCK);
+        Point3DFromCoords(0, 35 + SIDE_CONVEYORS_OFFSET, -500), PROVIDER_CLOCK);
   producer.ProvideOnFrame := 0;
   m_worldEntities.Add(producer);
 
@@ -152,14 +153,14 @@ begin
   end;
 
   conveyor := TTestConveyor.Conveyor(
-        Point3DFromCoords(0, 20, -500),
+        Point3DFromCoords(0, SIDE_CONVEYORS_OFFSET, -500),
         CONVEYOR_CLOCK, 20);
   conveyor.Rotate(0, pi / 2, 0);
   conveyor.InputSource(producer);
   m_worldEntities.Add(conveyor);
 
   gravity := TTestConveyor.Ghost(
-        Point3DFromCoords(1100, 0, -500), CONVEYOR_CLOCK);
+        Point3DFromCoords(1100, SIDE_CONVEYORS_OFFSET, -500), CONVEYOR_CLOCK);
   gravity.InputSource(conveyor);
   m_worldEntities.Add(gravity);
 
@@ -171,7 +172,7 @@ begin
 
   (* left *)
   producer := TProvider.Grabber(
-        Point3DFromCoords(0, 35 + 20, 500), PROVIDER_CLOCK);
+        Point3DFromCoords(0, 35 + SIDE_CONVEYORS_OFFSET, 500), PROVIDER_CLOCK);
   producer.ProvideOnFrame := 0;
   m_worldEntities.Add(producer);
 
@@ -181,14 +182,14 @@ begin
   end;
 
   conveyor := TTestConveyor.Conveyor(
-        Point3DFromCoords(0, 20, 500),
+        Point3DFromCoords(0, SIDE_CONVEYORS_OFFSET, 500),
         CONVEYOR_CLOCK, 20);
   conveyor.Rotate(0, pi / 2, 0);
   conveyor.InputSource(producer);
   m_worldEntities.Add(conveyor);
 
   gravity := TTestConveyor.Ghost(
-        Point3DFromCoords(1100, 0, 500), CONVEYOR_CLOCK);
+        Point3DFromCoords(1100, SIDE_CONVEYORS_OFFSET, 500), CONVEYOR_CLOCK);
   gravity.InputSource(conveyor);
   m_worldEntities.Add(gravity);
 
