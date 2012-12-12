@@ -324,7 +324,7 @@ begin
   m_clock := TTimer.Create(Nil);
   if interval > 0 then begin
     m_clock.Interval := interval;
-    m_clock.Enabled := True;
+    m_clock.Enabled := False;
   end
   else
     m_clock.Enabled := False;

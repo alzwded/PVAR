@@ -15,6 +15,7 @@ type
     (* helper function to add entities outside of any grabing action *)
     procedure AddStock(e: IWorldEntity);
 
+    procedure Start; override; (* reason: provide ON start *)
     procedure Init; override;
     procedure Loop; override;
     procedure Render(engine: PJakRandrEngine); override;
@@ -26,6 +27,12 @@ type
   end;
 
 implementation
+
+procedure TProvider.Start;
+begin
+  Loop;
+  inherited Start;
+end;
 
 procedure TProvider.Render(engine: PJakRandrEngine); begin end;
 
@@ -41,7 +48,10 @@ begin
     InanimateObjects[0].Hidden := False;;
   end;
 
-  m_pc := (m_pc + 1) mod m_provideOnFrame;
+  if m_provideOnFrame > 0 then
+    m_pc := (m_pc + 1) mod m_provideOnFrame
+  else
+    m_pc := 0;
 end;
 
 procedure TProvider.AddStock(e: IWorldEntity);

@@ -389,7 +389,7 @@ begin
                 GetLocation.x,
                 GetLocation.y - NAIL_HEIGHT * GRIMREAPER_SPIKE_SPLOSION_TRIGGER_AT,
                 GetLocation.z),
-        6, 6));
+        3, 3));
 end;
 
 procedure TGrimReaper.Loop;
