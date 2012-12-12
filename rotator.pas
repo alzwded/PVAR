@@ -11,9 +11,10 @@ const
   ROTATOR_MAX_FRAMES = 50;
 
 type
+  (* external counter since we're not stealing the entity only to put it back *)
   TChosenOne = record
     m_e: IWorldEntity;
-    m_phr: integer;
+    m_counter: integer;
   end;
 
   TRotator = class(AGrabber)
@@ -41,7 +42,7 @@ begin
       exit;
   end;
   chosen.m_e := e;
-  chosen.m_phr := 0;
+  chosen.m_counter := 0;
   SetLength(m_chosens, m_n + 1);
   m_chosens[m_n] := chosen;
   inc(m_n);
@@ -66,6 +67,7 @@ begin
     SetLength(m_chosens, 0);
   end;
 
+  (* if there's a better way to do this, please, let me know... *)
   for i := 1 to m_n - 1 do begin
     m_chosens[i - 1] := m_chosens[i];
   end;
@@ -80,10 +82,8 @@ var
   i: integer;
 begin
   c := GetRotatedPoint(Centre);
-  m_bbox.p1 := Point3DFromCoords(
-        c.x - 50, c.y - 100, c.z - 50);
-  m_bbox.p2 := Point3DFromCoords(
-        c.x + 50, c.y, c.z + 50);
+  m_bbox.p1 := Point3DFromCoords(c.x - 50, c.y - 100, c.z - 50);
+  m_bbox.p2 := Point3DFromCoords(c.x + 50, c.y, c.z + 50);
 
   if TryGrab(@m_bbox, False, e) then begin
     Consider(e);
@@ -91,13 +91,14 @@ begin
 
   i := 0;
   while i < m_n do begin
-    while m_chosens[i].m_phr >= ROTATOR_MAX_FRAMES do begin
+    (* clean used-up entities *)
+    while m_chosens[i].m_counter >= ROTATOR_MAX_FRAMES do begin
       ShiftLeft;
       if i >= m_n then break;
     end;
     if i >= m_n then break;
 
-    inc(m_chosens[i].m_phr);
+    inc(m_chosens[i].m_counter);
     m_chosens[i].m_e.Rotate(
         m_rx / ROTATOR_MAX_FRAMES,
         m_ry / ROTATOR_MAX_FRAMES,
