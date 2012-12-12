@@ -16,7 +16,7 @@
     <VersionInfo>
       <StringTable ProductVersion=""/>
     </VersionInfo>
-    <BuildModes Count="4" Active="win32-release">
+    <BuildModes Count="4" Active="win32-debug">
       <Item1 Name="linux-i686-debug" Default="True"/>
       <Item2 Name="win32-release">
         <CompilerOptions>
@@ -160,12 +160,12 @@
         <PackageName Value="LCL"/>
       </Item1>
     </RequiredPackages>
-    <Units Count="14">
+    <Units Count="15">
       <Unit0>
         <Filename Value="JakOmlette.lpr"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="JakOmlette"/>
-        <EditorIndex Value="8"/>
+        <EditorIndex Value="9"/>
         <WindowIndex Value="0"/>
         <TopLine Value="3"/>
         <CursorPos X="74" Y="16"/>
@@ -179,11 +179,10 @@
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
         <UnitName Value="JakRandr"/>
-        <IsVisibleTab Value="True"/>
         <EditorIndex Value="0"/>
         <WindowIndex Value="0"/>
-        <TopLine Value="153"/>
-        <CursorPos X="27" Y="162"/>
+        <TopLine Value="117"/>
+        <CursorPos X="29" Y="127"/>
         <UsageCount Value="216"/>
         <Loaded Value="True"/>
         <LoadedDesigner Value="True"/>
@@ -192,7 +191,7 @@
         <Filename Value="gfxutils.pas"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="GfxUtils"/>
-        <EditorIndex Value="3"/>
+        <EditorIndex Value="4"/>
         <WindowIndex Value="0"/>
         <TopLine Value="724"/>
         <CursorPos X="39" Y="735"/>
@@ -203,10 +202,10 @@
         <Filename Value="coreutils.pas"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="CoreUtils"/>
-        <EditorIndex Value="4"/>
+        <EditorIndex Value="5"/>
         <WindowIndex Value="0"/>
-        <TopLine Value="107"/>
-        <CursorPos X="17" Y="122"/>
+        <TopLine Value="11"/>
+        <CursorPos X="1" Y="11"/>
         <UsageCount Value="214"/>
         <Loaded Value="True"/>
       </Unit3>
@@ -228,7 +227,7 @@
         <Filename Value="testutils.pas"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="TestUtils"/>
-        <EditorIndex Value="6"/>
+        <EditorIndex Value="7"/>
         <WindowIndex Value="0"/>
         <TopLine Value="631"/>
         <CursorPos X="1" Y="641"/>
@@ -247,7 +246,7 @@
         <Filename Value="testconveyor.pas"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="TestConveyor"/>
-        <EditorIndex Value="7"/>
+        <EditorIndex Value="8"/>
         <WindowIndex Value="0"/>
         <TopLine Value="11"/>
         <CursorPos X="103" Y="19"/>
@@ -266,7 +265,7 @@
         <Filename Value="cartof.pas"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="Cartof"/>
-        <EditorIndex Value="2"/>
+        <EditorIndex Value="3"/>
         <WindowIndex Value="0"/>
         <TopLine Value="1"/>
         <CursorPos X="16" Y="1"/>
@@ -277,7 +276,7 @@
         <Filename Value="provider.pas"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="Provider"/>
-        <EditorIndex Value="5"/>
+        <EditorIndex Value="6"/>
         <WindowIndex Value="0"/>
         <TopLine Value="41"/>
         <CursorPos X="15" Y="54"/>
@@ -296,134 +295,146 @@
         <Filename Value="grimreaper.pas"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="GrimReaper"/>
-        <EditorIndex Value="1"/>
+        <EditorIndex Value="2"/>
         <WindowIndex Value="0"/>
-        <TopLine Value="379"/>
-        <CursorPos X="40" Y="398"/>
-        <UsageCount Value="157"/>
+        <TopLine Value="318"/>
+        <CursorPos X="10" Y="330"/>
+        <UsageCount Value="159"/>
         <Loaded Value="True"/>
       </Unit13>
+      <Unit14>
+        <Filename Value="rotator.pas"/>
+        <IsPartOfProject Value="True"/>
+        <UnitName Value="Rotator"/>
+        <IsVisibleTab Value="True"/>
+        <EditorIndex Value="1"/>
+        <WindowIndex Value="0"/>
+        <TopLine Value="1"/>
+        <CursorPos X="25" Y="11"/>
+        <UsageCount Value="22"/>
+        <Loaded Value="True"/>
+      </Unit14>
     </Units>
     <JumpHistory Count="30" HistoryIndex="29">
       <Position1>
-        <Filename Value="grimreaper.pas"/>
-        <Caret Line="140" Column="13" TopLine="135"/>
+        <Filename Value="jakrandr.pas"/>
+        <Caret Line="35" Column="13" TopLine="22"/>
       </Position1>
       <Position2>
-        <Filename Value="grimreaper.pas"/>
-        <Caret Line="332" Column="27" TopLine="315"/>
+        <Filename Value="coreutils.pas"/>
+        <Caret Line="120" Column="21" TopLine="107"/>
       </Position2>
       <Position3>
         <Filename Value="jakrandr.pas"/>
-        <Caret Line="77" Column="19" TopLine="69"/>
+        <Caret Line="101" Column="21" TopLine="94"/>
       </Position3>
       <Position4>
-        <Filename Value="jakrandr.pas"/>
-        <Caret Line="230" Column="36" TopLine="220"/>
+        <Filename Value="rotator.pas"/>
+        <Caret Line="26" Column="7" TopLine="25"/>
       </Position4>
       <Position5>
-        <Filename Value="jakrandr.pas"/>
-        <Caret Line="1" Column="1" TopLine="1"/>
+        <Filename Value="rotator.pas"/>
+        <Caret Line="60" Column="24" TopLine="42"/>
       </Position5>
       <Position6>
-        <Filename Value="jakrandr.pas"/>
-        <Caret Line="78" Column="30" TopLine="61"/>
+        <Filename Value="rotator.pas"/>
+        <Caret Line="49" Column="25" TopLine="40"/>
       </Position6>
       <Position7>
-        <Filename Value="testconveyor.pas"/>
-        <Caret Line="314" Column="38" TopLine="305"/>
+        <Filename Value="rotator.pas"/>
+        <Caret Line="30" Column="33" TopLine="17"/>
       </Position7>
       <Position8>
-        <Filename Value="coreutils.pas"/>
-        <Caret Line="72" Column="26" TopLine="66"/>
+        <Filename Value="rotator.pas"/>
+        <Caret Line="37" Column="31" TopLine="27"/>
       </Position8>
       <Position9>
-        <Filename Value="coreutils.pas"/>
-        <Caret Line="1" Column="1" TopLine="1"/>
+        <Filename Value="rotator.pas"/>
+        <Caret Line="22" Column="8" TopLine="14"/>
       </Position9>
       <Position10>
-        <Filename Value="coreutils.pas"/>
-        <Caret Line="131" Column="28" TopLine="118"/>
+        <Filename Value="rotator.pas"/>
+        <Caret Line="35" Column="6" TopLine="25"/>
       </Position10>
       <Position11>
-        <Filename Value="coreutils.pas"/>
-        <Caret Line="470" Column="25" TopLine="456"/>
+        <Filename Value="jakrandr.pas"/>
+        <Caret Line="126" Column="23" TopLine="117"/>
       </Position11>
       <Position12>
-        <Filename Value="coreutils.pas"/>
-        <Caret Line="1" Column="1" TopLine="1"/>
+        <Filename Value="jakrandr.pas"/>
+        <Caret Line="11" Column="1" TopLine="11"/>
       </Position12>
       <Position13>
-        <Filename Value="coreutils.pas"/>
-        <Caret Line="130" Column="30" TopLine="116"/>
+        <Filename Value="rotator.pas"/>
+        <Caret Line="38" Column="13" TopLine="21"/>
       </Position13>
       <Position14>
-        <Filename Value="coreutils.pas"/>
-        <Caret Line="413" Column="29" TopLine="413"/>
+        <Filename Value="rotator.pas"/>
+        <Caret Line="37" Column="33" TopLine="27"/>
       </Position14>
       <Position15>
         <Filename Value="coreutils.pas"/>
-        <Caret Line="1" Column="1" TopLine="1"/>
+        <Caret Line="124" Column="28" TopLine="119"/>
       </Position15>
       <Position16>
-        <Filename Value="coreutils.pas"/>
-        <Caret Line="483" Column="29" TopLine="464"/>
+        <Filename Value="rotator.pas"/>
+        <Caret Line="33" Column="9" TopLine="27"/>
       </Position16>
       <Position17>
-        <Filename Value="coreutils.pas"/>
-        <Caret Line="1" Column="1" TopLine="1"/>
+        <Filename Value="rotator.pas"/>
+        <Caret Line="34" Column="41" TopLine="27"/>
       </Position17>
       <Position18>
-        <Filename Value="coreutils.pas"/>
-        <Caret Line="117" Column="12" TopLine="98"/>
+        <Filename Value="grimreaper.pas"/>
+        <Caret Line="330" Column="10" TopLine="318"/>
       </Position18>
       <Position19>
-        <Filename Value="jakrandr.pas"/>
-        <Caret Line="98" Column="25" TopLine="84"/>
+        <Filename Value="rotator.pas"/>
+        <Caret Line="36" Column="39" TopLine="27"/>
       </Position19>
       <Position20>
-        <Filename Value="provider.pas"/>
-        <Caret Line="32" Column="25" TopLine="21"/>
+        <Filename Value="rotator.pas"/>
+        <Caret Line="41" Column="9" TopLine="33"/>
       </Position20>
       <Position21>
-        <Filename Value="gfxutils.pas"/>
-        <Caret Line="199" Column="23" TopLine="197"/>
+        <Filename Value="rotator.pas"/>
+        <Caret Line="89" Column="1" TopLine="80"/>
       </Position21>
       <Position22>
-        <Filename Value="coreutils.pas"/>
-        <Caret Line="327" Column="29" TopLine="315"/>
+        <Filename Value="rotator.pas"/>
+        <Caret Line="40" Column="16" TopLine="31"/>
       </Position22>
       <Position23>
-        <Filename Value="coreutils.pas"/>
-        <Caret Line="1" Column="1" TopLine="1"/>
+        <Filename Value="rotator.pas"/>
+        <Caret Line="39" Column="19" TopLine="31"/>
       </Position23>
       <Position24>
-        <Filename Value="coreutils.pas"/>
-        <Caret Line="117" Column="11" TopLine="101"/>
+        <Filename Value="rotator.pas"/>
+        <Caret Line="40" Column="1" TopLine="31"/>
       </Position24>
       <Position25>
-        <Filename Value="coreutils.pas"/>
-        <Caret Line="118" Column="22" TopLine="102"/>
+        <Filename Value="rotator.pas"/>
+        <Caret Line="41" Column="1" TopLine="31"/>
       </Position25>
       <Position26>
-        <Filename Value="testconveyor.pas"/>
-        <Caret Line="17" Column="69" TopLine="11"/>
+        <Filename Value="rotator.pas"/>
+        <Caret Line="42" Column="1" TopLine="31"/>
       </Position26>
       <Position27>
-        <Filename Value="grimreaper.pas"/>
-        <Caret Line="334" Column="32" TopLine="328"/>
+        <Filename Value="rotator.pas"/>
+        <Caret Line="43" Column="1" TopLine="31"/>
       </Position27>
       <Position28>
-        <Filename Value="jakrandr.pas"/>
-        <Caret Line="104" Column="40" TopLine="100"/>
+        <Filename Value="rotator.pas"/>
+        <Caret Line="44" Column="1" TopLine="31"/>
       </Position28>
       <Position29>
-        <Filename Value="provider.pas"/>
-        <Caret Line="33" Column="18" TopLine="21"/>
+        <Filename Value="rotator.pas"/>
+        <Caret Line="45" Column="1" TopLine="31"/>
       </Position29>
       <Position30>
-        <Filename Value="JakOmlette.lpr"/>
-        <Caret Line="10" Column="49" TopLine="3"/>
+        <Filename Value="rotator.pas"/>
+        <Caret Line="85" Column="20" TopLine="80"/>
       </Position30>
     </JumpHistory>
   </ProjectOptions>
@@ -462,37 +473,16 @@
     </Other>
   </CompilerOptions>
   <Debugging>
-    <BreakPoints Count="4">
+    <BreakPoints Count="1">
       <Item1>
         <Kind Value="bpkSource"/>
         <WatchScope Value="wpsLocal"/>
         <WatchKind Value="wpkWrite"/>
-        <Source Value="grimreaper.pas"/>
-        <Line Value="234"/>
+        <Source Value="rotator.pas"/>
+        <Line Value="39"/>
       </Item1>
-      <Item2>
-        <Kind Value="bpkSource"/>
-        <WatchScope Value="wpsLocal"/>
-        <WatchKind Value="wpkWrite"/>
-        <Source Value="grimreaper.pas"/>
-        <Line Value="238"/>
-      </Item2>
-      <Item3>
-        <Kind Value="bpkSource"/>
-        <WatchScope Value="wpsLocal"/>
-        <WatchKind Value="wpkWrite"/>
-        <Source Value="grimreaper.pas"/>
-        <Line Value="248"/>
-      </Item3>
-      <Item4>
-        <Kind Value="bpkSource"/>
-        <WatchScope Value="wpsLocal"/>
-        <WatchKind Value="wpkWrite"/>
-        <Source Value="grimreaper.pas"/>
-        <Line Value="264"/>
-      </Item4>
     </BreakPoints>
-    <Watches Count="3">
+    <Watches Count="4">
       <Item1>
         <Expression Value="m_entities.Items[1]"/>
       </Item1>
@@ -502,6 +492,9 @@
       <Item3>
         <Expression Value="m_nodes"/>
       </Item3>
+      <Item4>
+        <Expression Value="m_n"/>
+      </Item4>
     </Watches>
     <Exceptions Count="3">
       <Item1>

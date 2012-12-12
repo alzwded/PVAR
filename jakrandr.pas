@@ -18,7 +18,7 @@ interface
 uses
   Classes, SysUtils, FileUtil, Forms, Controls, Graphics, Dialogs, ExtCtrls,
   GfxUtils, CoreUtils, LCLType, TestUtils, TestConveyor, Cartof, Windows, Math,
-  Provider, GrimReaper;
+  Provider, GrimReaper, Rotator;
 
 const
   DEFAULT_CAPTION = 'JakRandr - F1 for help';
@@ -98,6 +98,7 @@ var
   conveyor: TTestConveyor;
   gravity: TTestConveyor;
   reaper: TGrimReaper;
+  rotator: TRotator;
   e: IWorldEntity;
   t: TPolygon;
   i: integer;
@@ -120,6 +121,14 @@ begin
   conveyor.InputSource(producer);
   m_worldEntities.Add(conveyor);
 
+  rotator := TRotator.Rotator(
+        Point3DFromCoords(1800, 100, 0),
+        CONVEYOR_CLOCK,
+        0, 0, pi / 2);
+  rotator.InputSource(conveyor);
+  m_worldEntities.Add(rotator);
+
+
   gravity := TTestConveyor.Ghost(
         Point3DFromCoords(2600, 0, 0), CONVEYOR_CLOCK);
   gravity.InputSource(conveyor);
@@ -133,7 +142,7 @@ begin
 
   (* right *)
   producer := TProvider.Grabber(
-        Point3DFromCoords(0, 35, -500), PROVIDER_CLOCK);
+        Point3DFromCoords(0, 35 + 20, -500), PROVIDER_CLOCK);
   producer.ProvideOnFrame := 0;
   m_worldEntities.Add(producer);
 
@@ -143,7 +152,7 @@ begin
   end;
 
   conveyor := TTestConveyor.Conveyor(
-        Point3DFromCoords(0, 0, -500),
+        Point3DFromCoords(0, 20, -500),
         CONVEYOR_CLOCK, 20);
   conveyor.Rotate(0, pi / 2, 0);
   conveyor.InputSource(producer);
@@ -162,7 +171,7 @@ begin
 
   (* left *)
   producer := TProvider.Grabber(
-        Point3DFromCoords(0, 35, 500), PROVIDER_CLOCK);
+        Point3DFromCoords(0, 35 + 20, 500), PROVIDER_CLOCK);
   producer.ProvideOnFrame := 0;
   m_worldEntities.Add(producer);
 
@@ -172,7 +181,7 @@ begin
   end;
 
   conveyor := TTestConveyor.Conveyor(
-        Point3DFromCoords(0, 0, 500),
+        Point3DFromCoords(0, 20, 500),
         CONVEYOR_CLOCK, 20);
   conveyor.Rotate(0, pi / 2, 0);
   conveyor.InputSource(producer);
