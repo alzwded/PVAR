@@ -22,6 +22,7 @@ type
   private
     m_pc: integer;
     m_provideOnFrame: integer;
+    m_firstStart: boolean;
   public
     property ProvideOnFrame: integer read m_provideOnFrame write m_provideOnFrame;
   end;
@@ -30,7 +31,10 @@ implementation
 
 procedure TProvider.Start;
 begin
-  Loop;
+  if m_firstStart then begin
+    Loop;
+    m_firstStart := false;
+  end;
   inherited Start;
 end;
 
@@ -39,6 +43,7 @@ procedure TProvider.Render(engine: PJakRandrEngine); begin end;
 procedure TProvider.Init;
 begin
   m_provideOnFrame := PROVIDE_ON_FRAME;
+  m_firstStart := true;
 end;
 
 procedure TProvider.Loop;

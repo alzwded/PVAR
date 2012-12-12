@@ -8,13 +8,19 @@ uses
   Classes, SysUtils, CoreUtils, GfxUtils, Graphics;
 
 const
-  NAIL_WIDTH = 50;
-  NAIL_HEIGHT = 200;
+  BED_OF_NAILS_NAIL_WIDTH = 50;
+  BED_OF_NAILS_NAIL_HEIGHT = 200;
 
   GRIMREAPER_SPIKE_SPLOSION_TRIGGER_AT = 0.7;
 
+  GrimReaper_Splosion = 0;
+  GrimReaper_BedOfNails = 1;
+
   SPLODE_AMOUNT = 8;
   SPLODE_FOR = 20;
+
+  Splosion_Support = 0;
+  Splosion_Skin = 1;
 
   Splosion_Top = 0;
   Splosion_Left = 1;
@@ -38,9 +44,6 @@ const
   Splosion_b2 = 5; (*       \| /          *)
   Splosion_b3 = 6; (*        \/           *)
   Splosion_b4 = 7; (*       front         *)
-
-  GrimReaper_Splosion = 0;
-  GrimReaper_BedOfNails = 1;
 
 type
   TBedOfNails = class(TPart)
@@ -110,41 +113,41 @@ var
   nailColor: TColor;
 begin
   p := GetLocation;
-  p.x := p.x - NAIL_WIDTH * m_u div 2;
-  p.z := p.z - NAIL_WIDTH * m_v div 2;
+  p.x := p.x - BED_OF_NAILS_NAIL_WIDTH * m_u div 2;
+  p.z := p.z - BED_OF_NAILS_NAIL_WIDTH * m_v div 2;
 
   nailColor := RGBToColor(70, 90, 60);
 
   for i := 0 to m_u - 1 - 1 do begin
     for j := 0 to m_v - 1 - 1 do begin
       e := TPolygon.Triangle(
-                Point3DFromCoords(p.x + NAIL_WIDTH * i, p.y, p.z + NAIL_WIDTH * j),
-                Point3DFromCoords(p.x + NAIL_WIDTH * i, p.y, p.z + NAIL_WIDTH * (j + 1)),
-                Point3DFromCoords(p.x + NAIL_WIDTH * i + NAIL_WIDTH / 2, p.y + NAIL_HEIGHT, p.z + NAIL_WIDTH * j + NAIL_WIDTH / 2));
+                Point3DFromCoords(p.x + BED_OF_NAILS_NAIL_WIDTH * i, p.y, p.z + BED_OF_NAILS_NAIL_WIDTH * j),
+                Point3DFromCoords(p.x + BED_OF_NAILS_NAIL_WIDTH * i, p.y, p.z + BED_OF_NAILS_NAIL_WIDTH * (j + 1)),
+                Point3DFromCoords(p.x + BED_OF_NAILS_NAIL_WIDTH * i + BED_OF_NAILS_NAIL_WIDTH / 2, p.y + BED_OF_NAILS_NAIL_HEIGHT, p.z + BED_OF_NAILS_NAIL_WIDTH * j + BED_OF_NAILS_NAIL_WIDTH / 2));
       e.ContourColour:=clBlack;
       e.FillColour:=nailColor;
       Geometry.Add(e);
 
       e := TPolygon.Triangle(
-                Point3DFromCoords(p.x + NAIL_WIDTH * (i + 1), p.y, p.z + NAIL_WIDTH * j),
-                Point3DFromCoords(p.x + NAIL_WIDTH * i, p.y, p.z + NAIL_WIDTH * j),
-                Point3DFromCoords(p.x + NAIL_WIDTH * i + NAIL_WIDTH / 2, p.y + NAIL_HEIGHT, p.z + NAIL_WIDTH * j + NAIL_WIDTH / 2));
+                Point3DFromCoords(p.x + BED_OF_NAILS_NAIL_WIDTH * (i + 1), p.y, p.z + BED_OF_NAILS_NAIL_WIDTH * j),
+                Point3DFromCoords(p.x + BED_OF_NAILS_NAIL_WIDTH * i, p.y, p.z + BED_OF_NAILS_NAIL_WIDTH * j),
+                Point3DFromCoords(p.x + BED_OF_NAILS_NAIL_WIDTH * i + BED_OF_NAILS_NAIL_WIDTH / 2, p.y + BED_OF_NAILS_NAIL_HEIGHT, p.z + BED_OF_NAILS_NAIL_WIDTH * j + BED_OF_NAILS_NAIL_WIDTH / 2));
       e.ContourColour:=clBlack;
       e.FillColour:=nailColor;
       Geometry.Add(e);
 
       e := TPolygon.Triangle(
-                Point3DFromCoords(p.x + NAIL_WIDTH * (i + 1), p.y, p.z + NAIL_WIDTH * (j + 1)),
-                Point3DFromCoords(p.x + NAIL_WIDTH * (i + 1), p.y, p.z + NAIL_WIDTH * j),
-                Point3DFromCoords(p.x + NAIL_WIDTH * i + NAIL_WIDTH / 2, p.y + NAIL_HEIGHT, p.z + NAIL_WIDTH * j + NAIL_WIDTH / 2));
+                Point3DFromCoords(p.x + BED_OF_NAILS_NAIL_WIDTH * (i + 1), p.y, p.z + BED_OF_NAILS_NAIL_WIDTH * (j + 1)),
+                Point3DFromCoords(p.x + BED_OF_NAILS_NAIL_WIDTH * (i + 1), p.y, p.z + BED_OF_NAILS_NAIL_WIDTH * j),
+                Point3DFromCoords(p.x + BED_OF_NAILS_NAIL_WIDTH * i + BED_OF_NAILS_NAIL_WIDTH / 2, p.y + BED_OF_NAILS_NAIL_HEIGHT, p.z + BED_OF_NAILS_NAIL_WIDTH * j + BED_OF_NAILS_NAIL_WIDTH / 2));
       e.ContourColour:=clBlack;
       e.FillColour:=nailColor;
       Geometry.Add(e);
 
       e := TPolygon.Triangle(
-                Point3DFromCoords(p.x + NAIL_WIDTH * i, p.y, p.z + NAIL_WIDTH * (j + 1)),
-                Point3DFromCoords(p.x + NAIL_WIDTH * (i + 1), p.y, p.z + NAIL_WIDTH * (j + 1)),
-                Point3DFromCoords(p.x + NAIL_WIDTH * i + NAIL_WIDTH / 2, p.y + NAIL_HEIGHT, p.z + NAIL_WIDTH * j + NAIL_WIDTH / 2));
+                Point3DFromCoords(p.x + BED_OF_NAILS_NAIL_WIDTH * i, p.y, p.z + BED_OF_NAILS_NAIL_WIDTH * (j + 1)),
+                Point3DFromCoords(p.x + BED_OF_NAILS_NAIL_WIDTH * (i + 1), p.y, p.z + BED_OF_NAILS_NAIL_WIDTH * (j + 1)),
+                Point3DFromCoords(p.x + BED_OF_NAILS_NAIL_WIDTH * i + BED_OF_NAILS_NAIL_WIDTH / 2, p.y + BED_OF_NAILS_NAIL_HEIGHT, p.z + BED_OF_NAILS_NAIL_WIDTH * j + BED_OF_NAILS_NAIL_WIDTH / 2));
       e.ContourColour:=clBlack;
       e.FillColour:=nailColor;
       Geometry.Add(e);
@@ -266,42 +269,42 @@ begin
         (m_phase + 1) * Splosion_TopVector.y * SPLODE_AMOUNT,
         (m_phase + 1) * Splosion_TopVector.z * SPLODE_AMOUNT);
   TranslateVector(v, GetLocation);
-  MoveVectorTo((Entities[0] as TSupport).Nodes[Splosion_Top]^, v);
+  MoveVectorTo((Entities[Splosion_Support] as TSupport).Nodes[Splosion_Top]^, v);
 
   v := Point3DFromCoords(
         (m_phase + 1) * Splosion_LeftVector.x * SPLODE_AMOUNT,
         (m_phase + 1) * Splosion_LeftVector.y * SPLODE_AMOUNT,
         (m_phase + 1) * Splosion_LeftVector.z * SPLODE_AMOUNT);
   TranslateVector(v, GetLocation);
-  MoveVectorTo((Entities[0] as TSupport).Nodes[Splosion_Left]^, v);
+  MoveVectorTo((Entities[Splosion_Support] as TSupport).Nodes[Splosion_Left]^, v);
 
   v := Point3DFromCoords(
         (m_phase + 1) * Splosion_BackVector.x * SPLODE_AMOUNT,
         (m_phase + 1) * Splosion_BackVector.y * SPLODE_AMOUNT,
         (m_phase + 1) * Splosion_BackVector.z * SPLODE_AMOUNT);
   TranslateVector(v, GetLocation);
-  MoveVectorTo((Entities[0] as TSupport).Nodes[Splosion_Back]^, v);
+  MoveVectorTo((Entities[Splosion_Support] as TSupport).Nodes[Splosion_Back]^, v);
 
   v := Point3DFromCoords(
         (m_phase + 1) * Splosion_RightVector.x * SPLODE_AMOUNT,
         (m_phase + 1) * Splosion_RightVector.y * SPLODE_AMOUNT,
         (m_phase + 1) * Splosion_RightVector.z * SPLODE_AMOUNT);
   TranslateVector(v, GetLocation);
-  MoveVectorTo((Entities[0] as TSupport).Nodes[Splosion_Right]^, v);
+  MoveVectorTo((Entities[Splosion_Support] as TSupport).Nodes[Splosion_Right]^, v);
 
   v := Point3DFromCoords(
         (m_phase + 1) * Splosion_FrontVector.x * SPLODE_AMOUNT,
         (m_phase + 1) * Splosion_FrontVector.y * SPLODE_AMOUNT,
         (m_phase + 1) * Splosion_FrontVector.z * SPLODE_AMOUNT);
   TranslateVector(v, GetLocation);
-  MoveVectorTo((Entities[0] as TSupport).Nodes[Splosion_Front]^, v);
+  MoveVectorTo((Entities[Splosion_Support] as TSupport).Nodes[Splosion_Front]^, v);
 
   v := Point3DFromCoords(
         (m_phase + 1) * Splosion_BottomVector.x * SPLODE_AMOUNT,
         (m_phase + 1) * Splosion_BottomVector.y * SPLODE_AMOUNT,
         (m_phase + 1) * Splosion_BottomVector.z * SPLODE_AMOUNT);
   TranslateVector(v, GetLocation);
-  MoveVectorTo((Entities[0] as TSupport).Nodes[Splosion_Bottom]^, v);
+  MoveVectorTo((Entities[Splosion_Support] as TSupport).Nodes[Splosion_Bottom]^, v);
 
   Entities[0].Rotate(pi / 6 * m_phase, pi / 12 * m_phase, pi / 24 * m_phase);
 end;
@@ -318,14 +321,14 @@ begin
     cl2 := RGBToColor(255, 100, 0);
   end;
 
-  ((Entities[1] as TSkin).Geometry[Splosion_t1] as TPointerPolygon).FillColour:=cl1;
-  ((Entities[1] as TSkin).Geometry[Splosion_t2] as TPointerPolygon).FillColour:=cl2;
-  ((Entities[1] as TSkin).Geometry[Splosion_t3] as TPointerPolygon).FillColour:=cl1;
-  ((Entities[1] as TSkin).Geometry[Splosion_t4] as TPointerPolygon).FillColour:=cl2;
-  ((Entities[1] as TSkin).Geometry[Splosion_b1] as TPointerPolygon).FillColour:=cl2;
-  ((Entities[1] as TSkin).Geometry[Splosion_b2] as TPointerPolygon).FillColour:=cl1;
-  ((Entities[1] as TSkin).Geometry[Splosion_b3] as TPointerPolygon).FillColour:=cl2;
-  ((Entities[1] as TSkin).Geometry[Splosion_b4] as TPointerPolygon).FillColour:=cl1;
+  ((Entities[Splosion_Skin] as TSkin).Geometry[Splosion_t1] as TPointerPolygon).FillColour:=cl1;
+  ((Entities[Splosion_Skin] as TSkin).Geometry[Splosion_t2] as TPointerPolygon).FillColour:=cl2;
+  ((Entities[Splosion_Skin] as TSkin).Geometry[Splosion_t3] as TPointerPolygon).FillColour:=cl1;
+  ((Entities[Splosion_Skin] as TSkin).Geometry[Splosion_t4] as TPointerPolygon).FillColour:=cl2;
+  ((Entities[Splosion_Skin] as TSkin).Geometry[Splosion_b1] as TPointerPolygon).FillColour:=cl2;
+  ((Entities[Splosion_Skin] as TSkin).Geometry[Splosion_b2] as TPointerPolygon).FillColour:=cl1;
+  ((Entities[Splosion_Skin] as TSkin).Geometry[Splosion_b3] as TPointerPolygon).FillColour:=cl2;
+  ((Entities[Splosion_Skin] as TSkin).Geometry[Splosion_b4] as TPointerPolygon).FillColour:=cl1;
 end;
 
 procedure TSplosion.Splode;
@@ -387,7 +390,7 @@ begin
   Entities.Add(TBedOfNails.BedOfNails(
         Point3DFromCoords(
                 GetLocation.x,
-                GetLocation.y - NAIL_HEIGHT * GRIMREAPER_SPIKE_SPLOSION_TRIGGER_AT,
+                GetLocation.y - BED_OF_NAILS_NAIL_HEIGHT * GRIMREAPER_SPIKE_SPLOSION_TRIGGER_AT,
                 GetLocation.z),
         3, 3));
 end;

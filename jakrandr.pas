@@ -131,12 +131,12 @@ begin
 
 
   gravity := TTestConveyor.Ghost(
-        Point3DFromCoords(2600, 0, 0), CONVEYOR_CLOCK);
+        Point3DFromCoords(2700, 0, 0), CONVEYOR_CLOCK);
   gravity.InputSource(conveyor);
   m_worldEntities.Add(gravity);
 
   reaper := TGrimReaper.GrimReaper(
-        Point3DFromCoords(2500, -800, 0));
+        Point3DFromCoords(2650, -800, 0));
   reaper.InputSource(gravity);
   m_worldEntities.Add(reaper);
 
@@ -160,12 +160,12 @@ begin
   m_worldEntities.Add(conveyor);
 
   gravity := TTestConveyor.Ghost(
-        Point3DFromCoords(1100, SIDE_CONVEYORS_OFFSET, -500), CONVEYOR_CLOCK);
+        Point3DFromCoords(1150, SIDE_CONVEYORS_OFFSET, -500), CONVEYOR_CLOCK);
   gravity.InputSource(conveyor);
   m_worldEntities.Add(gravity);
 
   reaper := TGrimReaper.GrimReaper(
-        Point3DFromCoords(1000, -800, -500));
+        Point3DFromCoords(1100, -800, -500));
   reaper.InputSource(gravity);
   m_worldEntities.Add(reaper);
 
@@ -189,12 +189,12 @@ begin
   m_worldEntities.Add(conveyor);
 
   gravity := TTestConveyor.Ghost(
-        Point3DFromCoords(1100, SIDE_CONVEYORS_OFFSET, 500), CONVEYOR_CLOCK);
+        Point3DFromCoords(1150, SIDE_CONVEYORS_OFFSET, 500), CONVEYOR_CLOCK);
   gravity.InputSource(conveyor);
   m_worldEntities.Add(gravity);
 
   reaper := TGrimReaper.GrimReaper(
-        Point3DFromCoords(1000, -800, 500));
+        Point3DFromCoords(1100, -800, 500));
   reaper.InputSource(gravity);
   m_worldEntities.Add(reaper);
 
