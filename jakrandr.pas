@@ -32,7 +32,8 @@ const
   ROOM_Z_LOW = 800;
   ROOM_Z_HIGH = 3000;
 
-  CONVEYOR_TIMER = 15000;
+  PROVIDER_CLOCK = 15000;
+  CONVEYOR_CLOCK = 10;
 
 type
 
@@ -103,7 +104,7 @@ var
 begin
   (* main *)
   producer := TProvider.Grabber(
-        Point3DFromCoords(0, 35, 0), CONVEYOR_TIMER);
+        Point3DFromCoords(0, 35, 0), PROVIDER_CLOCK);
   producer.ProvideOnFrame := 0;
   m_worldEntities.Add(producer);
 
@@ -114,13 +115,13 @@ begin
 
   conveyor := TTestConveyor.Conveyor(
         Point3DFromCoords(0, 0, 0),
-        50, 50);
+        CONVEYOR_CLOCK, 50);
   conveyor.Rotate(0, pi / 2, 0);
   conveyor.InputSource(producer);
   m_worldEntities.Add(conveyor);
 
   gravity := TTestConveyor.Ghost(
-        Point3DFromCoords(2600, 0, 0), 50);
+        Point3DFromCoords(2600, 0, 0), CONVEYOR_CLOCK);
   gravity.InputSource(conveyor);
   m_worldEntities.Add(gravity);
 
@@ -132,7 +133,7 @@ begin
 
   (* right *)
   producer := TProvider.Grabber(
-        Point3DFromCoords(0, 35, -500), CONVEYOR_TIMER);
+        Point3DFromCoords(0, 35, -500), PROVIDER_CLOCK);
   producer.ProvideOnFrame := 0;
   m_worldEntities.Add(producer);
 
@@ -143,13 +144,13 @@ begin
 
   conveyor := TTestConveyor.Conveyor(
         Point3DFromCoords(0, 0, -500),
-        50, 20);
+        CONVEYOR_CLOCK, 20);
   conveyor.Rotate(0, pi / 2, 0);
   conveyor.InputSource(producer);
   m_worldEntities.Add(conveyor);
 
   gravity := TTestConveyor.Ghost(
-        Point3DFromCoords(1100, 0, -500), 50);
+        Point3DFromCoords(1100, 0, -500), CONVEYOR_CLOCK);
   gravity.InputSource(conveyor);
   m_worldEntities.Add(gravity);
 
@@ -161,7 +162,7 @@ begin
 
   (* left *)
   producer := TProvider.Grabber(
-        Point3DFromCoords(0, 35, 500), CONVEYOR_TIMER);
+        Point3DFromCoords(0, 35, 500), PROVIDER_CLOCK);
   producer.ProvideOnFrame := 0;
   m_worldEntities.Add(producer);
 
@@ -172,13 +173,13 @@ begin
 
   conveyor := TTestConveyor.Conveyor(
         Point3DFromCoords(0, 0, 500),
-        50, 20);
+        CONVEYOR_CLOCK, 20);
   conveyor.Rotate(0, pi / 2, 0);
   conveyor.InputSource(producer);
   m_worldEntities.Add(conveyor);
 
   gravity := TTestConveyor.Ghost(
-        Point3DFromCoords(1100, 0, 500), 50);
+        Point3DFromCoords(1100, 0, 500), CONVEYOR_CLOCK);
   gravity.InputSource(conveyor);
   m_worldEntities.Add(gravity);
 
