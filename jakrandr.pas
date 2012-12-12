@@ -78,6 +78,8 @@ type
     procedure ToggleMotion;
     procedure CentreCamera;
     procedure ScreenShot;
+    procedure ShowCameraInfo;
+    procedure ShowAbout;
 
     procedure AddTestEntities;
     procedure AddEntities; virtual;
@@ -273,9 +275,10 @@ begin
   //AddTestEntities;
   AddEntities;
 
-  m_disp.O := Point3DFromCoords(1800, -700, 700);
-  m_disp.RX := -pi/24;
-  m_disp.RY := -pi/4;
+  m_disp.O := Point3DFromCoords(580, -1150, -825);
+  m_disp.RX := 5.55;
+  m_disp.RY := 0.72;
+  m_disp.RZ := 0.55;
 end;
 
 procedure TJakRandr.FormDeactivate(Sender: TObject);
@@ -439,6 +442,47 @@ procedure TJakRandr.FormKeyPress(Sender: TObject; var Key: char);
 begin
 end;
 
+procedure TJakRandr.ShowAbout;
+var
+  b: boolean;
+begin
+  b := m_move;
+  if b then ToggleMotion;
+
+  MessageDlg('JakRandr',
+        'Proiect realizat de Vlad Meșco. ©2012'#13#10 +
+        #13#10 +
+        '3D Animation Software Engine written from scratch.'#13#10 +
+        #13#10 +
+        'Shift + Esc - exit'#13#10 +
+        'Space - toggle animatnion'#13#10 +
+        'Shift + Enter - recenter camera'#13#10 +
+        'Mouse - manipulate camera'#13#10 +
+        'Ctrl + P - take screenshot'#13#10 +
+        'F2 - view current camera coordinates and rotations',
+        mtInformation,
+        [mbOK],
+        0);
+
+  if b then ToggleMotion;
+end;
+
+procedure TJakRandr.ShowCameraInfo;
+var
+  s: string;
+  b: boolean;
+begin
+  b := m_move;
+  if b then ToggleMotion;
+
+  s := Format('O=(%f,%f,%f) R=(%f,%f,%f)',
+        [m_disp.O.x, m_disp.O.y, m_disp.O.z,
+        m_disp.RX, m_disp.RY, m_disp.RZ]);
+  MessageDlg('JakRandr - Camera information', s, mtInformation, [mbOK], 0);
+
+  if b then ToggleMotion;
+end;
+
 procedure TJakRandr.FormKeyUp(Sender: TObject; var Key: Word; Shift: TShiftState
   );
 var
@@ -450,6 +494,7 @@ begin
     if ssCtrl in Shift then
       ScreenShot;
     end;
+  VK_F2: ShowCameraInfo;
   VK_SPACE: ToggleMotion;
   VK_RETURN: if ssShift in Shift then CentreCamera;
   VK_ESCAPE: if ssShift in Shift then begin
@@ -458,21 +503,7 @@ begin
       m_worldEntities[i].Stop;
     Self.Close;
     end;
-  VK_F1: begin
-    MessageDlg('JakRandr',
-        'Proiect realizat de Vlad Meșco. ©2012'#13#10 +
-        #13#10 +
-        '3D Animation Software Engine written from scratch.'#13#10 +
-        #13#10 +
-        'Shift + Esc - exit'#13#10 +
-        'Space - toggle animatnion'#13#10 +
-        'Shift + Enter - recenter camera'#13#10 +
-        'Mouse - manipulate camera'#13#10 +
-        'Ctrl + P - take screenshot',
-        mtInformation,
-        [mbOK],
-        0);
-    end;
+  VK_F1: ShowAbout;
   end;
 end;
 

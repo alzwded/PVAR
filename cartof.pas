@@ -30,6 +30,7 @@ begin
         Point3DFromCoords(c.x + 50, c.y, c.z - 50),
         Point3DFromCoords(c.x + 50, c.y, c.z + 50),
         Point3DFromCoords(c.x - 50, c.y, c.z + 50));
+  (e as TPolygon).FillColour := 255;
   Geometry.Add(e);
 
   // Sides
@@ -68,7 +69,11 @@ begin
         Point3DFromCoords(c.x - 50, c.y + 100, c.z + 50),
         Point3DFromCoords(c.x + 50, c.y + 100, c.z + 50),
         Point3DFromCoords(c.x + 50, c.y + 100, c.z - 50));
+  (e as TPolygon).FillColour := 255 shl 16;
   Geometry.Add(e);
+
+  decr(c.x, 50);
+  m_c := RealPoint3DFromPoint(c);
 end;
 
 function TCartof.GetBoundingBox: PBoundingBox;
