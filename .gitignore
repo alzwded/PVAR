@@ -1,9 +1,13 @@
 # gitignore file for freepascal/lazarus project
 
 # ignore "ton of crap" folder
+backup
 backup/*
 
 # ignore binaries
+bin
+bin/*
+lib
 lib/*
 JakOmlette
 *.exe
