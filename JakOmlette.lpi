@@ -160,7 +160,7 @@
         <PackageName Value="LCL"/>
       </Item1>
     </RequiredPackages>
-    <Units Count="17">
+    <Units Count="15">
       <Unit0>
         <Filename Value="JakOmlette.lpr"/>
         <IsPartOfProject Value="True"/>
@@ -177,11 +177,10 @@
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
         <UnitName Value="JakRandr"/>
-        <IsVisibleTab Value="True"/>
         <EditorIndex Value="0"/>
         <WindowIndex Value="0"/>
         <TopLine Value="452"/>
-        <CursorPos X="26" Y="467"/>
+        <CursorPos X="23" Y="458"/>
         <UsageCount Value="216"/>
         <Loaded Value="True"/>
         <LoadedDesigner Value="True"/>
@@ -201,10 +200,11 @@
         <Filename Value="coreutils.pas"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="CoreUtils"/>
+        <IsVisibleTab Value="True"/>
         <EditorIndex Value="5"/>
         <WindowIndex Value="0"/>
-        <TopLine Value="312"/>
-        <CursorPos X="74" Y="322"/>
+        <TopLine Value="582"/>
+        <CursorPos X="34" Y="601"/>
         <UsageCount Value="214"/>
         <Loaded Value="True"/>
       </Unit3>
@@ -213,14 +213,14 @@
         <WindowIndex Value="0"/>
         <TopLine Value="1677"/>
         <CursorPos X="7" Y="1688"/>
-        <UsageCount Value="35"/>
+        <UsageCount Value="4"/>
       </Unit4>
       <Unit5>
         <Filename Value="/usr/lib/lazarus/lcl/include/canvas.inc"/>
         <WindowIndex Value="0"/>
         <TopLine Value="807"/>
         <CursorPos X="1" Y="818"/>
-        <UsageCount Value="35"/>
+        <UsageCount Value="4"/>
       </Unit5>
       <Unit6>
         <Filename Value="testutils.pas"/>
@@ -239,7 +239,7 @@
         <WindowIndex Value="0"/>
         <TopLine Value="507"/>
         <CursorPos X="27" Y="526"/>
-        <UsageCount Value="62"/>
+        <UsageCount Value="31"/>
       </Unit7>
       <Unit8>
         <Filename Value="testconveyor.pas"/>
@@ -258,7 +258,7 @@
         <WindowIndex Value="0"/>
         <TopLine Value="251"/>
         <CursorPos X="3" Y="260"/>
-        <UsageCount Value="61"/>
+        <UsageCount Value="30"/>
       </Unit9>
       <Unit10>
         <Filename Value="cartof.pas"/>
@@ -288,7 +288,7 @@
         <WindowIndex Value="0"/>
         <TopLine Value="171"/>
         <CursorPos X="1" Y="182"/>
-        <UsageCount Value="132"/>
+        <UsageCount Value="101"/>
       </Unit12>
       <Unit13>
         <Filename Value="grimreaper.pas"/>
@@ -298,7 +298,7 @@
         <WindowIndex Value="0"/>
         <TopLine Value="1"/>
         <CursorPos X="31" Y="12"/>
-        <UsageCount Value="180"/>
+        <UsageCount Value="492"/>
         <Loaded Value="True"/>
       </Unit13>
       <Unit14>
@@ -309,141 +309,131 @@
         <WindowIndex Value="0"/>
         <TopLine Value="94"/>
         <CursorPos X="14" Y="98"/>
-        <UsageCount Value="43"/>
+        <UsageCount Value="354"/>
         <Loaded Value="True"/>
       </Unit14>
-      <Unit15>
-        <Filename Value="C:/lazarus/fpc/2.6.0/source/rtl/inc/wstringh.inc"/>
-        <WindowIndex Value="0"/>
-        <TopLine Value="20"/>
-        <CursorPos X="17" Y="30"/>
-        <UsageCount Value="8"/>
-      </Unit15>
-      <Unit16>
-        <Filename Value="C:/lazarus/fpc/2.6.0/source/rtl/objpas/sysutils/sysstrh.inc"/>
-        <WindowIndex Value="0"/>
-        <TopLine Value="198"/>
-        <CursorPos X="16" Y="214"/>
-        <UsageCount Value="10"/>
-      </Unit16>
     </Units>
-    <JumpHistory Count="29" HistoryIndex="28">
+    <JumpHistory Count="30" HistoryIndex="29">
       <Position1>
-        <Filename Value="grimreaper.pas"/>
-        <Caret Line="18" Column="21" TopLine="5"/>
+        <Filename Value="coreutils.pas"/>
+        <Caret Line="1" Column="1" TopLine="1"/>
       </Position1>
       <Position2>
-        <Filename Value="grimreaper.pas"/>
-        <Caret Line="411" Column="1" TopLine="392"/>
+        <Filename Value="jakrandr.pas"/>
+        <Caret Line="446" Column="13" TopLine="436"/>
       </Position2>
       <Position3>
-        <Filename Value="grimreaper.pas"/>
-        <Caret Line="22" Column="8" TopLine="7"/>
+        <Filename Value="jakrandr.pas"/>
+        <Caret Line="455" Column="26" TopLine="436"/>
       </Position3>
       <Position4>
-        <Filename Value="grimreaper.pas"/>
-        <Caret Line="23" Column="12" TopLine="12"/>
+        <Filename Value="jakrandr.pas"/>
+        <Caret Line="442" Column="35" TopLine="432"/>
       </Position4>
       <Position5>
-        <Filename Value="grimreaper.pas"/>
-        <Caret Line="11" Column="4" TopLine="10"/>
+        <Filename Value="jakrandr.pas"/>
+        <Caret Line="80" Column="34" TopLine="69"/>
       </Position5>
       <Position6>
-        <Filename Value="grimreaper.pas"/>
-        <Caret Line="12" Column="11" TopLine="1"/>
+        <Filename Value="cartof.pas"/>
+        <Caret Line="33" Column="38" TopLine="24"/>
       </Position6>
       <Position7>
-        <Filename Value="provider.pas"/>
-        <Caret Line="47" Column="29" TopLine="41"/>
+        <Filename Value="jakrandr.pas"/>
+        <Caret Line="480" Column="20" TopLine="480"/>
       </Position7>
       <Position8>
-        <Filename Value="testconveyor.pas"/>
-        <Caret Line="38" Column="1" TopLine="30"/>
+        <Filename Value="jakrandr.pas"/>
+        <Caret Line="82" Column="25" TopLine="69"/>
       </Position8>
       <Position9>
-        <Filename Value="testconveyor.pas"/>
-        <Caret Line="50" Column="32" TopLine="34"/>
+        <Filename Value="coreutils.pas"/>
+        <Caret Line="323" Column="18" TopLine="312"/>
       </Position9>
       <Position10>
-        <Filename Value="testconveyor.pas"/>
-        <Caret Line="262" Column="27" TopLine="257"/>
+        <Filename Value="coreutils.pas"/>
+        <Caret Line="11" Column="1" TopLine="11"/>
       </Position10>
       <Position11>
-        <Filename Value="testconveyor.pas"/>
-        <Caret Line="1" Column="1" TopLine="1"/>
+        <Filename Value="coreutils.pas"/>
+        <Caret Line="468" Column="22" TopLine="451"/>
       </Position11>
       <Position12>
-        <Filename Value="grimreaper.pas"/>
-        <Caret Line="197" Column="12" TopLine="183"/>
+        <Filename Value="coreutils.pas"/>
+        <Caret Line="1" Column="1" TopLine="1"/>
       </Position12>
       <Position13>
-        <Filename Value="gfxutils.pas"/>
-        <Caret Line="730" Column="28" TopLine="724"/>
+        <Filename Value="coreutils.pas"/>
+        <Caret Line="153" Column="30" TopLine="140"/>
       </Position13>
       <Position14>
-        <Filename Value="testutils.pas"/>
-        <Caret Line="638" Column="33" TopLine="631"/>
+        <Filename Value="coreutils.pas"/>
+        <Caret Line="423" Column="22" TopLine="404"/>
       </Position14>
       <Position15>
-        <Filename Value="testutils.pas"/>
-        <Caret Line="699" Column="1" TopLine="680"/>
+        <Filename Value="coreutils.pas"/>
+        <Caret Line="1" Column="1" TopLine="1"/>
       </Position15>
       <Position16>
         <Filename Value="coreutils.pas"/>
-        <Caret Line="14" Column="25" TopLine="11"/>
+        <Caret Line="149" Column="14" TopLine="140"/>
       </Position16>
       <Position17>
         <Filename Value="coreutils.pas"/>
-        <Caret Line="777" Column="1" TopLine="758"/>
+        <Caret Line="580" Column="21" TopLine="573"/>
       </Position17>
       <Position18>
-        <Filename Value="rotator.pas"/>
-        <Caret Line="70" Column="8" TopLine="56"/>
+        <Filename Value="coreutils.pas"/>
+        <Caret Line="1" Column="1" TopLine="1"/>
       </Position18>
       <Position19>
-        <Filename Value="rotator.pas"/>
-        <Caret Line="68" Column="7" TopLine="56"/>
+        <Filename Value="coreutils.pas"/>
+        <Caret Line="157" Column="32" TopLine="148"/>
       </Position19>
       <Position20>
-        <Filename Value="rotator.pas"/>
-        <Caret Line="103" Column="23" TopLine="95"/>
+        <Filename Value="coreutils.pas"/>
+        <Caret Line="625" Column="24" TopLine="606"/>
       </Position20>
       <Position21>
         <Filename Value="coreutils.pas"/>
-        <Caret Line="538" Column="28" TopLine="532"/>
+        <Caret Line="1" Column="1" TopLine="1"/>
       </Position21>
       <Position22>
         <Filename Value="coreutils.pas"/>
-        <Caret Line="1" Column="1" TopLine="1"/>
+        <Caret Line="159" Column="36" TopLine="148"/>
       </Position22>
       <Position23>
-        <Filename Value="jakrandr.pas"/>
-        <Caret Line="446" Column="13" TopLine="436"/>
+        <Filename Value="coreutils.pas"/>
+        <Caret Line="592" Column="30" TopLine="573"/>
       </Position23>
       <Position24>
-        <Filename Value="jakrandr.pas"/>
-        <Caret Line="455" Column="26" TopLine="436"/>
+        <Filename Value="coreutils.pas"/>
+        <Caret Line="1" Column="1" TopLine="1"/>
       </Position24>
       <Position25>
-        <Filename Value="jakrandr.pas"/>
-        <Caret Line="442" Column="35" TopLine="432"/>
+        <Filename Value="coreutils.pas"/>
+        <Caret Line="153" Column="30" TopLine="145"/>
       </Position25>
       <Position26>
-        <Filename Value="jakrandr.pas"/>
-        <Caret Line="80" Column="34" TopLine="69"/>
+        <Filename Value="coreutils.pas"/>
+        <Caret Line="660" Column="40" TopLine="641"/>
       </Position26>
       <Position27>
-        <Filename Value="cartof.pas"/>
-        <Caret Line="33" Column="38" TopLine="24"/>
+        <Filename Value="coreutils.pas"/>
+        <Caret Line="1" Column="1" TopLine="1"/>
       </Position27>
       <Position28>
-        <Filename Value="jakrandr.pas"/>
-        <Caret Line="480" Column="20" TopLine="480"/>
+        <Filename Value="coreutils.pas"/>
+        <Caret Line="160" Column="14" TopLine="142"/>
       </Position28>
       <Position29>
-        <Filename Value="jakrandr.pas"/>
-        <Caret Line="82" Column="25" TopLine="69"/>
+        <Filename Value="coreutils.pas"/>
+        <Caret Line="665" Column="30" TopLine="648"/>
       </Position29>
+      <Position30>
+        <Filename Value="coreutils.pas"/>
+        <Caret Line="1" Column="1" TopLine="1"/>
+      </Position30>
     </JumpHistory>
   </ProjectOptions>
   <CompilerOptions>
