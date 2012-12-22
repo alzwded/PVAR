@@ -7,6 +7,10 @@ interface
 uses
   Classes, SysUtils, GfxUtils, CoreUtils;
 
+const
+  NICE_YELLOW = 10351863; // 9D F4 F7
+  NICE_GREEN = 5959770; // 5A F0 5A
+
 type
   TCartof = class(TPart)
     procedure InitMesh; override;
@@ -30,7 +34,7 @@ begin
         Point3DFromCoords(c.x + 50, c.y, c.z - 50),
         Point3DFromCoords(c.x + 50, c.y, c.z + 50),
         Point3DFromCoords(c.x - 50, c.y, c.z + 50));
-  (e as TPolygon).FillColour := 255;
+  (e as TPolygon).FillColour := NICE_GREEN;
   Geometry.Add(e);
 
   // Sides
@@ -40,6 +44,7 @@ begin
         Point3DFromCoords(c.x - 50, c.y + 100, c.z - 50),
         Point3DFromCoords(c.x + 50, c.y + 100, c.z - 50),
         Point3DFromCoords(c.x + 50, c.y, c.z - 50));
+  (e as TPolygon).FillColour := NICE_YELLOW;
   Geometry.Add(e);
   // - right
   e := TPolygon.Quad(
@@ -47,6 +52,7 @@ begin
         Point3DFromCoords(c.x + 50, c.y + 100, c.z - 50),
         Point3DFromCoords(c.x + 50, c.y + 100, c.z + 50),
         Point3DFromCoords(c.x + 50, c.y, c.z + 50));
+  (e as TPolygon).FillColour := NICE_YELLOW;
   Geometry.Add(e);
   // - front
   e := TPolygon.Quad(
@@ -54,6 +60,7 @@ begin
         Point3DFromCoords(c.x + 50, c.y + 100, c.z + 50),
         Point3DFromCoords(c.x - 50, c.y + 100, c.z + 50),
         Point3DFromCoords(c.x - 50, c.y, c.z + 50));
+  (e as TPolygon).FillColour := NICE_YELLOW;
   Geometry.Add(e);
   // - left
   e := TPolygon.Quad(
@@ -61,6 +68,7 @@ begin
         Point3DFromCoords(c.x - 50, c.y + 100, c.z + 50),
         Point3DFromCoords(c.x - 50, c.y + 100, c.z - 50),
         Point3DFromCoords(c.x - 50, c.y, c.z - 50));
+  (e as TPolygon).FillColour := NICE_YELLOW;
   Geometry.Add(e);
 
   // top
@@ -69,7 +77,7 @@ begin
         Point3DFromCoords(c.x - 50, c.y + 100, c.z + 50),
         Point3DFromCoords(c.x + 50, c.y + 100, c.z + 50),
         Point3DFromCoords(c.x + 50, c.y + 100, c.z - 50));
-  (e as TPolygon).FillColour := 255 shl 16;
+  (e as TPolygon).FillColour := NICE_GREEN;
   Geometry.Add(e);
 
   decr(c.x, 50);

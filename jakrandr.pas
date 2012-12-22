@@ -32,12 +32,20 @@ const
   ROOM_Z_LOW = 800;
   ROOM_Z_HIGH = 3000;
 
-  PROVIDER_CLOCK = 20000; // TODO
   CONVEYOR_CLOCK = 120;
   SIDE_CONVEYORS_OFFSET = 47;
   PARTS_STOCK = 20;
   FLIPARM_OFFSET = 310;
   FLIPARM_COMPENSATION = 38;
+
+  FLIPARMS_WAIT = 120; // speed of conveyor / distance
+  FLIPARMS_MOVE = 10;
+  FLIPARMS_RETURN = 20;
+
+  PROVIDER_CLOCK = CONVEYOR_CLOCK;
+  PROVIDERS_MAX = FLIPARMS_WAIT + FLIPARMS_RETURN + FLIPARMS_MOVE; // sum of FLIPARMS frames
+  PROVIDERS_MAIN = FLIPARMS_MOVE;  // = FLIPARMS_MOVE
+  PROVIDERS_SIDE = 0;
 
 type
 
@@ -113,7 +121,8 @@ begin
   (* main *)
   producer := TProvider.Grabber(
         Point3DFromCoords(0, 35, 0), PROVIDER_CLOCK);
-  producer.ProvideOnFrame := 0;
+  producer.ProvideOnFrame := PROVIDERS_MAIN;
+  producer.MaxFrame := PROVIDERS_MAX;
   m_worldEntities.Add(producer);
 
   for i := 1 to PARTS_STOCK do begin
@@ -149,7 +158,8 @@ begin
   (* right *)
   producer := TProvider.Grabber(
         Point3DFromCoords(0, 35 + SIDE_CONVEYORS_OFFSET, -500), PROVIDER_CLOCK);
-  producer.ProvideOnFrame := 0;
+  producer.ProvideOnFrame := PROVIDERS_SIDE;
+  producer.MaxFrame := PROVIDERS_MAX;
   m_worldEntities.Add(producer);
 
   for i := 1 to PARTS_STOCK do begin
@@ -178,13 +188,14 @@ begin
         Point3DFromCoords(950, SIDE_CONVEYORS_OFFSET + FLIPARM_HEIGHT + FLIPARM_COMPENSATION, -FLIPARM_OFFSET),
         CONVEYOR_CLOCK,
         faoLeft,
-        100, 10, 28);
+        FLIPARMS_WAIT, FLIPARMS_MOVE, FLIPARMS_RETURN);
   m_worldEntities.Add(fliparm);
 
   (* left *)
   producer := TProvider.Grabber(
         Point3DFromCoords(0, 35 + SIDE_CONVEYORS_OFFSET, 500), PROVIDER_CLOCK);
-  producer.ProvideOnFrame := 0;
+  producer.ProvideOnFrame := PROVIDERS_SIDE;
+  producer.MaxFrame := PROVIDERS_MAX;
   m_worldEntities.Add(producer);
 
   for i := 1 to PARTS_STOCK do begin
@@ -213,7 +224,7 @@ begin
         Point3DFromCoords(950, SIDE_CONVEYORS_OFFSET + FLIPARM_HEIGHT + FLIPARM_COMPENSATION, FLIPARM_OFFSET),
         CONVEYOR_CLOCK,
         faoRight,
-        100, 10, 28);
+        FLIPARMS_WAIT, FLIPARMS_MOVE, FLIPARMS_RETURN);
   m_worldEntities.Add(fliparm);
 
   ToggleMotion;
