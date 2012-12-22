@@ -77,6 +77,9 @@ begin
   supTip.AddNode(Point3DFromCoords(rp.x - 100.0, rp.y - 10, rp.z));
   supTip.AddNode(Point3DFromCoords(rp.x - 100.0, rp.y + 10, rp.z));
   supTip.AddNode(Point3DFromCoords(rp.x - 100.0, rp.y, rp.z + offsetOri));
+  supTip.AddNode(Point3DFromCoords(rp.x - 150.0, rp.y - 10, rp.z));
+  supTip.AddNode(Point3DFromCoords(rp.x - 150.0, rp.y + 10, rp.z));
+  supTip.AddNode(Point3DFromCoords(rp.x - 150.0, rp.y, rp.z + offsetOri));
   if m_orientation = faoLeft then
     supTip.RotateAround(rp, 0, -pi/4, 0)
   else if m_orientation = faoRight then
@@ -84,8 +87,21 @@ begin
   Entities.Add(supTip);
 
   skin := TSkin.Skin;
-  (* TODO *)
+  case m_orientation of
+  faoLeft: begin
+    skin.BindQuad(
+        supKrnl.Nodes[0], supKrnl.Nodes[1],
+        supTip.Nodes[1], supTip.Nodes[0],
+        0, RGBToColor(80, 230, 30));
+    );
+    end;
+    (* TODO *)
+  faoRight: begin
+    end;
+  end;
   Entities.Add(skin);
+
+  AddReceivingBox(Point3DFromCoords(rp.x - 125, rp.y, rp.z + 8), 10);
 end;
 
 procedure TFlipArm.Loop;
