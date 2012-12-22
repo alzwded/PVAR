@@ -32,11 +32,12 @@ const
   ROOM_Z_LOW = 800;
   ROOM_Z_HIGH = 3000;
 
-  PROVIDER_CLOCK = 15000; // TODO
-  CONVEYOR_CLOCK = 100;
+  PROVIDER_CLOCK = 20000; // TODO
+  CONVEYOR_CLOCK = 120;
   SIDE_CONVEYORS_OFFSET = 47;
   PARTS_STOCK = 20;
   FLIPARM_OFFSET = 310;
+  FLIPARM_COMPENSATION = 38;
 
 type
 
@@ -174,10 +175,10 @@ begin
   m_worldEntities.Add(reaper);
 
   fliparm := TFlipArm.FlipArm(
-        Point3DFromCoords(950, SIDE_CONVEYORS_OFFSET + FLIPARM_HEIGHT + 35, -FLIPARM_OFFSET),
+        Point3DFromCoords(950, SIDE_CONVEYORS_OFFSET + FLIPARM_HEIGHT + FLIPARM_COMPENSATION, -FLIPARM_OFFSET),
         CONVEYOR_CLOCK,
         faoLeft,
-        100, 10, 30);
+        100, 10, 28);
   m_worldEntities.Add(fliparm);
 
   (* left *)
@@ -209,10 +210,10 @@ begin
   m_worldEntities.Add(reaper);
 
   fliparm := TFlipArm.FlipArm(
-        Point3DFromCoords(950, SIDE_CONVEYORS_OFFSET + FLIPARM_HEIGHT + 35, FLIPARM_OFFSET),
+        Point3DFromCoords(950, SIDE_CONVEYORS_OFFSET + FLIPARM_HEIGHT + FLIPARM_COMPENSATION, FLIPARM_OFFSET),
         CONVEYOR_CLOCK,
         faoRight,
-        100, 10, 30);
+        100, 10, 28);
   m_worldEntities.Add(fliparm);
 
   ToggleMotion;

@@ -16,7 +16,7 @@
     <VersionInfo>
       <StringTable ProductVersion=""/>
     </VersionInfo>
-    <BuildModes Count="4" Active="win32-debug">
+    <BuildModes Count="4" Active="win32-release">
       <Item1 Name="linux-i686-debug" Default="True"/>
       <Item2 Name="win32-release">
         <CompilerOptions>
@@ -177,10 +177,11 @@
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
         <UnitName Value="JakRandr"/>
+        <IsVisibleTab Value="True"/>
         <EditorIndex Value="0"/>
         <WindowIndex Value="0"/>
-        <TopLine Value="171"/>
-        <CursorPos X="20" Y="178"/>
+        <TopLine Value="31"/>
+        <CursorPos X="46" Y="39"/>
         <UsageCount Value="216"/>
         <Loaded Value="True"/>
         <LoadedDesigner Value="True"/>
@@ -315,135 +316,134 @@
         <Filename Value="fliparm.pas"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="FlipArm"/>
-        <IsVisibleTab Value="True"/>
         <EditorIndex Value="6"/>
         <WindowIndex Value="0"/>
-        <TopLine Value="45"/>
-        <CursorPos X="33" Y="58"/>
-        <UsageCount Value="25"/>
+        <TopLine Value="11"/>
+        <CursorPos X="41" Y="22"/>
+        <UsageCount Value="26"/>
         <Loaded Value="True"/>
       </Unit15>
     </Units>
     <JumpHistory Count="30" HistoryIndex="29">
       <Position1>
         <Filename Value="coreutils.pas"/>
-        <Caret Line="869" Column="1" TopLine="853"/>
+        <Caret Line="293" Column="1" TopLine="282"/>
       </Position1>
       <Position2>
-        <Filename Value="gfxutils.pas"/>
-        <Caret Line="1804" Column="1" TopLine="1794"/>
-      </Position2>
-      <Position3>
-        <Filename Value="gfxutils.pas"/>
-        <Caret Line="1805" Column="1" TopLine="1794"/>
-      </Position3>
-      <Position4>
-        <Filename Value="gfxutils.pas"/>
-        <Caret Line="1806" Column="1" TopLine="1794"/>
-      </Position4>
-      <Position5>
-        <Filename Value="gfxutils.pas"/>
-        <Caret Line="1807" Column="1" TopLine="1794"/>
-      </Position5>
-      <Position6>
-        <Filename Value="gfxutils.pas"/>
-        <Caret Line="1808" Column="1" TopLine="1794"/>
-      </Position6>
-      <Position7>
-        <Filename Value="gfxutils.pas"/>
-        <Caret Line="1809" Column="1" TopLine="1794"/>
-      </Position7>
-      <Position8>
-        <Filename Value="coreutils.pas"/>
-        <Caret Line="293" Column="1" TopLine="282"/>
-      </Position8>
-      <Position9>
         <Filename Value="coreutils.pas"/>
         <Caret Line="295" Column="1" TopLine="282"/>
-      </Position9>
-      <Position10>
+      </Position2>
+      <Position3>
         <Filename Value="coreutils.pas"/>
         <Caret Line="296" Column="1" TopLine="282"/>
-      </Position10>
-      <Position11>
+      </Position3>
+      <Position4>
         <Filename Value="coreutils.pas"/>
         <Caret Line="297" Column="1" TopLine="282"/>
-      </Position11>
-      <Position12>
+      </Position4>
+      <Position5>
         <Filename Value="coreutils.pas"/>
         <Caret Line="298" Column="1" TopLine="282"/>
+      </Position5>
+      <Position6>
+        <Filename Value="fliparm.pas"/>
+        <Caret Line="181" Column="7" TopLine="170"/>
+      </Position6>
+      <Position7>
+        <Filename Value="fliparm.pas"/>
+        <Caret Line="178" Column="39" TopLine="170"/>
+      </Position7>
+      <Position8>
+        <Filename Value="fliparm.pas"/>
+        <Caret Line="168" Column="11" TopLine="163"/>
+      </Position8>
+      <Position9>
+        <Filename Value="fliparm.pas"/>
+        <Caret Line="166" Column="1" TopLine="163"/>
+      </Position9>
+      <Position10>
+        <Filename Value="fliparm.pas"/>
+        <Caret Line="168" Column="1" TopLine="163"/>
+      </Position10>
+      <Position11>
+        <Filename Value="fliparm.pas"/>
+        <Caret Line="170" Column="1" TopLine="163"/>
+      </Position11>
+      <Position12>
+        <Filename Value="fliparm.pas"/>
+        <Caret Line="175" Column="1" TopLine="163"/>
       </Position12>
       <Position13>
         <Filename Value="fliparm.pas"/>
-        <Caret Line="181" Column="7" TopLine="170"/>
+        <Caret Line="177" Column="1" TopLine="163"/>
       </Position13>
       <Position14>
         <Filename Value="fliparm.pas"/>
-        <Caret Line="178" Column="39" TopLine="170"/>
+        <Caret Line="180" Column="32" TopLine="173"/>
       </Position14>
       <Position15>
         <Filename Value="fliparm.pas"/>
-        <Caret Line="168" Column="11" TopLine="163"/>
+        <Caret Line="69" Column="51" TopLine="63"/>
       </Position15>
       <Position16>
         <Filename Value="fliparm.pas"/>
-        <Caret Line="166" Column="1" TopLine="163"/>
+        <Caret Line="182" Column="50" TopLine="176"/>
       </Position16>
       <Position17>
         <Filename Value="fliparm.pas"/>
-        <Caret Line="168" Column="1" TopLine="163"/>
+        <Caret Line="161" Column="29" TopLine="144"/>
       </Position17>
       <Position18>
-        <Filename Value="fliparm.pas"/>
-        <Caret Line="170" Column="1" TopLine="163"/>
+        <Filename Value="jakrandr.pas"/>
+        <Caret Line="200" Column="64" TopLine="190"/>
       </Position18>
       <Position19>
-        <Filename Value="fliparm.pas"/>
-        <Caret Line="175" Column="1" TopLine="163"/>
+        <Filename Value="jakrandr.pas"/>
+        <Caret Line="204" Column="91" TopLine="199"/>
       </Position19>
       <Position20>
         <Filename Value="fliparm.pas"/>
-        <Caret Line="177" Column="1" TopLine="163"/>
+        <Caret Line="57" Column="9" TopLine="48"/>
       </Position20>
       <Position21>
         <Filename Value="fliparm.pas"/>
-        <Caret Line="180" Column="32" TopLine="173"/>
+        <Caret Line="56" Column="1" TopLine="48"/>
       </Position21>
       <Position22>
         <Filename Value="fliparm.pas"/>
-        <Caret Line="69" Column="51" TopLine="63"/>
+        <Caret Line="69" Column="1" TopLine="56"/>
       </Position22>
       <Position23>
         <Filename Value="fliparm.pas"/>
-        <Caret Line="182" Column="50" TopLine="176"/>
+        <Caret Line="71" Column="1" TopLine="56"/>
       </Position23>
       <Position24>
-        <Filename Value="fliparm.pas"/>
-        <Caret Line="161" Column="29" TopLine="144"/>
+        <Filename Value="jakrandr.pas"/>
+        <Caret Line="179" Column="21" TopLine="171"/>
       </Position24>
       <Position25>
         <Filename Value="jakrandr.pas"/>
-        <Caret Line="200" Column="64" TopLine="190"/>
+        <Caret Line="21" Column="1" TopLine="21"/>
       </Position25>
       <Position26>
-        <Filename Value="jakrandr.pas"/>
-        <Caret Line="204" Column="91" TopLine="199"/>
+        <Filename Value="fliparm.pas"/>
+        <Caret Line="90" Column="111" TopLine="80"/>
       </Position26>
       <Position27>
-        <Filename Value="fliparm.pas"/>
-        <Caret Line="57" Column="9" TopLine="48"/>
+        <Filename Value="jakrandr.pas"/>
+        <Caret Line="168" Column="32" TopLine="163"/>
       </Position27>
       <Position28>
-        <Filename Value="fliparm.pas"/>
-        <Caret Line="56" Column="1" TopLine="48"/>
+        <Filename Value="jakrandr.pas"/>
+        <Caret Line="40" Column="29" TopLine="21"/>
       </Position28>
       <Position29>
-        <Filename Value="fliparm.pas"/>
-        <Caret Line="69" Column="1" TopLine="56"/>
+        <Filename Value="jakrandr.pas"/>
+        <Caret Line="209" Column="22" TopLine="207"/>
       </Position29>
       <Position30>
-        <Filename Value="fliparm.pas"/>
-        <Caret Line="71" Column="1" TopLine="56"/>
+        <Filename Value="jakrandr.pas"/>
+        <Caret Line="216" Column="22" TopLine="198"/>
       </Position30>
     </JumpHistory>
   </ProjectOptions>
@@ -482,21 +482,14 @@
     </Other>
   </CompilerOptions>
   <Debugging>
-    <BreakPoints Count="2">
+    <BreakPoints Count="1">
       <Item1>
         <Kind Value="bpkSource"/>
         <WatchScope Value="wpsLocal"/>
         <WatchKind Value="wpkWrite"/>
         <Source Value="fliparm.pas"/>
-        <Line Value="182"/>
-      </Item1>
-      <Item2>
-        <Kind Value="bpkSource"/>
-        <WatchScope Value="wpsLocal"/>
-        <WatchKind Value="wpkWrite"/>
-        <Source Value="fliparm.pas"/>
         <Line Value="69"/>
-      </Item2>
+      </Item1>
     </BreakPoints>
     <Watches Count="4">
       <Item1>
