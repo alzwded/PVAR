@@ -86,6 +86,13 @@ TODO
     - ^ although, that's what I want for state machines where timers need to be based on a global timer (like in the real world)
 * JakOmlette
     - implementat particularităţiile proiectului (adică scopul acestui proiect)
+        - ~~gravity and pits of death~~
+        - ~~fliparms~~
+        - bot parts
+        - head crank
+        - leg crank
+        - death animation
+        - syncing
 
 What we've learnt from this project
 ===================================
