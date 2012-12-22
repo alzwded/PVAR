@@ -12,6 +12,14 @@ const
   FlipArm_Tip = 1;
   FlipArm_Skin = 2;
 
+  FLIPARM_HEIGHT = 50;
+  FLIPARM_TIPDICKNESS = 30;
+  FLIPARM_TIPLENGTH = 100;
+  FLIPARM_TIPKRNLLENGTH = 365;
+
+  FLIPARM_KRNLCOLOUR = 10351863; // 9D F4 F7
+  FLIPARM_TIPCOLOUR = 5959770; // 5A F0 5A
+
 type
   TFlipArmOrientation = (
         faoRight,
@@ -41,14 +49,14 @@ constructor TFlipArm.FlipArm(
   orientation: TFlipArmOrientation;
   waitSteps, moveSteps, returnSteps: integer);
 begin
-  if (m_waitSteps + m_moveSteps + m_returnSteps <= 0) then
+  if (waitSteps + moveSteps + returnSteps <= 0) then
     Raise Exception.Create('Sum of wait and move steps must be greater than 0!');
 
-  inherited Sticker(c, ntrvl);
   m_orientation := orientation;
   m_waitSteps := waitSteps;
   m_moveSteps := moveSteps;
   m_returnSteps := returnSteps;
+  inherited Sticker(c, ntrvl);
 end;
 
 procedure TFlipArm.Init;
@@ -59,27 +67,27 @@ var
   offsetOri: real;
 begin
   case m_orientation of
-  faoLeft: offsetOri := -20.0;
-  faoRight: offsetOri := 20.0;
+  faoLeft: offsetOri := -FLIPARM_TIPDICKNESS;
+  faoRight: offsetOri := FLIPARM_TIPDICKNESS;
   end;
 
   rp := GetRotatedPoint(Centre);
 
   supKrnl := TSupport.Support(rp);
-  supKrnl.AddNode(Point3DFromCoords(rp.x, rp.y - 10, rp.z));
-  supKrnl.AddNode(Point3DFromCoords(rp.x, rp.y + 10, rp.z));
+  supKrnl.AddNode(Point3DFromCoords(rp.x, rp.y - FLIPARM_HEIGHT, rp.z));
+  supKrnl.AddNode(Point3DFromCoords(rp.x, rp.y + FLIPARM_HEIGHT, rp.z));
   supKrnl.AddNode(Point3DFromCoords(rp.x, rp.y, rp.z + offsetOri));
   Entities.Add(supKrnl);
 
   supTip := TSupport.Support(Point3DFromCoords(
-                rp.x - 100.0,
+                rp.x - FLIPARM_TIPKRNLLENGTH,
                 rp.y, rp.z));
-  supTip.AddNode(Point3DFromCoords(rp.x - 100.0, rp.y - 10, rp.z));
-  supTip.AddNode(Point3DFromCoords(rp.x - 100.0, rp.y + 10, rp.z));
-  supTip.AddNode(Point3DFromCoords(rp.x - 100.0, rp.y, rp.z + offsetOri));
-  supTip.AddNode(Point3DFromCoords(rp.x - 150.0, rp.y - 10, rp.z));
-  supTip.AddNode(Point3DFromCoords(rp.x - 150.0, rp.y + 10, rp.z));
-  supTip.AddNode(Point3DFromCoords(rp.x - 150.0, rp.y, rp.z + offsetOri));
+  supTip.AddNode(Point3DFromCoords(rp.x - FLIPARM_TIPKRNLLENGTH, rp.y - FLIPARM_HEIGHT, rp.z));
+  supTip.AddNode(Point3DFromCoords(rp.x - FLIPARM_TIPKRNLLENGTH, rp.y + FLIPARM_HEIGHT, rp.z));
+  supTip.AddNode(Point3DFromCoords(rp.x - FLIPARM_TIPKRNLLENGTH, rp.y, rp.z + offsetOri));
+  supTip.AddNode(Point3DFromCoords(rp.x - FLIPARM_TIPKRNLLENGTH - FLIPARM_TIPLENGTH, rp.y - FLIPARM_HEIGHT, rp.z));
+  supTip.AddNode(Point3DFromCoords(rp.x - FLIPARM_TIPKRNLLENGTH - FLIPARM_TIPLENGTH, rp.y + FLIPARM_HEIGHT, rp.z));
+  supTip.AddNode(Point3DFromCoords(rp.x - FLIPARM_TIPKRNLLENGTH - FLIPARM_TIPLENGTH, rp.y, rp.z + offsetOri));
   if m_orientation = faoLeft then
     supTip.RotateAround(rp, 0, -pi/4, 0)
   else if m_orientation = faoRight then
@@ -92,11 +100,73 @@ begin
     skin.BindQuad(
         supKrnl.Nodes[0], supKrnl.Nodes[1],
         supTip.Nodes[1], supTip.Nodes[0],
-        0, RGBToColor(80, 230, 30));
+        0, FLIPARM_KRNLCOLOUR
     );
+    skin.BindQuad(
+        supTip.Nodes[1], supKrnl.Nodes[1],
+        supKrnl.Nodes[2], supTip.Nodes[2],
+        0, FLIPARM_KRNLCOLOUR
+    );
+    skin.BindQuad(
+        supTip.Nodes[2], supKrnl.Nodes[2],
+        supKrnl.Nodes[0], supTip.Nodes[0],
+        0, FLIPARM_KRNLCOLOUR
+    );
+    skin.BindQuad(
+        supTip.Nodes[3], supTip.Nodes[0],
+        supTip.Nodes[1], supTip.Nodes[4],
+        0, FLIPARM_TIPCOLOUR
+    );
+    skin.BindQuad(
+        supTip.Nodes[5], supTip.Nodes[4],
+        supTip.Nodes[1], supTip.Nodes[2],
+        0, FLIPARM_TIPCOLOUR
+    );
+    skin.BindQuad(
+        supTip.Nodes[3], supTip.Nodes[5],
+        supTip.Nodes[2], supTip.Nodes[0],
+        0, FLIPARM_TIPCOLOUR
+    );
+    skin.BindTria(supTip.Nodes[4], supTip.Nodes[5], supTip.Nodes[3],
+        0, FLIPARM_TIPCOLOUR);
+    skin.BindTria(supKrnl.Nodes[0], supKrnl.Nodes[2], supKrnl.Nodes[1],
+        0, FLIPARM_TIPCOLOUR);
     end;
-    (* TODO *)
   faoRight: begin
+    skin.BindQuad(
+        supKrnl.Nodes[1], supKrnl.Nodes[0],
+        supTip.Nodes[0], supTip.Nodes[1],
+        0, FLIPARM_KRNLCOLOUR
+    );
+    skin.BindQuad(
+        supKrnl.Nodes[2], supTip.Nodes[2],
+        supTip.Nodes[0], supKrnl.Nodes[0],
+        0, FLIPARM_KRNLCOLOUR
+    );
+    skin.BindQuad(
+        supTip.Nodes[2], supKrnl.Nodes[2],
+        supKrnl.Nodes[1], supTip.Nodes[1],
+        0, FLIPARM_KRNLCOLOUR
+    );
+    skin.BindQuad(
+        supTip.Nodes[2], supTip.Nodes[1],
+        supTip.Nodes[4], supTip.Nodes[5],
+        0, FLIPARM_TIPCOLOUR
+    );
+    skin.BindQuad(
+        supTip.Nodes[5], supTip.Nodes[3],
+        supTip.Nodes[0], supTip.Nodes[2],
+        0, FLIPARM_TIPCOLOUR
+    );
+    skin.BindQuad(
+        supTip.Nodes[0], supTip.Nodes[3],
+        supTip.Nodes[4], supTip.Nodes[1],
+        0, FLIPARM_TIPCOLOUR
+    );
+    skin.BindTria(supTip.Nodes[4], supTip.Nodes[3], supTip.Nodes[5],
+        0, FLIPARM_TIPCOLOUR);
+    skin.BindTria(supKrnl.Nodes[0], supKrnl.Nodes[1], supKrnl.Nodes[2],
+        0, FLIPARM_TIPCOLOUR);
     end;
   end;
   Entities.Add(skin);
@@ -120,17 +190,19 @@ begin
 
   if m_phase < m_waitSteps then
     exit
-  else if m_phase = m_waitSteps then
+  else if m_phase = m_waitSteps then begin
     if TryGrab(Nil(*TODO*), True, e) then
-      InanimateObjects.Add(e)
-  else if m_phase < m_waitSteps + m_moveSteps then
-    RotateAround(GetRotatedPoint(m_c), 0, direction * (pi/2.0) / m_moveSteps, 0)
+      InanimateObjects.Add(e);
+    Entities[FlipArm_Tip].RotateAround(GetRotatedPoint(m_c), 0, direction * (pi/2.0) / m_moveSteps, 0)
+  end else if m_phase < m_waitSteps + m_moveSteps then
+    Entities[FlipArm_Tip].RotateAround(GetRotatedPoint(m_c), 0, direction * (pi/2.0) / m_moveSteps, 0)
   else if m_phase = m_waitSteps + m_moveSteps then begin
-    if InanimateObjects.Count > 0 then
+    if InanimateObjects.Count > 0 then begin
       TryStick(Nil(*TODO*), True, InanimateObjects[0]);
-    RotateAround(GetRotatedPoint(m_c), 0, direction * (-pi/2.0) / m_returnSteps, 0);
+    end;
+    Entities[FlipArm_Tip].RotateAround(GetRotatedPoint(m_c), 0, direction * (-pi/2.0) / m_returnSteps, 0);
   end else
-    RotateAround(GetRotatedPoint(m_c), 0, direction * (-pi/2.0) / m_returnSteps, 0);
+    Entities[FlipArm_Tip].RotateAround(GetRotatedPoint(m_c), 0, direction * (-pi/2.0) / m_returnSteps, 0);
 end;
 
 end.

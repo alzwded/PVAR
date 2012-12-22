@@ -18,7 +18,7 @@ interface
 uses
   Classes, SysUtils, FileUtil, Forms, Controls, Graphics, Dialogs, ExtCtrls,
   GfxUtils, CoreUtils, LCLType, TestUtils, TestConveyor, Cartof, Windows, Math,
-  Provider, GrimReaper, Rotator;
+  Provider, GrimReaper, Rotator, FlipArm;
 
 const
   DEFAULT_CAPTION = 'JakRandr - F1 for help';
@@ -32,10 +32,11 @@ const
   ROOM_Z_LOW = 800;
   ROOM_Z_HIGH = 3000;
 
-  PROVIDER_CLOCK = 15000;
-  CONVEYOR_CLOCK = 10;
+  PROVIDER_CLOCK = 15000; // TODO
+  CONVEYOR_CLOCK = 100;
   SIDE_CONVEYORS_OFFSET = 47;
   PARTS_STOCK = 20;
+  FLIPARM_OFFSET = 310;
 
 type
 
@@ -103,6 +104,7 @@ var
   gravity: TTestConveyor;
   reaper: TGrimReaper;
   rotator: TRotator;
+  fliparm: TFlipArm;
   e: IWorldEntity;
   t: TPolygon;
   i: integer;
@@ -171,6 +173,12 @@ begin
   reaper.InputSource(gravity);
   m_worldEntities.Add(reaper);
 
+  fliparm := TFlipArm.FlipArm(
+        Point3DFromCoords(950, SIDE_CONVEYORS_OFFSET + FLIPARM_HEIGHT + 35, -FLIPARM_OFFSET),
+        CONVEYOR_CLOCK,
+        faoLeft,
+        100, 10, 30);
+  m_worldEntities.Add(fliparm);
 
   (* left *)
   producer := TProvider.Grabber(
@@ -199,6 +207,13 @@ begin
         Point3DFromCoords(1000, -800, 500));
   reaper.InputSource(gravity);
   m_worldEntities.Add(reaper);
+
+  fliparm := TFlipArm.FlipArm(
+        Point3DFromCoords(950, SIDE_CONVEYORS_OFFSET + FLIPARM_HEIGHT + 35, FLIPARM_OFFSET),
+        CONVEYOR_CLOCK,
+        faoRight,
+        100, 10, 30);
+  m_worldEntities.Add(fliparm);
 
   ToggleMotion;
 end;
