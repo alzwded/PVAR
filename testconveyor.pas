@@ -5,7 +5,7 @@ unit TestConveyor;
 interface
 
 uses
-  Classes, SysUtils, CoreUtils, GfxUtils, Graphics, Math;
+  Classes, SysUtils, CoreUtils, GfxUtils, Graphics, Math, BuildableRobot;
 
 const
   CONVEYOR_SPEED = 5;
@@ -15,12 +15,13 @@ const
   MAX_GRAVITY = 113.0;
 
 type
-  TTestConveyor = class(AGrabber)
+  TTestConveyor = class(ASticker)
     constructor Conveyor(c: TPoint3D; intrval: cardinal; nbPlates: integer = 9; width: integer = 120);
     constructor Ghost(c: TPoint3D; intrval: cardinal);
     procedure Init; override;
     procedure Loop; override;
     function GetTranslationVectorPerFrame: TPoint3D;
+    function TryReceive(bbox: PBoundingBox; extract: boolean; e: IWorldEntity): boolean; override;
   private
     m_platesEnd: integer;
     m_support: TSupport;
@@ -355,6 +356,19 @@ begin
         c.y + PLATE_LENGTH + 5, c.z + PLATE_LENGTH / 2);
 
   GrabbingBox := @m_grabbingBox;
+end;
+
+function TTestConveyor.TryReceive(bbox: PBoundingBox; extract: boolean; e: IWorldEntity): boolean;
+var
+  i: integer;
+begin
+  for i := 0 to InanimateObjects.Count - 1 do begin
+    if (InanimateObjects[i] is TBuildableRobot)
+            and BoundingBoxesIntersect(bbox, InanimateObjects[i].GetBoundingBox)
+    then begin
+      (InanimateObjects[i] as TBuildableRobot).Stick(e);
+    end;
+  end;
 end;
 
 end.

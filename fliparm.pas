@@ -33,10 +33,12 @@ type
       waitSteps, moveSteps, returnSteps: integer);
     procedure Init; override;
     procedure Loop; override;
+    function GetBoundingBox: PBoundingBox; override;
   private
     m_waitSteps, m_moveSteps, m_returnSteps: integer;
     m_orientation: TFlipArmOrientation;
     m_phase: integer;
+    m_bbox: TBoundingBox;
   end;
 
 implementation
@@ -170,8 +172,23 @@ begin
     end;
   end;
   Entities.Add(skin);
+end;
 
-  AddReceivingBox(Point3DFromCoords(rp.x - 125, rp.y, rp.z + 8), 10);
+function TFlipArm.GetBoundingBox: PBoundingBox;
+var
+  p1: TPoint3D;
+  p2: TPoint3D;
+begin
+  p1 := GetRotatedPoint( (Entities[FlipArm_Tip] as TSupport).Nodes[3]^ );
+  p2 := GetRotatedPoint( (Entities[FlipArm_Tip] as TSupport).Nodes[1]^ );
+  p1 := Point3DFromCoords(
+        (p1.x + p2.x) / 2,
+        (p1.y + p2.y) / 2,
+        (p1.z + p2.z) / 2);
+
+  m_bbox.p1 := Point3DFromCoords(p1.x - 10, p1.y - 10, p1.z - 10);
+  m_bbox.p2 := Point3DFromCoords(p1.x + 10, p1.y + 10, p1.z + 10);
+  GetBoundingBox := @m_bbox;
 end;
 
 procedure TFlipArm.Loop;
@@ -191,14 +208,14 @@ begin
   if m_phase < m_waitSteps then
     exit
   else if m_phase = m_waitSteps then begin
-    if TryGrab(Nil(*TODO*), True, e) then
+    if TryGrab(GetBoundingBox, True, e) then
       InanimateObjects.Add(e);
     Entities[FlipArm_Tip].RotateAround(GetRotatedPoint(m_c), 0, direction * (pi/2.0) / m_moveSteps, 0)
   end else if m_phase < m_waitSteps + m_moveSteps then
     Entities[FlipArm_Tip].RotateAround(GetRotatedPoint(m_c), 0, direction * (pi/2.0) / m_moveSteps, 0)
   else if m_phase = m_waitSteps + m_moveSteps then begin
     if InanimateObjects.Count > 0 then begin
-      TryStick(Nil(*TODO*), True, InanimateObjects[0]);
+      TryStick(GetBoundingBox, True, InanimateObjects[0]);
     end;
     Entities[FlipArm_Tip].RotateAround(GetRotatedPoint(m_c), 0, direction * (-pi/2.0) / m_returnSteps, 0);
   end else

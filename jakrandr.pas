@@ -18,7 +18,7 @@ interface
 uses
   Classes, SysUtils, FileUtil, Forms, Controls, Graphics, Dialogs, ExtCtrls,
   GfxUtils, CoreUtils, LCLType, TestUtils, TestConveyor, Cartof, Windows, Math,
-  Provider, GrimReaper, Rotator, FlipArm;
+  Provider, GrimReaper, Rotator, FlipArm, BuildableRobot;
 
 const
   DEFAULT_CAPTION = 'JakRandr - F1 for help';
@@ -33,7 +33,7 @@ const
   ROOM_Z_HIGH = 3000;
 
   CONVEYOR_CLOCK = 120;
-  SIDE_CONVEYORS_OFFSET = 47;
+  SIDE_CONVEYORS_OFFSET = BR_ARM_TO_WAIST_OFFSET;
   PARTS_STOCK = 20;
   FLIPARM_OFFSET = 310;
   FLIPARM_COMPENSATION = 38;

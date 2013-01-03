@@ -8,8 +8,7 @@ uses
   {$ENDIF}{$ENDIF}
   Interfaces, // this includes the LCL widgetset
   Forms, JakRandr, GfxUtils, CoreUtils, TestUtils, TestConveyor, Cartof,
-Provider, GrimReaper, Rotator, FlipArm
-  { you can add units after this };
+Provider, GrimReaper, Rotator, FlipArm, BuildableRobot;
 
 {$R *.res}
 

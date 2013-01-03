@@ -135,7 +135,7 @@ type
   protected
     (* caller calls aSuccess := aObject.TryGive(GetBoundingBox(), aItem)
        removes item from list without erasing it and returns it in e *)
-    function TryGive(bbox: PBoundingBox; extract: boolean; var e: IWorldEntity): boolean;
+    function TryGive(bbox: PBoundingBox; extract: boolean; var e: IWorldEntity): boolean; virtual;
   private
     m_inanimateObjects: TListOfWorldEntities;
     m_inputs: TListOfGrabbers;
@@ -149,16 +149,12 @@ type
     constructor Sticker(c: TPoint3D; ntrvl: cardinal);
     destructor Destroy; override;
     procedure OutputSource(src: ASticker);
-    procedure AddReceivingBox(offset: TPoint3D; l: real);
-    procedure AddReceivingBox(bbox: TBoundingBox);
   public
     function TryStick(bbox: PBoundingBox; extract: Boolean; e: IWorldEntity): boolean;
   protected
-    function TryReceive(bbox: PBoundingBox; extract: Boolean; e: IWorldEntity): boolean;
+    function TryReceive(bbox: PBoundingBox; extract: Boolean; e: IWorldEntity): boolean; virtual;
   private
     m_outputs: TListOfStickers;
-    m_receivingBoxes: array of TBoundingBox;
-    m_receivingBoxesCount: integer;
   end;
 
   (* flexible skin *)
@@ -591,14 +587,12 @@ constructor ASticker.Sticker(c: TPoint3D; ntrvl: cardinal);
 begin
   inherited Grabber(c, ntrvl);
   m_outputs := TListOfStickers.Create;
-  m_receivingBoxesCount := 0;
 end;
 
 destructor ASticker.Destroy;
 begin
   m_outputs.Clear;
   m_outputs.Free;
-  SetLength(m_receivingBoxes, 0);
   inherited;
 end;
 
@@ -626,44 +620,17 @@ function ASticker.TryReceive(bbox: PBoundingBox; extract: boolean; e: IWorldEnti
 var
   i: integer;
 begin
-  for i := 0 to m_receivingBoxesCount - 1 do begin
-    if BoundingBoxesIntersect(bbox, @m_receivingBoxes[i]) then begin
-      InanimateObjects.Add(e);
+  for i := 0 to InanimateObjects.Count - 1 do begin
+    if BoundingBoxesIntersect(bbox, InanimateObjects[i].GetBoundingBox) then
+    begin
+      if extract then
+        InanimateObjects.Add(e);
       TryReceive := true;
       exit;
     end;
   end;
 
   TryReceive := false;
-end;
-
-procedure ASticker.AddReceivingBox(offset: TPoint3D; l: real);
-var
-  rp: TPoint3D;
-begin
-  rp := GetRotatedPoint(m_c);
-
-  SetLength(m_receivingBoxes, m_receivingBoxesCount + 1);
-
-  m_receivingBoxes[m_receivingBoxesCount].p1 :=
-        Point3DFromCoords(
-                rp.x + offset.x - l / 2,
-                rp.y + offset.y - l / 2,
-                rp.z + offset.z - l / 2);
-  m_receivingBoxes[m_receivingBoxesCount].p2 :=
-        Point3DFromCoords(
-                rp.x + offset.x + l / 2,
-                rp.y + offset.y + l / 2,
-                rp.z + offset.z + l / 2);
-
-  inc(m_receivingBoxesCount);
-end;
-
-procedure ASticker.AddReceivingBox(bbox: TBoundingBox);
-begin
-  SetLength(m_receivingBoxes, m_receivingBoxesCount + 1);
-  m_receivingBoxes[m_receivingBoxesCount] := bbox;
-  inc(m_receivingBoxesCount);
 end;
 
 (* AWorldEntity *)
