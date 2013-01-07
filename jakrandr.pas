@@ -44,7 +44,7 @@ const
 
   PROVIDER_CLOCK = CONVEYOR_CLOCK;
   PROVIDERS_MAX = FLIPARMS_WAIT + FLIPARMS_RETURN + FLIPARMS_MOVE; // sum of FLIPARMS frames
-  PROVIDERS_MAIN = FLIPARMS_MOVE;  // = FLIPARMS_MOVE
+  PROVIDERS_MAIN = FLIPARMS_MOVE + 3;  // = FLIPARMS_MOVE
   PROVIDERS_SIDE = 0;
 
 type
@@ -110,6 +110,7 @@ procedure TJakRandr.AddEntities;
 var
   producer: TProvider;
   conveyor: TTestConveyor;
+  mainConveyor: TTestConveyor;
   gravity: TTestConveyor;
   reaper: TGrimReaper;
   rotator: TRotator;
@@ -126,7 +127,7 @@ begin
   m_worldEntities.Add(producer);
 
   for i := 1 to PARTS_STOCK do begin
-    e := TCartof.Part(Point3DFromCoords(0, 0, 0));
+    e := TBuildableRobot.Compound(Point3DFromCoords(0, 0, 0), PROVIDER_CLOCK);
     producer.AddStock(e);
   end;
 
@@ -136,6 +137,7 @@ begin
   conveyor.Rotate(0, pi / 2, 0);
   conveyor.InputSource(producer);
   m_worldEntities.Add(conveyor);
+  mainConveyor := conveyor;
 
   rotator := TRotator.Rotator(
         Point3DFromCoords(1400, 100, 0),
@@ -157,30 +159,30 @@ begin
 
   (* right *)
   producer := TProvider.Grabber(
-        Point3DFromCoords(0, 35 + SIDE_CONVEYORS_OFFSET, -500), PROVIDER_CLOCK);
+        Point3DFromCoords(0, 35 + SIDE_CONVEYORS_OFFSET + 4, -560), PROVIDER_CLOCK);
   producer.ProvideOnFrame := PROVIDERS_SIDE;
   producer.MaxFrame := PROVIDERS_MAX;
   m_worldEntities.Add(producer);
 
   for i := 1 to PARTS_STOCK do begin
-    e := TCartof.Part(Point3DFromCoords(0, 0, 0));
+    e := TRobotPart.RobotPart(Point3DFromCoords(0, 0, 0), rptRightArm);
     producer.AddStock(e);
   end;
 
   conveyor := TTestConveyor.Conveyor(
-        Point3DFromCoords(0, SIDE_CONVEYORS_OFFSET, -500),
+        Point3DFromCoords(0, SIDE_CONVEYORS_OFFSET, -560),
         CONVEYOR_CLOCK, 20);
   conveyor.Rotate(0, pi / 2, 0);
   conveyor.InputSource(producer);
   m_worldEntities.Add(conveyor);
 
   gravity := TTestConveyor.Ghost(
-        Point3DFromCoords(1100, SIDE_CONVEYORS_OFFSET, -500), CONVEYOR_CLOCK);
+        Point3DFromCoords(1100, SIDE_CONVEYORS_OFFSET, -560), CONVEYOR_CLOCK);
   gravity.InputSource(conveyor);
   m_worldEntities.Add(gravity);
 
   reaper := TGrimReaper.GrimReaper(
-        Point3DFromCoords(1000, -800, -500));
+        Point3DFromCoords(1050, -800, -560));
   reaper.InputSource(gravity);
   m_worldEntities.Add(reaper);
 
@@ -189,34 +191,36 @@ begin
         CONVEYOR_CLOCK,
         faoLeft,
         FLIPARMS_WAIT, FLIPARMS_MOVE, FLIPARMS_RETURN);
+  fliparm.InputSource(conveyor);
+  fliparm.OutputSource(mainConveyor);
   m_worldEntities.Add(fliparm);
 
   (* left *)
   producer := TProvider.Grabber(
-        Point3DFromCoords(0, 35 + SIDE_CONVEYORS_OFFSET, 500), PROVIDER_CLOCK);
+        Point3DFromCoords(0, 35 + SIDE_CONVEYORS_OFFSET, 560), PROVIDER_CLOCK);
   producer.ProvideOnFrame := PROVIDERS_SIDE;
   producer.MaxFrame := PROVIDERS_MAX;
   m_worldEntities.Add(producer);
 
   for i := 1 to PARTS_STOCK do begin
-    e := TCartof.Part(Point3DFromCoords(0, 0, 0));
+    e := TRobotPart.RobotPart(Point3DFromCoords(0, 0, 0), rptLeftArm);
     producer.AddStock(e);
   end;
 
   conveyor := TTestConveyor.Conveyor(
-        Point3DFromCoords(0, SIDE_CONVEYORS_OFFSET, 500),
+        Point3DFromCoords(0, SIDE_CONVEYORS_OFFSET, 560),
         CONVEYOR_CLOCK, 20);
   conveyor.Rotate(0, pi / 2, 0);
   conveyor.InputSource(producer);
   m_worldEntities.Add(conveyor);
 
   gravity := TTestConveyor.Ghost(
-        Point3DFromCoords(1100, SIDE_CONVEYORS_OFFSET, 500), CONVEYOR_CLOCK);
+        Point3DFromCoords(1100, SIDE_CONVEYORS_OFFSET, 560), CONVEYOR_CLOCK);
   gravity.InputSource(conveyor);
   m_worldEntities.Add(gravity);
 
   reaper := TGrimReaper.GrimReaper(
-        Point3DFromCoords(1000, -800, 500));
+        Point3DFromCoords(1050, -800, 560));
   reaper.InputSource(gravity);
   m_worldEntities.Add(reaper);
 
@@ -225,6 +229,8 @@ begin
         CONVEYOR_CLOCK,
         faoRight,
         FLIPARMS_WAIT, FLIPARMS_MOVE, FLIPARMS_RETURN);
+  fliparm.InputSource(conveyor);
+  fliparm.OutputSource(mainConveyor);
   m_worldEntities.Add(fliparm);
 
   ToggleMotion;

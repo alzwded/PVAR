@@ -586,7 +586,7 @@ end;
 constructor ASticker.Sticker(c: TPoint3D; ntrvl: cardinal);
 begin
   inherited Grabber(c, ntrvl);
-  m_outputs := TListOfStickers.Create;
+  m_outputs := TListOfStickers.Create(False);
 end;
 
 destructor ASticker.Destroy;

@@ -5,7 +5,7 @@ unit TestConveyor;
 interface
 
 uses
-  Classes, SysUtils, CoreUtils, GfxUtils, Graphics, Math, BuildableRobot;
+  Classes, SysUtils, CoreUtils, GfxUtils, Graphics, BuildableRobot;
 
 const
   CONVEYOR_SPEED = 5;
@@ -181,13 +181,11 @@ var
   aDistance: real;
   side: TPlanarity;
   angle: real;
-  OB: TPoint3D;
   frontPlane, backPlane, horizPlane: TPolygon;
   i: integer;
   vect: TPoint3D;
   cosz, sinz: real;
   crAngle: real;
-  arbitraryValue: real;
   e: IWorldEntity;
   rp: TPoint3D;
 begin
@@ -351,9 +349,9 @@ var
 begin
   c := GetRotatedPoint(m_c);
   m_grabbingBox.p1 := Point3DFromCoords(c.x - PLATE_LENGTH / 2,
-        c.y + PLATE_LENGTH, c.z - PLATE_LENGTH / 2);
+        c.y + 35, c.z - PLATE_LENGTH / 2);
   m_grabbingBox.p2 := Point3DFromCoords(c.x + PLATE_LENGTH / 2,
-        c.y + PLATE_LENGTH + 5, c.z + PLATE_LENGTH / 2);
+        c.y + 35 + 5, c.z + PLATE_LENGTH / 2);
 
   GrabbingBox := @m_grabbingBox;
 end;
@@ -367,8 +365,11 @@ begin
             and BoundingBoxesIntersect(bbox, InanimateObjects[i].GetBoundingBox)
     then begin
       (InanimateObjects[i] as TBuildableRobot).Stick(e);
+      TryReceive := true;
+      exit;
     end;
   end;
+  TryReceive := false;
 end;
 
 end.

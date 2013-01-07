@@ -19,6 +19,7 @@ const
   BR_ARM_TO_WAIST_OFFSET = 77;
   BR_LEG_TO_WAIST_OFFSET = 0;
   BR_HEAD_TO_WAIST_OFFSET = 110;
+  BR_HALF_WIDTH = 50;
 
 type
   TRobotPartType = (
@@ -32,8 +33,10 @@ type
   TRobotPart = class(TPart)
     constructor RobotPart(cntr: TPoint3D; leType: TRobotPartType);
     procedure InitMesh; override;
+    function GetBoundingBox: PBoundingBox; override;
   private
     m_type: TRobotPartType;
+    m_bbox: TBoundingBox;
   public
     property MyType: TRobotPartType read m_type;
   private
@@ -46,10 +49,12 @@ type
     procedure Stick(e: IWorldEntity);
     procedure Init; override;
     procedure Loop; override;
+    function GetBoundingBox: PBoundingBox; override;
   private
     m_leftArm, m_rightArm: TRobotPart;
-    m_leftLeft, m_rightLeg: TRobotPart;
+    m_leftLeg, m_rightLeg: TRobotPart;
     m_head: TRobotPart;
+    m_bbox: TBoundingBox;
   end;
 
 implementation
@@ -62,7 +67,7 @@ begin
   inherited Part(cntr);
 end;
 
-function TRobotPart.GetAArm: IEntity3D;
+procedure TRobotPart.GetAArm;
 var
   e: TPolygon;
   rp: TPoint3D;
@@ -71,21 +76,21 @@ begin
 
   e := TPolygon.Quad(
         Point3DFromCoords(rp.x, rp.y + 20, rp.z),
-        Point3DFromCoords(rp.x, rp.y - 20, rp.z),
-        Point3DFromCoords(rp.x + 100, rp.y - 20, rp.z),
+        Point3DFromCoords(rp.x, rp.y, rp.z),
+        Point3DFromCoords(rp.x + 100, rp.y, rp.z),
         Point3DFromCoords(rp.x + 100, rp.y + 20, rp.z)
   );
-  e.ContourColour := NICE_YELLOW;
+  e.ContourColour := 0;
   e.FillColour := NICE_GREEN;
   Geometry.Add(e);
 
   e := TPolygon.Quad(
         Point3DFromCoords(rp.x, rp.y + 20, rp.z),
         Point3DFromCoords(rp.x + 100, rp.y + 20, rp.z),
-        Point3DFromCoords(rp.x + 100, rp.y - 20, rp.z),
-        Point3DFromCoords(rp.x, rp.y - 20, rp.z)
+        Point3DFromCoords(rp.x + 100, rp.y, rp.z),
+        Point3DFromCoords(rp.x, rp.y, rp.z)
   );
-  e.ContourColour := NICE_YELLOW;
+  e.ContourColour := 0;
   e.FillColour := NICE_GREEN;
   Geometry.Add(e);
 end;
@@ -114,6 +119,16 @@ begin
   e.ContourColour := NICE_YELLOW;
   e.FillColour := NICE_GREEN;
   Geometry.Add(e);
+end;
+
+function TRobotPart.GetBoundingBox: PBoundingBox;
+var
+  rp: TPoint3D;
+begin
+  rp := GetRotatedPoint(Location);
+  m_bbox.p1 := Point3DFromCoords(rp.x - 10, rp.y - 10, rp.z - 10);
+  m_bbox.p2 := Point3DFromCoords(rp.x + 10, rp.y + 10, rp.z + 10);
+  GetBoundingBox := @m_bbox;
 end;
 
 procedure TRobotPart.GetAHead;
@@ -229,16 +244,16 @@ var
   sp: TSplosion;
   rp: TPoint3D;
   body: TPart;
-  e: IEntity3D;
+  e: TPolygon;
 begin
   rp := GetRotatedPoint(Centre);
 
   (* splojunz *)
   sp := TSplosion.Splosion(Point3DFromCoords(
-        rp.x, rp.y + BR_ARM_TO_WAIST_OFFSET, rp.z - 50));
+        rp.x, rp.y + BR_ARM_TO_WAIST_OFFSET, rp.z - BR_HALF_WIDTH));
   Entities.Add(sp);
   sp := TSplosion.Splosion(Point3DFromCoords(
-        rp.x, rp.y + BR_ARM_TO_WAIST_OFFSET, rp.z + 50));
+        rp.x, rp.y + BR_ARM_TO_WAIST_OFFSET, rp.z + BR_HALF_WIDTH));
   Entities.Add(sp);
   sp := TSplosion.Splosion(Point3DFromCoords(
         rp.x, rp.y + BR_LEG_TO_WAIST_OFFSET, rp.z));
@@ -248,6 +263,80 @@ begin
   Entities.Add(sp);
 
   (* body *)
+
+  body := TPart.Part(rp);
+  Entities.Add(body);
+
+  (* back *)
+  e := TPolygon.Quad(
+        Point3DFromCoords(rp.x, rp.y, rp.z - BR_HALF_WIDTH),
+        Point3DFromCoords(rp.x, rp.y, rp.z + BR_HALF_WIDTH),
+        Point3DFromCoords(rp.x, rp.y + BR_HEAD_TO_WAIST_OFFSET, rp.z + BR_HALF_WIDTH),
+        Point3DFromCoords(rp.x, rp.y + BR_HEAD_TO_WAIST_OFFSET, rp.z - BR_HALF_WIDTH)
+  );
+  e.ContourColour := 0;
+  e.FillColour := NICE_YELLOW;
+  body.Geometry.Add(e);
+  (* front *)
+  e := TPolygon.Quad(
+        Point3DFromCoords(rp.x + BR_HALF_WIDTH, rp.y, rp.z + BR_HALF_WIDTH),
+        Point3DFromCoords(rp.x + BR_HALF_WIDTH, rp.y, rp.z - BR_HALF_WIDTH),
+        Point3DFromCoords(rp.x + BR_HALF_WIDTH, rp.y + BR_HEAD_TO_WAIST_OFFSET, rp.z - BR_HALF_WIDTH),
+        Point3DFromCoords(rp.x + BR_HALF_WIDTH, rp.y + BR_HEAD_TO_WAIST_OFFSET, rp.z + BR_HALF_WIDTH)
+  );
+  e.ContourColour := 0;
+  e.FillColour := NICE_YELLOW;
+  body.Geometry.Add(e);
+  (* left *)
+  e := TPolygon.Quad(
+        Point3DFromCoords(rp.x + BR_HALF_WIDTH, rp.y, rp.z - BR_HALF_WIDTH),
+        Point3DFromCoords(rp.x, rp.y, rp.z - BR_HALF_WIDTH),
+        Point3DFromCoords(rp.x, rp.y + BR_HEAD_TO_WAIST_OFFSET, rp.z - BR_HALF_WIDTH),
+        Point3DFromCoords(rp.x + BR_HALF_WIDTH, rp.y + BR_HEAD_TO_WAIST_OFFSET, rp.z - BR_HALF_WIDTH)
+  );
+  e.ContourColour := 0;
+  e.FillColour := NICE_YELLOW;
+  body.Geometry.Add(e);
+  (* right *)
+  e := TPolygon.Quad(
+        Point3DFromCoords(rp.x + BR_HALF_WIDTH, rp.y, rp.z + BR_HALF_WIDTH),
+        Point3DFromCoords(rp.x + BR_HALF_WIDTH, rp.y + BR_HEAD_TO_WAIST_OFFSET, rp.z + BR_HALF_WIDTH),
+        Point3DFromCoords(rp.x, rp.y + BR_HEAD_TO_WAIST_OFFSET, rp.z + BR_HALF_WIDTH),
+        Point3DFromCoords(rp.x, rp.y, rp.z + BR_HALF_WIDTH)
+  );
+  e.ContourColour := 0;
+  e.FillColour := NICE_YELLOW;
+  body.Geometry.Add(e);
+  (* top *)
+  e := TPolygon.Quad(
+        Point3DFromCoords(rp.x + BR_HALF_WIDTH, rp.y + BR_HEAD_TO_WAIST_OFFSET, rp.z - BR_HALF_WIDTH),
+        Point3DFromCoords(rp.x, rp.y + BR_HEAD_TO_WAIST_OFFSET, rp.z - BR_HALF_WIDTH),
+        Point3DFromCoords(rp.x, rp.y + BR_HEAD_TO_WAIST_OFFSET, rp.z + BR_HALF_WIDTH),
+        Point3DFromCoords(rp.x + BR_HALF_WIDTH, rp.y + BR_HEAD_TO_WAIST_OFFSET, rp.z + BR_HALF_WIDTH)
+  );
+  e.ContourColour := 0;
+  e.FillColour := NICE_YELLOW;
+  body.Geometry.Add(e);
+  (* bottom *)
+  e := TPolygon.Quad(
+        Point3DFromCoords(rp.x + BR_HALF_WIDTH, rp.y, rp.z - BR_HALF_WIDTH),
+        Point3DFromCoords(rp.x + BR_HALF_WIDTH, rp.y, rp.z + BR_HALF_WIDTH),
+        Point3DFromCoords(rp.x, rp.y, rp.z + BR_HALF_WIDTH),
+        Point3DFromCoords(rp.x, rp.y, rp.z - BR_HALF_WIDTH)
+  );
+  e.ContourColour := 0;
+  e.FillColour := NICE_YELLOW;
+  body.Geometry.Add(e);
+end;
+
+function TBuildableRobot.GetBoundingBox: PBoundingBox;
+var
+  rp: TPoint3D;
+begin
+  rp := GetRotatedPoint(Centre);
+  m_bbox.p1 := Point3DFromCoords(rp.x, rp.y, rp.z - BR_HALF_WIDTH - 1);
+  m_bbox.p2 := Point3DFromCoords(rp.x + BR_HALF_WIDTH, rp.y + BR_HEAD_TO_WAIST_OFFSET, rp.z + BR_HALF_WIDTH + 1);
+  GetBoundingBox := @m_bbox;
 end;
 
 procedure TBuildableRobot.Loop;

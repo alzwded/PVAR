@@ -1,5 +1,5 @@
 object JakRandr: TJakRandr
-  Left = 306
+  Left = 105
   Height = 480
   Top = 82
   Width = 640

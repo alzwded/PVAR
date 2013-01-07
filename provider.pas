@@ -47,7 +47,7 @@ procedure TProvider.Render(engine: PJakRandrEngine); begin end;
 procedure TProvider.Init;
 begin
   m_provideOnFrame := PROVIDE_ON_FRAME;
-  m_maxFrame := PROVIDER_MAX_FRAME
+  m_maxFrame := PROVIDER_MAX_FRAME;
   //m_firstStart := true;
 end;
 
@@ -55,7 +55,7 @@ procedure TProvider.Loop;
 begin
   if (InanimateObjects.Count > 0) and (m_pc = m_provideOnFrame) then begin
     InanimateObjects[0].MoveTo(GetRotatedPoint(Centre));
-    InanimateObjects[0].Hidden := False;;
+    InanimateObjects[0].Hidden := False;
   end;
 
   if m_maxFrame > m_provideOnFrame then
