@@ -381,17 +381,25 @@ end;
 
 procedure TJakRandrEngine.CommitScene;
 var
-  i: integer;
+  i, j: integer;
+  max: integer;
+  e: IEntity3D;
 begin
+  (* yes I know this is wrong, shut up.
+     it was supposed to do more swapping
+     this... sort of works, and it's still reasonably fast *)
   while m_entities.Count > 1 do begin
-    if m_visu.InOrder(m_entities[0], m_entities[1]) then begin
-      m_visu.Draw(m_entities[0]);
-      m_entities.Delete(0);
-    end else begin
-      // swap suffices
-      m_visu.Draw(m_entities[1]);
-      m_entities.Delete(1);
+    e := m_entities[0];
+    if 3 >= m_entities.Count then
+      max := m_entities.Count - 1
+    else
+      max := 3;
+    for j := 1 to max do begin
+      if not m_visu.InOrder(e, m_entities[j]) then
+        e := m_entities[j];
     end;
+    m_visu.Draw(e);
+    m_entities.Remove(e);
   end;
 
   if m_entities.Count = 1 then
