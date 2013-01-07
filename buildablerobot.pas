@@ -19,7 +19,7 @@ const
   BR_ARM_TO_WAIST_OFFSET = 57;
   BR_LEG_TO_WAIST_OFFSET = 0;
   BR_HEAD_TO_WAIST_OFFSET = 110;
-  BR_HALF_WIDTH = 50;
+  BR_HALF_WIDTH = 42;
 
 type
   TRobotPartType = (
@@ -250,10 +250,10 @@ begin
 
   (* splojunz *)
   sp := TSplosion.Splosion(Point3DFromCoords(
-        rp.x, rp.y + BR_ARM_TO_WAIST_OFFSET, rp.z - BR_HALF_WIDTH));
+        rp.x, rp.y + BR_ARM_TO_WAIST_OFFSET, rp.z + BR_HALF_WIDTH));
   Entities.Add(sp);
   sp := TSplosion.Splosion(Point3DFromCoords(
-        rp.x, rp.y + BR_ARM_TO_WAIST_OFFSET, rp.z + BR_HALF_WIDTH));
+        rp.x, rp.y + BR_ARM_TO_WAIST_OFFSET, rp.z - BR_HALF_WIDTH));
   Entities.Add(sp);
   sp := TSplosion.Splosion(Point3DFromCoords(
         rp.x, rp.y + BR_LEG_TO_WAIST_OFFSET, rp.z));

@@ -54,6 +54,8 @@ const
   LIGHT_PERCENTAGE = 0.6;
   SQRT_PERCENTAGE = 0.2;
 
+  MAGIC_SORTING_NUMBER = 4;
+
 type
   TPoint3D = record
     x, y, z: real;
@@ -390,10 +392,10 @@ begin
      this... sort of works, and it's still reasonably fast *)
   while m_entities.Count > 1 do begin
     e := m_entities[0];
-    if 3 >= m_entities.Count then
+    if MAGIC_SORTING_NUMBER >= m_entities.Count then
       max := m_entities.Count - 1
     else
-      max := 3;
+      max := MAGIC_SORTING_NUMBER;
     for j := 1 to max do begin
       if not m_visu.InOrder(e, m_entities[j]) then
         e := m_entities[j];
