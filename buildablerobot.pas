@@ -126,8 +126,13 @@ var
   rp: TPoint3D;
 begin
   rp := GetRotatedPoint(Location);
-  m_bbox.p1 := Point3DFromCoords(rp.x - 10, rp.y - 10, rp.z - 10);
-  m_bbox.p2 := Point3DFromCoords(rp.x + 10, rp.y + 10, rp.z + 10);
+  if m_type = rptHead then begin
+    m_bbox.p1 := Point3DFromCoords(rp.x, rp.y, rp.z -40);
+    m_bbox.p2 := Point3DFromCoords(rp.x + 80, rp.y + 80, rp.z + 40);
+  end else begin
+    m_bbox.p1 := Point3DFromCoords(rp.x - 10, rp.y - 10, rp.z - 10);
+    m_bbox.p2 := Point3DFromCoords(rp.x + 10, rp.y + 10, rp.z + 10);
+  end;
   GetBoundingBox := @m_bbox;
 end;
 

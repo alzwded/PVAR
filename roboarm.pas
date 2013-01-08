@@ -42,6 +42,9 @@ type
     m_waitSteps, m_moveSteps, m_returnSteps: integer;
     m_phase: integer;
     m_bbox: TBoundingBox;
+
+    (* rotate the crank arm thingy *)
+    procedure RotateThings(fwd: boolean);
   end;
 
 implementation
@@ -280,13 +283,39 @@ begin
         0, NICE_GREEN);
 end;
 
+procedure TRoboArm.RotateThings(fwd: boolean);
+var
+  rp: TPoint3D;
+  direction, ratio: real;
+  specialAngle: real;
+begin
+  rp := GetRotatedPoint(Centre);
+
+  if fwd then begin direction := 1.0; ratio := m_moveSteps; end
+  else begin direction := -1.0; ratio := m_returnSteps; end;
+
+  Entities[RoboArm_Grapple].RotateAround(rp, 0, direction * (pi/2.0) / ratio, 0);
+  Entities[RoboArm_Grapple].Rotate(0, direction * (pi/2.0) / ratio, 0);
+  Entities[RoboArm_Median].RotateAround(rp, 0, direction * (pi/2.0) / ratio, 0);
+  Entities[RoboArm_Median].Rotate(0, direction * (pi/2.0) / ratio, 0);
+  Entities[RoboArm_Pivot].RotateAround(rp, 0, direction * (pi/2.0) / ratio, 0);
+  Entities[RoboArm_Pivot].Rotate(0, direction * (pi/2.0) / ratio, 0);
+
+  specialAngle := (pi/6) / (m_moveSteps/2);
+  if (m_phase - m_waitSteps) > (m_moveSteps div 2) then
+    specialAngle := -specialAngle;
+
+  rp := GetRotatedPoint((Entities[RoboArm_Median] as TSupport).Nodes[0]^);
+
+  //Entities[RoboArm_Grapple].RotateAround(rp, 0, 0, specialAngle);
+end;
+
 procedure TRoboArm.Loop;
 var
   e: IWorldEntity;
   i: integer;
   p0, p1, dv: TPoint3D;
 begin
-  (*
   m_phase := (m_phase + 1) mod (m_waitSteps + m_moveSteps + m_returnSteps);
 
   if m_phase < m_waitSteps then
@@ -294,17 +323,17 @@ begin
   else if m_phase = m_waitSteps then begin
     if TryGrab(GetBoundingBox, True, e) then
       InanimateObjects.Add(e);
-    p0 := GetRotatedPoint((Entities[FlipArm_Tip] as TSupport).Nodes[0]^);
-    Entities[FlipArm_Tip].RotateAround(GetRotatedPoint(m_c), 0, (pi/2.0) / m_moveSteps, 0);
-    p1 := GetRotatedPoint((Entities[FlipArm_Tip] as TSupport).Nodes[0]^);
+    p0 := GetRotatedPoint((Entities[RoboArm_Grapple] as TSupport).Nodes[0]^);
+    RotateThings(true);
+    p1 := GetRotatedPoint((Entities[RoboArm_Grapple] as TSupport).Nodes[0]^);
     dv := Point3DFromCoords(p1.x - p0.x, p1.y - p0.y, p1.z - p0.z);
 
     for i := 0 to InanimateObjects.Count - 1 do
       InanimateObjects[i].Translate(dv);
   end else if m_phase < m_waitSteps + m_moveSteps then begin
-    p0 := GetRotatedPoint((Entities[FlipArm_Tip] as TSupport).Nodes[0]^);
-    Entities[FlipArm_Tip].RotateAround(GetRotatedPoint(m_c), 0, (pi/2.0) / m_moveSteps, 0);
-    p1 := GetRotatedPoint((Entities[FlipArm_Tip] as TSupport).Nodes[0]^);
+    p0 := GetRotatedPoint((Entities[RoboArm_Grapple] as TSupport).Nodes[0]^);
+    RotateThings(true);
+    p1 := GetRotatedPoint((Entities[RoboArm_Grapple] as TSupport).Nodes[0]^);
     dv := Point3DFromCoords(p1.x - p0.x, p1.y - p0.y, p1.z - p0.z);
     for i := 0 to InanimateObjects.Count - 1 do
       InanimateObjects[i].Translate(dv);
@@ -312,11 +341,10 @@ begin
     if InanimateObjects.Count > 0 then begin
       TryStick(GetBoundingBox, True, InanimateObjects[0]);
     end;
-    Entities[FlipArm_Tip].RotateAround(GetRotatedPoint(m_c), 0, (-pi/2.0) / m_returnSteps, 0);
+    RotateThings(false);
   end else begin
-    Entities[FlipArm_Tip].RotateAround(GetRotatedPoint(m_c), 0, (-pi/2.0) / m_returnSteps, 0);
+    RotateThings(false);
   end;
-  *)
 end;
 
 function TRoboArm.GetBoundingBox: PBoundingBox;

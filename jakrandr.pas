@@ -49,6 +49,17 @@ const
   FLIPARMS_MOVE = 10;
   FLIPARMS_RETURN = 20;
 
+  (*
+  // @210 we actually meet up with the head
+  ROBOARM_WAIT = 210;
+  ROBOARM_MOVE = 64; // @274/wait + 64 it meets up with the body
+  ROBOARM_RETURN = 20;
+  *)
+  // decent values: 63/64/23
+  ROBOARM_WAIT = 63;
+  ROBOARM_MOVE = 63;
+  ROBOARM_RETURN = 24;
+
   PROVIDER_CLOCK = CONVEYOR_CLOCK;
   PROVIDERS_MAX = FLIPARMS_WAIT + FLIPARMS_RETURN + FLIPARMS_MOVE; // sum of FLIPARMS frames
   PROVIDERS_MAIN = FLIPARMS_MOVE + 3;  // = FLIPARMS_MOVE
@@ -62,7 +73,7 @@ const
   HEAD_ARM_Y_OFFSET = 110;
 
   HEAD_CONV_X = HEAD_ARM_X_OFFSET - 290;
-  HEAD_CONV_Y = 0;
+  HEAD_CONV_Y = 120 - 35;
   HEAD_CONV_Z = -20 * PLATE_LENGTH + HEAD_ARM_Z_OFFSET * 2 + 70;
 
 type
@@ -256,9 +267,9 @@ begin
   roboarm := TRoboArm.RoboArm(
         Point3DFromCoords(HEAD_ARM_X_OFFSET, HEAD_ARM_Y_OFFSET, HEAD_ARM_Z_OFFSET),
         CONVEYOR_CLOCK,
-        100,
-        10,
-        10);
+        ROBOARM_WAIT,
+        ROBOARM_MOVE,
+        ROBOARM_RETURN);
   m_worldEntities.Add(roboarm);
 
   producer := TProvider.Grabber(
@@ -279,12 +290,12 @@ begin
   m_worldEntities.Add(conveyor);
 
   gravity := TTestConveyor.Ghost(
-        Point3DFromCoords(HEAD_CONV_X, 0, HEAD_CONV_Z + 21 * PLATE_LENGTH + 50), CONVEYOR_CLOCK);
+        Point3DFromCoords(HEAD_CONV_X, HEAD_CONV_Y, HEAD_CONV_Z + 21 * PLATE_LENGTH + 50), CONVEYOR_CLOCK);
   gravity.InputSource(conveyor);
   m_worldEntities.Add(gravity);
 
   reaper := TGrimReaper.GrimReaper(
-        Point3DFromCoords(HEAD_CONV_X + 50 - 25, -800, HEAD_CONV_Z + 50 + 21 * PLATE_LENGTH - 50));
+        Point3DFromCoords(HEAD_CONV_X + 50 - 25, -800 + HEAD_CONV_Y, HEAD_CONV_Z + 50 + 21 * PLATE_LENGTH - 50));
   reaper.InputSource(gravity);
   m_worldEntities.Add(reaper);
 
