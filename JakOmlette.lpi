@@ -176,11 +176,10 @@
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
         <UnitName Value="JakRandr"/>
-        <IsVisibleTab Value="True"/>
         <EditorIndex Value="0"/>
         <WindowIndex Value="0"/>
-        <TopLine Value="61"/>
-        <CursorPos X="45" Y="78"/>
+        <TopLine Value="191"/>
+        <CursorPos X="26" Y="205"/>
         <UsageCount Value="216"/>
         <Loaded Value="True"/>
         <LoadedDesigner Value="True"/>
@@ -189,7 +188,7 @@
         <Filename Value="gfxutils.pas"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="GfxUtils"/>
-        <EditorIndex Value="3"/>
+        <EditorIndex Value="2"/>
         <WindowIndex Value="0"/>
         <TopLine Value="1566"/>
         <CursorPos X="1" Y="1575"/>
@@ -200,10 +199,10 @@
         <Filename Value="coreutils.pas"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="CoreUtils"/>
-        <EditorIndex Value="4"/>
+        <EditorIndex Value="3"/>
         <WindowIndex Value="0"/>
-        <TopLine Value="373"/>
-        <CursorPos X="1" Y="383"/>
+        <TopLine Value="584"/>
+        <CursorPos X="1" Y="594"/>
         <UsageCount Value="214"/>
         <Loaded Value="True"/>
       </Unit3>
@@ -211,7 +210,7 @@
         <Filename Value="testutils.pas"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="TestUtils"/>
-        <EditorIndex Value="8"/>
+        <EditorIndex Value="7"/>
         <WindowIndex Value="0"/>
         <TopLine Value="11"/>
         <CursorPos X="5" Y="20"/>
@@ -222,10 +221,10 @@
         <Filename Value="testconveyor.pas"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="TestConveyor"/>
-        <EditorIndex Value="9"/>
+        <EditorIndex Value="8"/>
         <WindowIndex Value="0"/>
-        <TopLine Value="353"/>
-        <CursorPos X="1" Y="365"/>
+        <TopLine Value="357"/>
+        <CursorPos X="37" Y="376"/>
         <UsageCount Value="327"/>
         <Loaded Value="True"/>
       </Unit5>
@@ -242,7 +241,7 @@
         <Filename Value="provider.pas"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="Provider"/>
-        <EditorIndex Value="7"/>
+        <EditorIndex Value="6"/>
         <WindowIndex Value="0"/>
         <TopLine Value="46"/>
         <CursorPos X="36" Y="50"/>
@@ -261,10 +260,10 @@
         <Filename Value="grimreaper.pas"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="GrimReaper"/>
-        <EditorIndex Value="2"/>
+        <EditorIndex Value="1"/>
         <WindowIndex Value="0"/>
-        <TopLine Value="1"/>
-        <CursorPos X="1" Y="1"/>
+        <TopLine Value="270"/>
+        <CursorPos X="25" Y="277"/>
         <UsageCount Value="492"/>
         <Loaded Value="True"/>
       </Unit9>
@@ -272,10 +271,10 @@
         <Filename Value="rotator.pas"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="Rotator"/>
-        <EditorIndex Value="1"/>
+        <EditorIndex Value="9"/>
         <WindowIndex Value="0"/>
-        <TopLine Value="94"/>
-        <CursorPos X="23" Y="102"/>
+        <TopLine Value="74"/>
+        <CursorPos X="34" Y="92"/>
         <UsageCount Value="354"/>
         <Loaded Value="True"/>
       </Unit10>
@@ -283,10 +282,10 @@
         <Filename Value="fliparm.pas"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="FlipArm"/>
-        <EditorIndex Value="5"/>
+        <EditorIndex Value="4"/>
         <WindowIndex Value="0"/>
-        <TopLine Value="209"/>
-        <CursorPos X="26" Y="215"/>
+        <TopLine Value="211"/>
+        <CursorPos X="14" Y="227"/>
         <UsageCount Value="228"/>
         <Loaded Value="True"/>
       </Unit11>
@@ -294,10 +293,11 @@
         <Filename Value="buildablerobot.pas"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="BuildableRobot"/>
+        <IsVisibleTab Value="True"/>
         <EditorIndex Value="10"/>
         <WindowIndex Value="0"/>
-        <TopLine Value="124"/>
-        <CursorPos X="61" Y="133"/>
+        <TopLine Value="382"/>
+        <CursorPos X="17" Y="383"/>
         <UsageCount Value="222"/>
         <Loaded Value="True"/>
       </Unit12>
@@ -307,140 +307,140 @@
         <WindowIndex Value="0"/>
         <TopLine Value="172"/>
         <CursorPos X="1" Y="182"/>
-        <UsageCount Value="5"/>
+        <UsageCount Value="4"/>
       </Unit13>
       <Unit14>
         <Filename Value="roboarm.pas"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="RoboArm"/>
-        <EditorIndex Value="6"/>
+        <EditorIndex Value="5"/>
         <WindowIndex Value="0"/>
-        <TopLine Value="344"/>
-        <CursorPos X="10" Y="347"/>
-        <UsageCount Value="69"/>
+        <TopLine Value="1"/>
+        <CursorPos X="51" Y="8"/>
+        <UsageCount Value="72"/>
         <Loaded Value="True"/>
       </Unit14>
     </Units>
     <JumpHistory Count="30" HistoryIndex="29">
       <Position1>
-        <Filename Value="jakrandr.pas"/>
-        <Caret Line="238" Column="16" TopLine="236"/>
+        <Filename Value="roboarm.pas"/>
+        <Caret Line="334" Column="30" TopLine="327"/>
       </Position1>
       <Position2>
-        <Filename Value="jakrandr.pas"/>
-        <Caret Line="246" Column="63" TopLine="244"/>
+        <Filename Value="roboarm.pas"/>
+        <Caret Line="1" Column="1" TopLine="1"/>
       </Position2>
       <Position3>
-        <Filename Value="jakrandr.pas"/>
-        <Caret Line="211" Column="28" TopLine="200"/>
+        <Filename Value="roboarm.pas"/>
+        <Caret Line="40" Column="28" TopLine="24"/>
       </Position3>
       <Position4>
-        <Filename Value="jakrandr.pas"/>
-        <Caret Line="615" Column="1" TopLine="610"/>
+        <Filename Value="roboarm.pas"/>
+        <Caret Line="327" Column="30" TopLine="308"/>
       </Position4>
       <Position5>
-        <Filename Value="jakrandr.pas"/>
-        <Caret Line="260" Column="23" TopLine="246"/>
+        <Filename Value="roboarm.pas"/>
+        <Caret Line="342" Column="30" TopLine="326"/>
       </Position5>
       <Position6>
         <Filename Value="jakrandr.pas"/>
-        <Caret Line="264" Column="31" TopLine="254"/>
+        <Caret Line="304" Column="25" TopLine="293"/>
       </Position6>
       <Position7>
-        <Filename Value="jakrandr.pas"/>
-        <Caret Line="270" Column="66" TopLine="255"/>
+        <Filename Value="roboarm.pas"/>
+        <Caret Line="305" Column="27" TopLine="299"/>
       </Position7>
       <Position8>
-        <Filename Value="jakrandr.pas"/>
-        <Caret Line="265" Column="44" TopLine="256"/>
+        <Filename Value="roboarm.pas"/>
+        <Caret Line="20" Column="23" TopLine="11"/>
       </Position8>
       <Position9>
         <Filename Value="roboarm.pas"/>
-        <Caret Line="298" Column="1" TopLine="280"/>
+        <Caret Line="319" Column="38" TopLine="301"/>
       </Position9>
       <Position10>
         <Filename Value="roboarm.pas"/>
-        <Caret Line="285" Column="15" TopLine="285"/>
+        <Caret Line="207" Column="19" TopLine="203"/>
       </Position10>
       <Position11>
-        <Filename Value="roboarm.pas"/>
-        <Caret Line="301" Column="39" TopLine="301"/>
+        <Filename Value="jakrandr.pas"/>
+        <Caret Line="71" Column="26" TopLine="61"/>
       </Position11>
       <Position12>
         <Filename Value="roboarm.pas"/>
-        <Caret Line="283" Column="32" TopLine="274"/>
+        <Caret Line="255" Column="3" TopLine="252"/>
       </Position12>
       <Position13>
-        <Filename Value="roboarm.pas"/>
-        <Caret Line="46" Column="38" TopLine="31"/>
+        <Filename Value="gfxutils.pas"/>
+        <Caret Line="1575" Column="1" TopLine="1566"/>
       </Position13>
       <Position14>
-        <Filename Value="jakrandr.pas"/>
-        <Caret Line="290" Column="11" TopLine="282"/>
+        <Filename Value="gfxutils.pas"/>
+        <Caret Line="419" Column="1" TopLine="409"/>
       </Position14>
       <Position15>
-        <Filename Value="jakrandr.pas"/>
-        <Caret Line="53" Column="22" TopLine="41"/>
+        <Filename Value="roboarm.pas"/>
+        <Caret Line="314" Column="22" TopLine="306"/>
       </Position15>
       <Position16>
-        <Filename Value="jakrandr.pas"/>
-        <Caret Line="140" Column="20" TopLine="124"/>
+        <Filename Value="roboarm.pas"/>
+        <Caret Line="316" Column="72" TopLine="307"/>
       </Position16>
       <Position17>
-        <Filename Value="jakrandr.pas"/>
-        <Caret Line="263" Column="21" TopLine="247"/>
+        <Filename Value="gfxutils.pas"/>
+        <Caret Line="1575" Column="1" TopLine="1566"/>
       </Position17>
       <Position18>
         <Filename Value="roboarm.pas"/>
-        <Caret Line="310" Column="70" TopLine="297"/>
+        <Caret Line="260" Column="22" TopLine="251"/>
       </Position18>
       <Position19>
-        <Filename Value="jakrandr.pas"/>
-        <Caret Line="298" Column="36" TopLine="289"/>
+        <Filename Value="gfxutils.pas"/>
+        <Caret Line="1575" Column="1" TopLine="1566"/>
       </Position19>
       <Position20>
-        <Filename Value="buildablerobot.pas"/>
-        <Caret Line="135" Column="41" TopLine="128"/>
+        <Filename Value="roboarm.pas"/>
+        <Caret Line="259" Column="27" TopLine="251"/>
       </Position20>
       <Position21>
-        <Filename Value="buildablerobot.pas"/>
-        <Caret Line="338" Column="40" TopLine="329"/>
+        <Filename Value="fliparm.pas"/>
+        <Caret Line="227" Column="14" TopLine="211"/>
       </Position21>
       <Position22>
-        <Filename Value="buildablerobot.pas"/>
-        <Caret Line="339" Column="1" TopLine="329"/>
+        <Filename Value="roboarm.pas"/>
+        <Caret Line="116" Column="23" TopLine="116"/>
       </Position22>
       <Position23>
-        <Filename Value="buildablerobot.pas"/>
-        <Caret Line="1" Column="1" TopLine="1"/>
+        <Filename Value="roboarm.pas"/>
+        <Caret Line="271" Column="20" TopLine="255"/>
       </Position23>
       <Position24>
         <Filename Value="buildablerobot.pas"/>
-        <Caret Line="36" Column="28" TopLine="20"/>
+        <Caret Line="131" Column="26" TopLine="124"/>
       </Position24>
       <Position25>
         <Filename Value="buildablerobot.pas"/>
-        <Caret Line="52" Column="28" TopLine="36"/>
+        <Caret Line="280" Column="27" TopLine="270"/>
       </Position25>
       <Position26>
-        <Filename Value="roboarm.pas"/>
-        <Caret Line="334" Column="30" TopLine="327"/>
+        <Filename Value="rotator.pas"/>
+        <Caret Line="99" Column="19" TopLine="94"/>
       </Position26>
       <Position27>
-        <Filename Value="roboarm.pas"/>
-        <Caret Line="1" Column="1" TopLine="1"/>
+        <Filename Value="buildablerobot.pas"/>
+        <Caret Line="115" Column="25" TopLine="113"/>
       </Position27>
       <Position28>
-        <Filename Value="roboarm.pas"/>
-        <Caret Line="40" Column="28" TopLine="24"/>
+        <Filename Value="buildablerobot.pas"/>
+        <Caret Line="262" Column="22" TopLine="247"/>
       </Position28>
       <Position29>
-        <Filename Value="roboarm.pas"/>
-        <Caret Line="327" Column="30" TopLine="308"/>
+        <Filename Value="buildablerobot.pas"/>
+        <Caret Line="379" Column="3" TopLine="362"/>
       </Position29>
       <Position30>
-        <Filename Value="roboarm.pas"/>
-        <Caret Line="342" Column="30" TopLine="326"/>
+        <Filename Value="buildablerobot.pas"/>
+        <Caret Line="282" Column="16" TopLine="264"/>
       </Position30>
     </JumpHistory>
   </ProjectOptions>
@@ -479,15 +479,6 @@
     </Other>
   </CompilerOptions>
   <Debugging>
-    <BreakPoints Count="1">
-      <Item1>
-        <Kind Value="bpkSource"/>
-        <WatchScope Value="wpsLocal"/>
-        <WatchKind Value="wpkWrite"/>
-        <Source Value="fliparm.pas"/>
-        <Line Value="227"/>
-      </Item1>
-    </BreakPoints>
     <Watches Count="6">
       <Item1>
         <Expression Value="m_entities.Items[1]"/>

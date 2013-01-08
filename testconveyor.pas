@@ -310,7 +310,7 @@ begin
       rp := GetRotatedPoint(Centre);
       for i := 0 to InanimateObjects.Count - 1 do begin
         aDistance := Distance(InanimateObjects[i].GetLocation, rp)
-                * (10 * Interval / 1000)
+                * (10 * Interval / 300)
                 + 0.00001 (* NEVER 0 *);
         if aDistance > MAX_GRAVITY then aDistance := MAX_GRAVITY;
         vect := Point3DFromCoords(v.x * aDistance, v.y * aDistance, v.z * aDistance);

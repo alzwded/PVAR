@@ -5,7 +5,7 @@ unit RoboArm;
 interface
 
 uses
-  Classes, SysUtils, CoreUtils, GfxUtils;
+  Classes, SysUtils, CoreUtils, GfxUtils, Graphics;
 
 const
   NICE_YELLOW = 10351863; // 9D F4 F7
@@ -16,6 +16,8 @@ const
   RoboArm_Median = 2;
   RoboArm_Grapple = 3;
   RoboArm_Skin = 4;
+
+  ROBA_PITCH_ANGLE = -pi/4;
 
   ROBA_DIST_KERN_MED_X = 256;
   ROBA_DIST_KERN_MED_Y = -200;
@@ -248,13 +250,15 @@ begin
         grappleSup.Nodes[0], grappleSup.Nodes[3],
         0, NICE_YELLOW);
   // front
-  skin.BindQuad(medianSup.Nodes[3], medianSup.Nodes[2],
-        grappleSup.Nodes[3], grappleSup.Nodes[2],
-        0, NICE_YELLOW);
+  skin.BindTria(medianSup.Nodes[3], medianSup.Nodes[2],
+        grappleSup.Nodes[3], 0, NICE_YELLOW);
+  skin.BindTria(grappleSup.Nodes[3], grappleSup.Nodes[2],
+        medianSup.Nodes[3], 0, NICE_YELLOW);
   // back
-  skin.BindQuad(medianSup.Nodes[1], medianSup.Nodes[0],
-        grappleSup.Nodes[1], grappleSup.Nodes[0],
-        0, NICE_YELLOW);
+  skin.BindTria(medianSup.Nodes[1], medianSup.Nodes[0],
+        grappleSup.Nodes[1], 0, NICE_YELLOW);
+  skin.BindTria(grappleSup.Nodes[1], grappleSup.Nodes[0],
+        medianSup.Nodes[1], 0, NICE_YELLOW);
 
   (* grapple *)
   // top
@@ -264,7 +268,7 @@ begin
   // bottom
   skin.BindQuad(grappleSup.Nodes[8], grappleSup.Nodes[9],
         grappleSup.Nodes[10], grappleSup.Nodes[11],
-        0, NICE_GREEN);
+        0, clSilver);
   // front
   skin.BindQuad(grappleSup.Nodes[6], grappleSup.Nodes[7],
         grappleSup.Nodes[11], grappleSup.Nodes[10],
@@ -301,13 +305,19 @@ begin
   Entities[RoboArm_Pivot].RotateAround(rp, 0, direction * (pi/2.0) / ratio, 0);
   Entities[RoboArm_Pivot].Rotate(0, direction * (pi/2.0) / ratio, 0);
 
-  specialAngle := (pi/6) / (m_moveSteps/2);
-  if (m_phase - m_waitSteps) > (m_moveSteps div 2) then
-    specialAngle := -specialAngle;
+  if fwd then begin
+    specialAngle := (ROBA_PITCH_ANGLE) / m_moveSteps;
+    if (m_phase - m_waitSteps) >= (m_moveSteps div 2) then
+      specialAngle := (-ROBA_PITCH_ANGLE) / (m_moveSteps + (m_moveSteps mod 2));
+  end else begin
+    specialAngle := (ROBA_PITCH_ANGLE) / m_returnSteps;
+    if (m_phase - m_waitSteps - m_moveSteps) >= (m_returnSteps div 2) then
+      specialAngle := (-ROBA_PITCH_ANGLE) / (m_returnSteps + (m_returnSteps mod 2));
+  end;
 
-  rp := GetRotatedPoint((Entities[RoboArm_Median] as TSupport).Nodes[0]^);
+  rp := GetRotatedPoint((Entities[RoboArm_Median] as TSupport).Location);
 
-  //Entities[RoboArm_Grapple].RotateAround(rp, 0, 0, specialAngle);
+  Entities[RoboArm_Grapple].RotateAround(rp, 0, 0, specialAngle);
 end;
 
 procedure TRoboArm.Loop;

@@ -55,9 +55,36 @@ type
     m_leftLeg, m_rightLeg: TRobotPart;
     m_head: TRobotPart;
     m_bbox: TBoundingBox;
+    m_disabled: boolean;
+    m_phase: integer;
+  end;
+
+  TRobotLifeGiver = class(AGrabber)
+    constructor LifeGiver(cntr: TPoint3D; ntrvl: cardinal);
+    procedure Loop; override;
+  private
+    m_bbox: TBoundingBox;
   end;
 
 implementation
+
+(* TRobotLifeGiver *)
+
+constructor TRobotLifeGiver.LifeGiver(cntr: TPoint3D; ntrvl: cardinal);
+begin
+  m_bbox.p1 := Point3DFromCoords(cntr.x - 50, cntr.y - 50, cntr.z - 50);
+  m_bbox.p2 := Point3DFromCoords(cntr.x + 50, cntr.y + 50, cntr.z + 50);
+  inherited Grabber(cntr, ntrvl);
+end;
+
+procedure TRobotLifeGiver.Loop;
+var
+  e: IWorldEntity;
+begin
+  if TryGrab(@m_bbox, False, e) then
+    if e is TBuildableRobot then
+      (e as TBuildableRobot).m_disabled := false;
+end;
 
 (* TRobotPart *)
 
@@ -251,6 +278,9 @@ var
   body: TPart;
   e: TPolygon;
 begin
+  m_disabled := true;
+  m_phase := 0;
+
   rp := GetRotatedPoint(Centre);
 
   (* splojunz *)
@@ -280,7 +310,7 @@ begin
         Point3DFromCoords(rp.x, rp.y + BR_HEAD_TO_WAIST_OFFSET, rp.z - BR_HALF_WIDTH)
   );
   e.ContourColour := 0;
-  e.FillColour := NICE_YELLOW;
+  e.FillColour := NICE_GREEN;
   body.Geometry.Add(e);
   (* front *)
   e := TPolygon.Quad(
@@ -346,7 +376,61 @@ end;
 
 procedure TBuildableRobot.Loop;
 begin
-  inherited Loop;
+  if m_disabled then exit;
+
+  if m_phase >= 40 then m_phase := 0;
+
+  if m_phase < 5 then begin
+    // flail larm
+    if m_leftArm <> Nil then
+      m_leftArm.Rotate(-pi/60, pi/60, 0);
+    // flail rarm
+    if m_rightArm <> Nil then
+      m_rightArm.Rotate(pi/60, -pi/60, 0);
+    // flail lleg
+    if m_leftLeg <> Nil then
+      m_leftLeg.Rotate(0, 0, pi/60);
+    // flail rleg
+    if m_leftLeg <> Nil then
+      m_leftLeg.Rotate(0, 0, -pi/60);
+    // flail head
+    if m_head <> Nil then
+      m_head.Rotate(pi/30, 0, 0);
+  end else if m_phase < 15 then begin
+    // flail larm
+    if m_leftArm <> Nil then
+      m_leftArm.Rotate(pi/60, -pi/60, 0);
+    // flail rarm
+    if m_rightArm <> Nil then
+      m_rightArm.Rotate(-pi/60, pi/60, 0);
+    // flail lleg
+    if m_leftLeg <> Nil then
+      m_leftLeg.Rotate(0, 0, -pi/60);
+    // flail rleg
+    if m_leftLeg <> Nil then
+      m_leftLeg.Rotate(0, 0, pi/60);
+    // flail head
+    if m_head <> Nil then
+      m_head.Rotate(-pi/30, 0, 0);
+  end else if m_phase < 20 then begin
+    // flail larm
+    if m_leftArm <> Nil then
+      m_leftArm.Rotate(-pi/60, pi/60, 0);
+    // flail rarm
+    if m_rightArm <> Nil then
+      m_rightArm.Rotate(pi/60, -pi/60, 0);
+    // flail lleg
+    if m_leftLeg <> Nil then
+      m_leftLeg.Rotate(0, 0, pi/60);
+    // flail rleg
+    if m_leftLeg <> Nil then
+      m_leftLeg.Rotate(0, 0, -pi/60);
+    // flail head
+    if m_head <> Nil then
+      m_head.Rotate(pi/30, 0, 0);
+  end;
+
+  inc(m_phase);
 end;
 
 end.

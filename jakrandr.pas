@@ -68,7 +68,7 @@ const
 
   ROTATOR_X_OFFSET = 1600;
 
-  HEAD_CORRECTION_Z = -8;
+  HEAD_CORRECTION_Z = -14;
   HEAD_CORRECTION_Y = 23;
 
   HEAD_ARM_Z_OFFSET = -272 + HEAD_CORRECTION_Z;
@@ -148,6 +148,7 @@ var
   rotator: TRotator;
   fliparm: TFlipArm;
   roboarm: TRoboArm;
+  lifeGiver: TRobotLifeGiver;
   e: IWorldEntity;
   t: TPolygon;
   i: integer;
@@ -183,6 +184,11 @@ begin
         Point3DFromCoords(2700, 0, 0), CONVEYOR_CLOCK);
   gravity.InputSource(conveyor);
   m_worldEntities.Add(gravity);
+
+  lifeGiver := TRobotLifeGiver.LifeGiver(
+        Point3DFromCoords(2700, 0, 0), CONVEYOR_CLOCK);
+  lifeGiver.InputSource(conveyor);
+  m_worldEntities.Add(lifeGiver);
 
   reaper := TGrimReaper.GrimReaper(
         Point3DFromCoords(2600, -800, 0));
