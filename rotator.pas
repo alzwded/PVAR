@@ -19,6 +19,7 @@ type
 
   TRotator = class(AGrabber)
     constructor Rotator(cen: TPoint3D; intrvl: Cardinal; rx, ry, rz: real);
+    procedure Init; override;
     procedure Loop; override;
   private
     m_bbox: TBoundingBox;
@@ -56,6 +57,36 @@ begin
   m_n := 0;
 
   inherited Grabber(cen, intrvl);
+end;
+
+procedure TRotator.Init;
+var
+  part: TPart;
+  e: TPolygon;
+  rp: TPoint3D;
+begin
+  rp := GetRotatedPoint(Centre);
+
+  part := TPart.Part(rp);
+  Entities.Add(part);
+
+  e := TPolygon.Quad(
+        Point3DFromCoords(rp.x, rp.y + 100, rp.z - 100),
+        Point3DFromCoords(rp.x, rp.y + 120, rp.z - 100),
+        Point3DFromCoords(rp.x, rp.y + 120, rp.z + 100),
+        Point3DFromCoords(rp.x, rp.y + 100, rp.z + 100));
+  e.ContourColour := 0;
+  e.FillColour := $F7F49D;
+  part.Geometry.Add(e);
+
+  e := TPolygon.Quad(
+        Point3DFromCoords(rp.x, rp.y + 100, rp.z - 100),
+        Point3DFromCoords(rp.x, rp.y + 100, rp.z + 100),
+        Point3DFromCoords(rp.x, rp.y + 120, rp.z + 100),
+        Point3DFromCoords(rp.x, rp.y + 120, rp.z - 100));
+  e.ContourColour := 0;
+  e.FillColour := $F7F49D;
+  part.Geometry.Add(e);
 end;
 
 procedure TRotator.ShiftLeft;

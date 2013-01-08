@@ -62,6 +62,7 @@ type
   TRobotLifeGiver = class(AGrabber)
     constructor LifeGiver(cntr: TPoint3D; ntrvl: cardinal);
     procedure Loop; override;
+    procedure Init; override;
   private
     m_bbox: TBoundingBox;
   end;
@@ -84,6 +85,35 @@ begin
   if TryGrab(@m_bbox, False, e) then
     if e is TBuildableRobot then
       (e as TBuildableRobot).m_disabled := false;
+end;
+
+procedure TRobotLifeGiver.Init;
+var
+  part: TPart;
+  e: TPolygon;
+  rp: TPoint3D;
+begin
+  rp := GetRotatedPoint(Centre);
+  decr(rp.x, 100);
+
+  part := TPart.Part(rp);
+  Entities.Add(part);
+
+  e := TPolygon.Triangle(
+        Point3DFromCoords(rp.x, rp.y + 100, rp.z),
+        Point3DFromCoords(rp.x + 30 * sqrt(2), rp.y + 100, rp.z - 15),
+        Point3DFromCoords(rp.x + 30 * sqrt(2), rp.y + 100, rp.z + 15));
+  e.ContourColour := 0;
+  e.FillColour := $F7F49D;
+  part.Geometry.Add(e);
+
+  e := TPolygon.Triangle(
+        Point3DFromCoords(rp.x, rp.y + 100, rp.z),
+        Point3DFromCoords(rp.x + 30 * sqrt(2), rp.y + 100, rp.z + 15),
+        Point3DFromCoords(rp.x + 30 * sqrt(2), rp.y + 100, rp.z - 15));
+  e.ContourColour := 0;
+  e.FillColour := $F7F49D;
+  part.Geometry.Add(e);
 end;
 
 (* TRobotPart *)
@@ -378,7 +408,7 @@ procedure TBuildableRobot.Loop;
 begin
   if m_disabled then exit;
 
-  if m_phase >= 40 then m_phase := 0;
+  if m_phase >= 20 then m_phase := 0;
 
   if m_phase < 5 then begin
     // flail larm

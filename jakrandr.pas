@@ -161,7 +161,7 @@ begin
   m_worldEntities.Add(producer);
 
   for i := 1 to PARTS_STOCK do begin
-    e := TBuildableRobot.Compound(Point3DFromCoords(0, 0, 0), PROVIDER_CLOCK);
+    e := TBuildableRobot.Compound(Point3DFromCoords(0, 0, 0), CONVEYOR_CLOCK);
     producer.AddStock(e);
   end;
 
@@ -186,8 +186,8 @@ begin
   m_worldEntities.Add(gravity);
 
   lifeGiver := TRobotLifeGiver.LifeGiver(
-        Point3DFromCoords(2700, 0, 0), CONVEYOR_CLOCK);
-  lifeGiver.InputSource(conveyor);
+        Point3DFromCoords(2700 - 300, 0, 0), CONVEYOR_CLOCK); // have it
+  lifeGiver.InputSource(conveyor);                            // closer
   m_worldEntities.Add(lifeGiver);
 
   reaper := TGrimReaper.GrimReaper(
