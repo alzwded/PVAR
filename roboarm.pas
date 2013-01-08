@@ -354,7 +354,7 @@ var
 begin
   sup := Entities[RoboArm_Grapple] as TSupport;
   rp := GetRotatedPoint(sup.Nodes[8]^);
-  m_bbox.p1 := Point3DFromCoords(rp.x, rp.y - 5, rp.z);
+  m_bbox.p1 := Point3DFromCoords(rp.x, rp.y - 100, rp.z);
   m_bbox.p2 := GetRotatedPoint(sup.Nodes[10]^);
   GetBoundingBox := @m_bbox;
 end;
