@@ -18,12 +18,19 @@ interface
 uses
   Classes, SysUtils, FileUtil, Forms, Controls, Graphics, Dialogs, ExtCtrls,
   GfxUtils, CoreUtils, LCLType, TestUtils, TestConveyor, Cartof, Windows, Math,
-  Provider, GrimReaper, Rotator, FlipArm, BuildableRobot;
+  Provider, GrimReaper, Rotator, FlipArm, BuildableRobot, RoboArm;
 
 const
   DEFAULT_CAPTION = 'JakRandr - F1 for help';
   DYNAMIC_FRAMERATE_LOW = 0.5;
   DYNAMIC_FRAMERATE_HIGH = 0.9;
+
+  CAMERA_DEFAULT_X = 666;
+  CAMERA_DEFAULT_Y = -1273;
+  CAMERA_DEFAULT_Z = -762;
+  CAMERA_DEFAULT_RX = 5.34;
+  CAMERA_DEFAULT_RY = 0.44;
+  CAMERA_DEFAULT_RZ = 0.55;
 
   ROOM_X_LOW = -2000;
   ROOM_X_HIGH = 2000;
@@ -46,6 +53,17 @@ const
   PROVIDERS_MAX = FLIPARMS_WAIT + FLIPARMS_RETURN + FLIPARMS_MOVE; // sum of FLIPARMS frames
   PROVIDERS_MAIN = FLIPARMS_MOVE + 3;  // = FLIPARMS_MOVE
   PROVIDERS_SIDE = 0;
+  PROVIDERS_HEAD = PROVIDERS_MAIN + 10;
+
+  ROTATOR_X_OFFSET = 1600;
+
+  HEAD_ARM_Z_OFFSET = -272;
+  HEAD_ARM_X_OFFSET = 1600;
+  HEAD_ARM_Y_OFFSET = 110;
+
+  HEAD_CONV_X = HEAD_ARM_X_OFFSET - 290;
+  HEAD_CONV_Y = 0;
+  HEAD_CONV_Z = -20 * PLATE_LENGTH + HEAD_ARM_Z_OFFSET * 2 + 70;
 
 type
 
@@ -115,6 +133,7 @@ var
   reaper: TGrimReaper;
   rotator: TRotator;
   fliparm: TFlipArm;
+  roboarm: TRoboArm;
   e: IWorldEntity;
   t: TPolygon;
   i: integer;
@@ -140,7 +159,7 @@ begin
   mainConveyor := conveyor;
 
   rotator := TRotator.Rotator(
-        Point3DFromCoords(1400, 100, 0),
+        Point3DFromCoords(ROTATOR_X_OFFSET, 100, 0),
         CONVEYOR_CLOCK,
         0, 0, pi / 2);
   rotator.InputSource(conveyor);
@@ -233,6 +252,45 @@ begin
   fliparm.OutputSource(mainConveyor);
   m_worldEntities.Add(fliparm);
 
+  (* head stuff *)
+  roboarm := TRoboArm.RoboArm(
+        Point3DFromCoords(HEAD_ARM_X_OFFSET, HEAD_ARM_Y_OFFSET, HEAD_ARM_Z_OFFSET),
+        CONVEYOR_CLOCK,
+        100,
+        10,
+        10);
+  m_worldEntities.Add(roboarm);
+
+  producer := TProvider.Grabber(
+        Point3DFromCoords(HEAD_CONV_X - 10, 35 + HEAD_CONV_Y, HEAD_CONV_Z), PROVIDER_CLOCK);
+  producer.ProvideOnFrame := PROVIDERS_HEAD;
+  producer.MaxFrame := PROVIDERS_MAX;
+  m_worldEntities.Add(producer);
+
+  for i := 1 to PARTS_STOCK do begin
+    e := TRobotPart.RobotPart(Point3DFromCoords(0, 0, 0), rptHead);
+    producer.AddStock(e);
+  end;
+
+  conveyor := TTestConveyor.Conveyor(
+        Point3DFromCoords(HEAD_CONV_X, HEAD_CONV_Y, HEAD_CONV_Z),
+        CONVEYOR_CLOCK, 20);
+  conveyor.InputSource(producer);
+  m_worldEntities.Add(conveyor);
+
+  gravity := TTestConveyor.Ghost(
+        Point3DFromCoords(HEAD_CONV_X, 0, HEAD_CONV_Z + 21 * PLATE_LENGTH + 50), CONVEYOR_CLOCK);
+  gravity.InputSource(conveyor);
+  m_worldEntities.Add(gravity);
+
+  reaper := TGrimReaper.GrimReaper(
+        Point3DFromCoords(HEAD_CONV_X + 50 - 25, -800, HEAD_CONV_Z + 50 + 21 * PLATE_LENGTH - 50));
+  reaper.InputSource(gravity);
+  m_worldEntities.Add(reaper);
+
+  roboarm.InputSource(conveyor);
+  roboarm.OutputSource(mainConveyor);
+
   ToggleMotion;
 end;
 
@@ -308,10 +366,10 @@ begin
   //AddTestEntities;
   AddEntities;
 
-  m_disp.O := Point3DFromCoords(580, -1150, -825);
-  m_disp.RX := 5.55;
-  m_disp.RY := 0.72;
-  m_disp.RZ := 0.55;
+  m_disp.O := Point3DFromCoords(CAMERA_DEFAULT_X, CAMERA_DEFAULT_Y, CAMERA_DEFAULT_Z);
+  m_disp.RX := CAMERA_DEFAULT_RX;
+  m_disp.RY := CAMERA_DEFAULT_RY;
+  m_disp.RZ := CAMERA_DEFAULT_RZ;
 end;
 
 procedure TJakRandr.FormDeactivate(Sender: TObject);
@@ -592,10 +650,10 @@ end;
 
 procedure TJakRandr.CentreCamera;
 begin
-  m_disp.O := Point3DFromCoords(0.0, 0.0, 0.0);
-  m_disp.RX := 0.0;
-  m_disp.RY := 0.0;
-  m_disp.RZ := 0.0;
+  m_disp.O := Point3DFromCoords(CAMERA_DEFAULT_X, CAMERA_DEFAULT_Y, CAMERA_DEFAULT_Z);
+  m_disp.RX := CAMERA_DEFAULT_RX;
+  m_disp.RY := CAMERA_DEFAULT_RY;
+  m_disp.RZ := CAMERA_DEFAULT_RZ;
   m_disp.D := 5000.0;
 end;
 
