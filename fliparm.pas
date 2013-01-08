@@ -181,10 +181,6 @@ var
 begin
   p1 := GetRotatedPoint( (Entities[FlipArm_Tip] as TSupport).Nodes[3]^ );
   p2 := GetRotatedPoint( (Entities[FlipArm_Tip] as TSupport).Nodes[1]^ );
-  (*p1 := Point3DFromCoords(
-        (p1.x + p2.x) / 2,
-        (p1.y + p2.y) / 2,
-        (p1.z + p2.z) / 2);*)
 
   m_bbox.p1 := Point3DFromCoords(p1.x, p1.y, p1.z - 10);
   m_bbox.p2 := Point3DFromCoords(p2.x, p2.y, p2.z + 10);

@@ -176,10 +176,11 @@
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
         <UnitName Value="JakRandr"/>
+        <IsVisibleTab Value="True"/>
         <EditorIndex Value="0"/>
         <WindowIndex Value="0"/>
         <TopLine Value="31"/>
-        <CursorPos X="18" Y="38"/>
+        <CursorPos X="24" Y="38"/>
         <UsageCount Value="216"/>
         <Loaded Value="True"/>
         <LoadedDesigner Value="True"/>
@@ -188,11 +189,10 @@
         <Filename Value="gfxutils.pas"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="GfxUtils"/>
-        <IsVisibleTab Value="True"/>
         <EditorIndex Value="4"/>
         <WindowIndex Value="0"/>
         <TopLine Value="41"/>
-        <CursorPos X="28" Y="57"/>
+        <CursorPos X="14" Y="45"/>
         <UsageCount Value="216"/>
         <Loaded Value="True"/>
       </Unit2>
@@ -298,8 +298,8 @@
         <UnitName Value="BuildableRobot"/>
         <EditorIndex Value="10"/>
         <WindowIndex Value="0"/>
-        <TopLine Value="11"/>
-        <CursorPos X="25" Y="20"/>
+        <TopLine Value="249"/>
+        <CursorPos X="52" Y="256"/>
         <UsageCount Value="222"/>
         <Loaded Value="True"/>
       </Unit12>
