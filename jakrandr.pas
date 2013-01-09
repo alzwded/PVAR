@@ -562,6 +562,7 @@ begin
 
   MessageDlg('JakRandr',
         'Proiect realizat de Vlad Meșco. ©2012'#13#10 +
+        'anul III, Tehnologia Informației, gr. 4301'#13#10 +
         #13#10 +
         '3D Animation Software Engine written from scratch.'#13#10 +
         #13#10 +

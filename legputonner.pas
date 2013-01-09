@@ -161,8 +161,8 @@ begin
     if m_phase < LPO_HALF_WAIT then begin
       Entities[0].Rotate(0, (-pi/2)/LPO_HALF_WAIT, 0);
       inc(m_phase);
-    end else if m_phase < 2 * LPO_HALF_WAIT then begin
-      Entities[0].Rotate(0, (pi/2)/LPO_HALF_WAIT, 0);
+    end else if m_phase < 3 * LPO_HALF_WAIT then begin
+      Entities[0].Rotate(0, (pi/2)/(2*LPO_HALF_WAIT), 0);
       inc(m_phase);
     end else
       m_phase := -1;
