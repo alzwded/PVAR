@@ -16,11 +16,11 @@
     <VersionInfo>
       <StringTable ProductVersion=""/>
     </VersionInfo>
-    <BuildModes Count="4" Active="win32-release">
+    <BuildModes Count="4" Active="linux-i686-release">
       <Item1 Name="linux-i686-debug" Default="True"/>
       <Item2 Name="win32-release">
         <CompilerOptions>
-          <Version Value="11"/>
+          <Version Value="9"/>
           <Target>
             <Filename Value="bin/JakOmlette-win32"/>
           </Target>
@@ -40,7 +40,6 @@
           </CodeGeneration>
           <Linking>
             <Debugging>
-              <GenerateDebugInfo Value="False"/>
               <UseLineInfoUnit Value="False"/>
               <StripSymbols Value="True"/>
               <UseExternalDbgSyms Value="True"/>
@@ -61,7 +60,7 @@
       </Item2>
       <Item3 Name="linux-i686-release">
         <CompilerOptions>
-          <Version Value="11"/>
+          <Version Value="9"/>
           <Target>
             <Filename Value="bin/JakOmlette-i686"/>
           </Target>
@@ -79,7 +78,6 @@
           </CodeGeneration>
           <Linking>
             <Debugging>
-              <GenerateDebugInfo Value="False"/>
               <UseLineInfoUnit Value="False"/>
               <StripSymbols Value="True"/>
               <UseExternalDbgSyms Value="True"/>
@@ -100,7 +98,7 @@
       </Item3>
       <Item4 Name="win32-debug">
         <CompilerOptions>
-          <Version Value="11"/>
+          <Version Value="9"/>
           <Target>
             <Filename Value="bin/JakOmlette-win32-debug"/>
           </Target>
@@ -159,15 +157,17 @@
         <PackageName Value="LCL"/>
       </Item1>
     </RequiredPackages>
-    <Units Count="16">
+    <Units Count="15">
       <Unit0>
         <Filename Value="JakOmlette.lpr"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="JakOmlette"/>
+        <EditorIndex Value="9"/>
         <WindowIndex Value="0"/>
-        <TopLine Value="2"/>
-        <CursorPos X="1" Y="20"/>
+        <TopLine Value="1"/>
+        <CursorPos X="16" Y="5"/>
         <UsageCount Value="216"/>
+        <Loaded Value="True"/>
       </Unit0>
       <Unit1>
         <Filename Value="jakrandr.pas"/>
@@ -176,10 +176,11 @@
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
         <UnitName Value="JakRandr"/>
+        <IsVisibleTab Value="True"/>
         <EditorIndex Value="0"/>
         <WindowIndex Value="0"/>
-        <TopLine Value="561"/>
-        <CursorPos X="61" Y="565"/>
+        <TopLine Value="631"/>
+        <CursorPos X="6" Y="638"/>
         <UsageCount Value="216"/>
         <Loaded Value="True"/>
         <LoadedDesigner Value="True"/>
@@ -221,7 +222,7 @@
         <UnitName Value="TestConveyor"/>
         <EditorIndex Value="6"/>
         <WindowIndex Value="0"/>
-        <TopLine Value="357"/>
+        <TopLine Value="355"/>
         <CursorPos X="41" Y="359"/>
         <UsageCount Value="327"/>
         <Loaded Value="True"/>
@@ -269,7 +270,7 @@
         <Filename Value="rotator.pas"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="Rotator"/>
-        <EditorIndex Value="9"/>
+        <EditorIndex Value="10"/>
         <WindowIndex Value="0"/>
         <TopLine Value="74"/>
         <CursorPos X="44" Y="78"/>
@@ -291,7 +292,7 @@
         <Filename Value="buildablerobot.pas"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="BuildableRobot"/>
-        <EditorIndex Value="10"/>
+        <EditorIndex Value="11"/>
         <WindowIndex Value="0"/>
         <TopLine Value="430"/>
         <CursorPos X="35" Y="448"/>
@@ -299,14 +300,6 @@
         <Loaded Value="True"/>
       </Unit12>
       <Unit13>
-        <Filename Value="C:/lazarus/lcl/customtimer.pas"/>
-        <UnitName Value="CustomTimer"/>
-        <WindowIndex Value="0"/>
-        <TopLine Value="172"/>
-        <CursorPos X="1" Y="182"/>
-        <UsageCount Value="4"/>
-      </Unit13>
-      <Unit14>
         <Filename Value="roboarm.pas"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="RoboArm"/>
@@ -316,145 +309,144 @@
         <CursorPos X="15" Y="352"/>
         <UsageCount Value="75"/>
         <Loaded Value="True"/>
-      </Unit14>
-      <Unit15>
+      </Unit13>
+      <Unit14>
         <Filename Value="legputonner.pas"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="LegPutOnner"/>
-        <IsVisibleTab Value="True"/>
         <EditorIndex Value="8"/>
         <WindowIndex Value="0"/>
-        <TopLine Value="159"/>
-        <CursorPos X="53" Y="165"/>
+        <TopLine Value="158"/>
+        <CursorPos X="47" Y="168"/>
         <UsageCount Value="22"/>
         <Loaded Value="True"/>
-      </Unit15>
+      </Unit14>
     </Units>
     <JumpHistory Count="30" HistoryIndex="29">
       <Position1>
         <Filename Value="legputonner.pas"/>
-        <Caret Line="90" Column="60" TopLine="77"/>
+        <Caret Line="8" Column="57" TopLine="1"/>
       </Position1>
       <Position2>
         <Filename Value="legputonner.pas"/>
-        <Caret Line="94" Column="29" TopLine="90"/>
+        <Caret Line="140" Column="36" TopLine="129"/>
       </Position2>
       <Position3>
-        <Filename Value="legputonner.pas"/>
-        <Caret Line="134" Column="26" TopLine="119"/>
+        <Filename Value="buildablerobot.pas"/>
+        <Caret Line="107" Column="55" TopLine="101"/>
       </Position3>
       <Position4>
-        <Filename Value="legputonner.pas"/>
-        <Caret Line="8" Column="57" TopLine="1"/>
+        <Filename Value="roboarm.pas"/>
+        <Caret Line="38" Column="35" TopLine="31"/>
       </Position4>
       <Position5>
         <Filename Value="legputonner.pas"/>
-        <Caret Line="140" Column="36" TopLine="129"/>
+        <Caret Line="157" Column="22" TopLine="144"/>
       </Position5>
       <Position6>
-        <Filename Value="buildablerobot.pas"/>
-        <Caret Line="107" Column="55" TopLine="101"/>
+        <Filename Value="legputonner.pas"/>
+        <Caret Line="21" Column="1" TopLine="21"/>
       </Position6>
       <Position7>
-        <Filename Value="roboarm.pas"/>
-        <Caret Line="38" Column="35" TopLine="31"/>
+        <Filename Value="legputonner.pas"/>
+        <Caret Line="40" Column="10" TopLine="24"/>
       </Position7>
       <Position8>
         <Filename Value="legputonner.pas"/>
-        <Caret Line="157" Column="22" TopLine="144"/>
+        <Caret Line="154" Column="31" TopLine="144"/>
       </Position8>
       <Position9>
         <Filename Value="legputonner.pas"/>
-        <Caret Line="21" Column="1" TopLine="21"/>
+        <Caret Line="14" Column="22" TopLine="1"/>
       </Position9>
       <Position10>
         <Filename Value="legputonner.pas"/>
-        <Caret Line="40" Column="10" TopLine="24"/>
+        <Caret Line="146" Column="26" TopLine="136"/>
       </Position10>
       <Position11>
         <Filename Value="legputonner.pas"/>
-        <Caret Line="154" Column="31" TopLine="144"/>
+        <Caret Line="165" Column="18" TopLine="150"/>
       </Position11>
       <Position12>
         <Filename Value="legputonner.pas"/>
-        <Caret Line="14" Column="22" TopLine="1"/>
+        <Caret Line="148" Column="50" TopLine="138"/>
       </Position12>
       <Position13>
-        <Filename Value="legputonner.pas"/>
-        <Caret Line="146" Column="26" TopLine="136"/>
+        <Filename Value="buildablerobot.pas"/>
+        <Caret Line="48" Column="43" TopLine="41"/>
       </Position13>
       <Position14>
-        <Filename Value="legputonner.pas"/>
-        <Caret Line="165" Column="18" TopLine="150"/>
+        <Filename Value="buildablerobot.pas"/>
+        <Caret Line="422" Column="8" TopLine="407"/>
       </Position14>
       <Position15>
-        <Filename Value="legputonner.pas"/>
-        <Caret Line="148" Column="50" TopLine="138"/>
+        <Filename Value="buildablerobot.pas"/>
+        <Caret Line="448" Column="21" TopLine="441"/>
       </Position15>
       <Position16>
         <Filename Value="buildablerobot.pas"/>
-        <Caret Line="48" Column="43" TopLine="41"/>
+        <Caret Line="425" Column="32" TopLine="416"/>
       </Position16>
       <Position17>
         <Filename Value="buildablerobot.pas"/>
-        <Caret Line="422" Column="8" TopLine="407"/>
+        <Caret Line="457" Column="15" TopLine="439"/>
       </Position17>
       <Position18>
         <Filename Value="buildablerobot.pas"/>
-        <Caret Line="448" Column="21" TopLine="441"/>
+        <Caret Line="1" Column="1" TopLine="1"/>
       </Position18>
       <Position19>
         <Filename Value="buildablerobot.pas"/>
-        <Caret Line="425" Column="32" TopLine="416"/>
+        <Caret Line="49" Column="20" TopLine="33"/>
       </Position19>
       <Position20>
         <Filename Value="buildablerobot.pas"/>
-        <Caret Line="457" Column="15" TopLine="439"/>
+        <Caret Line="288" Column="8" TopLine="281"/>
       </Position20>
       <Position21>
-        <Filename Value="buildablerobot.pas"/>
-        <Caret Line="1" Column="1" TopLine="1"/>
-      </Position21>
-      <Position22>
-        <Filename Value="buildablerobot.pas"/>
-        <Caret Line="49" Column="20" TopLine="33"/>
-      </Position22>
-      <Position23>
-        <Filename Value="buildablerobot.pas"/>
-        <Caret Line="288" Column="8" TopLine="281"/>
-      </Position23>
-      <Position24>
         <Filename Value="jakrandr.pas"/>
         <Caret Line="184" Column="26" TopLine="177"/>
-      </Position24>
-      <Position25>
+      </Position21>
+      <Position22>
         <Filename Value="jakrandr.pas"/>
         <Caret Line="71" Column="1" TopLine="71"/>
-      </Position25>
-      <Position26>
+      </Position22>
+      <Position23>
         <Filename Value="jakrandr.pas"/>
         <Caret Line="144" Column="29" TopLine="128"/>
-      </Position26>
-      <Position27>
+      </Position23>
+      <Position24>
         <Filename Value="buildablerobot.pas"/>
         <Caret Line="447" Column="46" TopLine="439"/>
-      </Position27>
-      <Position28>
+      </Position24>
+      <Position25>
         <Filename Value="buildablerobot.pas"/>
         <Caret Line="1" Column="1" TopLine="1"/>
-      </Position28>
-      <Position29>
+      </Position25>
+      <Position26>
         <Filename Value="legputonner.pas"/>
         <Caret Line="146" Column="39" TopLine="139"/>
+      </Position26>
+      <Position27>
+        <Filename Value="jakrandr.pas"/>
+        <Caret Line="175" Column="18" TopLine="166"/>
+      </Position27>
+      <Position28>
+        <Filename Value="JakOmlette.lpr"/>
+        <Caret Line="20" Column="1" TopLine="1"/>
+      </Position28>
+      <Position29>
+        <Filename Value="JakOmlette.lpr"/>
+        <Caret Line="1" Column="1" TopLine="1"/>
       </Position29>
       <Position30>
         <Filename Value="jakrandr.pas"/>
-        <Caret Line="175" Column="18" TopLine="166"/>
+        <Caret Line="565" Column="62" TopLine="561"/>
       </Position30>
     </JumpHistory>
   </ProjectOptions>
   <CompilerOptions>
-    <Version Value="11"/>
+    <Version Value="9"/>
     <Target>
       <Filename Value="bin/JakOmlette"/>
     </Target>
@@ -492,7 +484,7 @@
       <Item1>
         <Expression Value="m_entities.Items[1]"/>
       </Item1>
-      <Item2 ClassAutoCast="True">
+      <Item2>
         <Expression Value="e"/>
       </Item2>
       <Item3>

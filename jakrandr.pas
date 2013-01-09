@@ -17,7 +17,13 @@ interface
 
 uses
   Classes, SysUtils, FileUtil, Forms, Controls, Graphics, Dialogs, ExtCtrls,
-  GfxUtils, CoreUtils, LCLType, TestUtils, TestConveyor, Cartof, Windows, Math,
+  GfxUtils, CoreUtils, LCLType, TestUtils, TestConveyor, Cartof,
+  (*$IFDEF UNIX*)
+  LCLIntf,
+  (*$ELSE*)
+  Windows,
+  (*$ENDIF*)
+  Math,
   Provider, GrimReaper, Rotator, FlipArm, BuildableRobot, RoboArm, LegPutOnner;
 
 const
