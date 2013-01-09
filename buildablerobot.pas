@@ -164,7 +164,7 @@ begin
         Point3DFromCoords(rp.x, rp.y, rp.z + 20),
         Point3DFromCoords(rp.x + 100, rp.y, rp.z + 20),
         Point3DFromCoords(rp.x + 100, rp.y, rp.z - 20));
-  e.ContourColour := NICE_YELLOW;
+  e.ContourColour := 0;
   e.FillColour := NICE_GREEN;
   Geometry.Add(e);
 
@@ -173,7 +173,7 @@ begin
         Point3DFromCoords(rp.x + 100, rp.y, rp.z - 20),
         Point3DFromCoords(rp.x + 100, rp.y, rp.z + 20),
         Point3DFromCoords(rp.x, rp.y, rp.z + 20));
-  e.ContourColour := NICE_YELLOW;
+  e.ContourColour := 0;
   e.FillColour := NICE_GREEN;
   Geometry.Add(e);
 end;
@@ -419,10 +419,10 @@ begin
       m_rightArm.Rotate(pi/60, -pi/60, 0);
     // flail lleg
     if m_leftLeg <> Nil then
-      m_leftLeg.Rotate(0, 0, pi/60);
+      m_leftLeg.Rotate(0, -pi/60, pi/30);
     // flail rleg
     if m_leftLeg <> Nil then
-      m_leftLeg.Rotate(0, 0, -pi/60);
+      m_leftLeg.Rotate(0, pi/60, -pi/30);
     // flail head
     if m_head <> Nil then
       m_head.Rotate(pi/30, 0, 0);
@@ -435,10 +435,10 @@ begin
       m_rightArm.Rotate(-pi/60, pi/60, 0);
     // flail lleg
     if m_leftLeg <> Nil then
-      m_leftLeg.Rotate(0, 0, -pi/60);
+      m_leftLeg.Rotate(0, pi/60, -pi/30);
     // flail rleg
     if m_leftLeg <> Nil then
-      m_leftLeg.Rotate(0, 0, pi/60);
+      m_leftLeg.Rotate(0, -pi/60, pi/30);
     // flail head
     if m_head <> Nil then
       m_head.Rotate(-pi/30, 0, 0);
@@ -451,10 +451,10 @@ begin
       m_rightArm.Rotate(pi/60, -pi/60, 0);
     // flail lleg
     if m_leftLeg <> Nil then
-      m_leftLeg.Rotate(0, 0, pi/60);
+      m_leftLeg.Rotate(0, -pi/60, pi/30);
     // flail rleg
     if m_leftLeg <> Nil then
-      m_leftLeg.Rotate(0, 0, -pi/60);
+      m_leftLeg.Rotate(0, pi/60, -pi/30);
     // flail head
     if m_head <> Nil then
       m_head.Rotate(pi/30, 0, 0);

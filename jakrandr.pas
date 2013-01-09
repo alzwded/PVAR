@@ -18,7 +18,7 @@ interface
 uses
   Classes, SysUtils, FileUtil, Forms, Controls, Graphics, Dialogs, ExtCtrls,
   GfxUtils, CoreUtils, LCLType, TestUtils, TestConveyor, Cartof, Windows, Math,
-  Provider, GrimReaper, Rotator, FlipArm, BuildableRobot, RoboArm;
+  Provider, GrimReaper, Rotator, FlipArm, BuildableRobot, RoboArm, LegPutOnner;
 
 const
   DEFAULT_CAPTION = 'JakRandr - F1 for help';
@@ -49,13 +49,6 @@ const
   FLIPARMS_MOVE = 10;
   FLIPARMS_RETURN = 20;
 
-  (*
-  // @210 we actually meet up with the head
-  ROBOARM_WAIT = 210;
-  ROBOARM_MOVE = 64; // @274/wait + 64 it meets up with the body
-  ROBOARM_RETURN = 20;
-  *)
-  // decent values: 63/64/23
   ROBOARM_WAIT = 63;
   ROBOARM_MOVE = 63;
   ROBOARM_RETURN = 24;
@@ -149,6 +142,7 @@ var
   fliparm: TFlipArm;
   roboarm: TRoboArm;
   lifeGiver: TRobotLifeGiver;
+  legPutOnner: TLegPutOnner;
   e: IWorldEntity;
   t: TPolygon;
   i: integer;
@@ -186,9 +180,15 @@ begin
   m_worldEntities.Add(gravity);
 
   lifeGiver := TRobotLifeGiver.LifeGiver(
-        Point3DFromCoords(2700 - 300, 0, 0), CONVEYOR_CLOCK); // have it
+        Point3DFromCoords(2700 - 500, 0, 0), CONVEYOR_CLOCK); // have it
   lifeGiver.InputSource(conveyor);                            // closer
   m_worldEntities.Add(lifeGiver);
+
+  legPutOnner := TLegPutOnner.Sticker(
+        Point3DFromCoords(2700 - 300 - 500, 65, 180), CONVEYOR_CLOCK);
+  legPutOnner.InputSource(conveyor);
+  legPutOnner.OutputSource(conveyor);
+  m_worldEntities.Add(legPutOnner);
 
   reaper := TGrimReaper.GrimReaper(
         Point3DFromCoords(2600, -800, 0));
