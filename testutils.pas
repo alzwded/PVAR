@@ -7,9 +7,22 @@ interface
 uses
   Classes, SysUtils, GfxUtils, ExtCtrls, Graphics, fgl, CoreUtils;
 
+const
+  clWhite = $FFFFFF;
+  // 255 105 180
+  clHotPink = (195 << 16) + (145 << 8) + 255;
+  NICE_RED = $404080;
+
+  HEART_SCALE_FACTOR = 2.8;
+
 type
 
   PSupport = ^TSupport;
+
+  THeart = class(ACompound)
+    procedure Init; override;
+    procedure Loop; override;
+  end;
 
   TArm = class(ACompound)
     procedure Init; override;
@@ -57,6 +70,88 @@ type
   end;
 
 implementation
+
+(* THeart *)
+
+procedure THeart.Init;
+var
+  sup: TSupport;
+  skin: TSkin;
+  c: TPoint3D;
+begin
+  c := GetRotatedPoint(Centre);
+
+  sup := TSupport.Support(c);
+  skin := TSkin.Skin;
+  Entities.Add(sup);
+  Entities.Add(skin);
+
+  // left, top
+  sup.AddNode(Point3DFromCoords(c.x - HEART_SCALE_FACTOR * 400, c.y, c.z)); // 0
+  sup.AddNode(Point3DFromCoords(c.x - HEART_SCALE_FACTOR * 200, c.y, c.z - HEART_SCALE_FACTOR * 200)); // 1
+  sup.AddNode(Point3DFromCoords(c.x - HEART_SCALE_FACTOR * 200, c.y + HEART_SCALE_FACTOR * 200, c.z)); // 2
+  sup.AddNode(Point3DFromCoords(c.x - HEART_SCALE_FACTOR * 200, c.y, c.z + HEART_SCALE_FACTOR * 200)); // 3
+
+  sup.AddNode(Point3DFromCoords(c.x, c.y - HEART_SCALE_FACTOR * 600, c.z)); // 4 unique
+
+  sup.AddNode(Point3DFromCoords(c.x, c.y + HEART_SCALE_FACTOR * 100, c.z - HEART_SCALE_FACTOR * 80)); // 5
+  sup.AddNode(Point3DFromCoords(c.x, c.y + HEART_SCALE_FACTOR * 100, c.z + HEART_SCALE_FACTOR * 80)); // 6
+
+  sup.AddNode(Point3DFromCoords(c.x, c.y - HEART_SCALE_FACTOR * 80, c.z - HEART_SCALE_FACTOR * 200)); // 7
+  sup.AddNode(Point3DFromCoords(c.x, c.y - HEART_SCALE_FACTOR * 80, c.z + HEART_SCALE_FACTOR * 200)); // 8
+
+  sup.AddNode(Point3DFromCoords(c.x, c.y - HEART_SCALE_FACTOR * 280, c.z - HEART_SCALE_FACTOR * 200)); // 9
+  sup.AddNode(Point3DFromCoords(c.x, c.y - HEART_SCALE_FACTOR * 280, c.z + HEART_SCALE_FACTOR * 200)); // 10
+
+  sup.AddNode(Point3DFromCoords(c.x + HEART_SCALE_FACTOR * 400, c.y, c.z)); // 11
+  sup.AddNode(Point3DFromCoords(c.x + HEART_SCALE_FACTOR * 200, c.y, c.z - HEART_SCALE_FACTOR * 200)); // 12
+  sup.AddNode(Point3DFromCoords(c.x + HEART_SCALE_FACTOR * 200, c.y + HEART_SCALE_FACTOR * 200, c.z)); // 13
+  sup.AddNode(Point3DFromCoords(c.x + HEART_SCALE_FACTOR * 200, c.y, c.z + HEART_SCALE_FACTOR * 200)); // 14
+
+  skin.BindTria(sup.Nodes[2], sup.Nodes[1], sup.Nodes[0], clWhite, clHotPink);
+  skin.BindTria(sup.Nodes[0], sup.Nodes[3], sup.Nodes[2], clWhite, clHotPink);
+
+  skin.BindTria(sup.Nodes[2], sup.Nodes[5], sup.Nodes[1], clWhite, clHotPink);
+  skin.BindTria(sup.Nodes[2], sup.Nodes[6], sup.Nodes[5], clWhite, clHotPink);
+  skin.BindTria(sup.Nodes[2], sup.Nodes[3], sup.Nodes[6], clWhite, clHotPink);
+
+  // left, bottom
+  skin.BindTria(sup.Nodes[0], sup.Nodes[1], sup.Nodes[4], clWhite, clHotPink);
+  skin.BindTria(sup.Nodes[0], sup.Nodes[4], sup.Nodes[3], clWhite, clHotPink);
+
+  skin.BindTria(sup.Nodes[1], sup.Nodes[5], sup.Nodes[7], clWhite, clHotPink);
+  skin.BindTria(sup.Nodes[3], sup.Nodes[8], sup.Nodes[6], clWhite, clHotPink);
+
+  skin.BindTria(sup.Nodes[1], sup.Nodes[7], sup.Nodes[9], clWhite, clHotPink);
+  skin.BindTria(sup.Nodes[3], sup.Nodes[10], sup.Nodes[8], clWhite, clHotPink);
+  skin.BindTria(sup.Nodes[1], sup.Nodes[9], sup.Nodes[4], clWhite, clHotPink);
+  skin.BindTria(sup.Nodes[3], sup.Nodes[4], sup.Nodes[10], clWhite, clHotPink);
+
+  // right, top
+  skin.BindTria(sup.Nodes[11], sup.Nodes[13], sup.Nodes[14], clWhite, clHotPink);
+  skin.BindTria(sup.Nodes[11], sup.Nodes[12], sup.Nodes[13], clWhite, clHotPink);
+
+  skin.BindTria(sup.Nodes[13], sup.Nodes[12], sup.Nodes[5], clWhite, clHotPink);
+  skin.BindTria(sup.Nodes[13], sup.Nodes[5], sup.Nodes[6], clWhite, clHotPink);
+  skin.BindTria(sup.Nodes[13], sup.Nodes[6], sup.Nodes[14], clWhite, clHotPink);
+
+  // right, bottom
+  skin.BindTria(sup.Nodes[4], sup.Nodes[11], sup.Nodes[14], clWhite, clHotPink);
+  skin.BindTria(Sup.Nodes[4], sup.Nodes[12], sup.Nodes[11], clWhite, clHotPink);
+
+  skin.BindTria(sup.Nodes[5], sup.Nodes[12], sup.Nodes[7], clWhite, clHotPink);
+  skin.BindTria(sup.Nodes[6], sup.Nodes[8], sup.Nodes[14], clWhite, clHotPink);
+
+  skin.BindTria(sup.Nodes[4], sup.Nodes[9], sup.Nodes[12], clWhite, clHotPink);
+  skin.BindTria(sup.Nodes[4], sup.Nodes[14], sup.Nodes[10], clWhite, clHotPink);
+  skin.BindTria(sup.Nodes[9], sup.Nodes[7], sup.Nodes[12], clWhite, clHotPink);
+  skin.BindTria(sup.Nodes[10], sup.Nodes[14], sup.Nodes[8], clWhite, clHotPink);
+end;
+
+procedure THeart.Loop;
+begin
+  Rotate(0, pi / 24 / 5.01, 0);
+end;
 
 (* test entities *)
 

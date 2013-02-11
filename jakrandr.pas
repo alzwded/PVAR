@@ -27,16 +27,25 @@ uses
   Provider, GrimReaper, Rotator, FlipArm, BuildableRobot, RoboArm, LegPutOnner;
 
 const
-  DEFAULT_CAPTION = 'JakRandr - F1 for help';
+  DEFAULT_CAPTION = 'Eni, will you be my Valentine?';
   DYNAMIC_FRAMERATE_LOW = 0.5;
   DYNAMIC_FRAMERATE_HIGH = 0.9;
 
+  CAMERA_DEFAULT_X = 0;
+  CAMERA_DEFAULT_Y = 0;
+  CAMERA_DEFAULT_Z = 0;
+  CAMERA_DEFAULT_RX = 0;
+  CAMERA_DEFAULT_RY = 0;
+  CAMERA_DEFAULT_RZ = 0;
+  CAMERA_DEFAULT_DX = 3000.0;
+  (*
   CAMERA_DEFAULT_X = 666;
   CAMERA_DEFAULT_Y = -1273;
   CAMERA_DEFAULT_Z = -762;
   CAMERA_DEFAULT_RX = 5.34;
   CAMERA_DEFAULT_RY = 0.44;
   CAMERA_DEFAULT_RZ = 0.55;
+  *)
 
   ROOM_X_LOW = -2000;
   ROOM_X_HIGH = 2000;
@@ -124,6 +133,7 @@ type
 
     procedure AddTestEntities;
     procedure AddEntities; virtual;
+    procedure AddHeart;
   public
     { public declarations }
   end; 
@@ -390,12 +400,24 @@ begin
   m_worldEntities := TListOfWorldEntities.Create;
 
   //AddTestEntities;
-  AddEntities;
+  //AddEntities;
+  AddHeart;
 
   m_disp.O := Point3DFromCoords(CAMERA_DEFAULT_X, CAMERA_DEFAULT_Y, CAMERA_DEFAULT_Z);
   m_disp.RX := CAMERA_DEFAULT_RX;
   m_disp.RY := CAMERA_DEFAULT_RY;
   m_disp.RZ := CAMERA_DEFAULT_RZ;
+  m_disp.D := CAMERA_DEFAULT_DX;
+end;
+
+procedure TJakRandr.AddHeart;
+var
+  e: IWorldEntity;
+begin
+  e := THeart.Compound(Point3DFromCoords(0, 400, 0), 1000 div 24);
+  m_worldEntities.Add(e);
+
+  ToggleMotion;
 end;
 
 procedure TJakRandr.FormDeactivate(Sender: TObject);

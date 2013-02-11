@@ -15,7 +15,7 @@ object JakRandr: TJakRandr
   OnKeyPress = FormKeyPress
   OnKeyUp = FormKeyUp
   OnResize = FormResize
-  LCLVersion = '0.9.30.4'
+  LCLVersion = '1.0.4.0'
   object DisplaySurface: TImage
     Left = 0
     Height = 482
